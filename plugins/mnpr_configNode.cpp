@@ -17,6 +17,7 @@
 #include "node_watercolor.hpp"
 #include "node_oilpaint.hpp"
 #include "node_charcoal.hpp"
+#include "node_waterMemory.hpp"
 
 
 MTypeId ConfigNode::id(0x00127040);
@@ -79,6 +80,9 @@ MStatus ConfigNode::initializeCustomParameters() {
     else if (engineSettings->style == "Charcoal") {
         ch::initializeParameters(fxParameters, engineSettings, aEvaluate);
     }
+	else if (engineSettings->style == "Water Memory") {
+		wm::initializeParameters(fxParameters, engineSettings);
+	}
     cout << "Initialization of " << engineSettings->style << " parameters was successful" << endl;
     return MS::kSuccess;
 }
@@ -96,6 +100,9 @@ MStatus ConfigNode::computeCustomParameters(MDataBlock& data) {
         else if (engineSettings->style == "Charcoal") {
             ch::computeParameters(MNPR, data, fxParameters, engineSettings);
         }
+		if (engineSettings->style == "Water Memory") {
+			wm::computeParameters(MNPR, data, fxParameters, engineSettings);
+		}
     }
     return MS::kSuccess;
 }

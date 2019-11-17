@@ -49,7 +49,7 @@ extern const std::vector<MString> STYLES;
 struct EngineSettings {
     // float, float2, float3, float4 |  should be vectors
     bool initialized = { false };                                   ///< initialization
-    MString style = { "Watercolor" };                               ///< default style, Framework
+    MString style = { "Water Memory" };                               ///< default style, Framework
     unsigned int colorDepth = { 1 };						        ///< color depth of render targets
     std::vector<float> mayaGamma = std::vector<float>{ 1.0f };                        ///< gamma state in Maya viewport
     std::vector<float> mnprGamma = std::vector<float>{ 0.0f };                        ///< MNPR gamma state

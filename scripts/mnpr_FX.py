@@ -147,6 +147,13 @@ def getStyleFX():
     edgeFX_CH = MNPR_FX("edge manip", "Edge manipulation", "controlSetC", [[1, 0, 0, 0]], ["soften", "revert"], ["n. soften", "n. darken"])
     charcoalFX = [distortionFX, densityFX_CH, applicationFX_CH, mixingFX_CH, smudgingFX_CH, edgeFX_CH]
 
+    # watercolor effects
+    densityFX_WM = MNPR_FX("density", "Pigment turbulence", "controlSetA", [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
+    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA", [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
+    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC", [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
+    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening", "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]], ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
+    waterMemoryFX = [densityFX_WM, applicationFX_WM, distortionFX, edgeFX_WM, gapsOverlapsFX, blendingFX_WM]
+
     # query mnpr style and return
     style = cmds.mnpr(style=True, q=True).encode('latin1')  # some users have had problems without encode('latin1')
     if style == "Watercolor":
@@ -155,6 +162,8 @@ def getStyleFX():
         return oilFX
     elif style == "Charcoal":
         return charcoalFX
+    elif style == "Water Memory":
+        return waterMemoryFX
     return []
 
 

@@ -24,6 +24,7 @@
 #include "style_watercolor.hpp"
 #include "style_oilpaint.hpp"
 #include "style_charcoal.hpp"
+#include "style_waterMemory.hpp"
 #include <chrono>
 
 
@@ -31,7 +32,7 @@ const MString PLUGIN_NAME = "MNPR";                  // the same name as your pl
 const MString RENDERER_NAME = "MNPR";               // name in the renderer to appear in the Maya viewport
 const MString AUTHOR_NAME = "Santiago Montesdeoca";  // name of the author of the override
 const MString PURPOSE = "Research";                  // purpose of plugin ("Research" or "Client")
-const std::vector<MString> STYLES = { "Framework", "Watercolor", "Charcoal" };  // supported styles
+const std::vector<MString> STYLES = { "Framework", "Watercolor", "Charcoal", "Water Memory" };  // supported styles
 
 MHWRender::MRasterFormat MNPROverride::colorDepths[3] = { MHWRender::kR8G8B8A8_SNORM, MHWRender::kR16G16B16A16_SNORM, MHWRender::kR32G32B32A32_FLOAT };
 
@@ -47,6 +48,9 @@ MStatus MNPROverride::addCustomTargets() {
     else if (mEngSettings.style == "Charcoal") {
         ch::addTargets(mRenderTargets);
     }
+	else if (mEngSettings.style == "Water Memory") {
+		wm::addTargets(mRenderTargets);
+	}
     return MS::kSuccess;
 }
 
@@ -62,6 +66,9 @@ MStatus MNPROverride::addCustomOperations() {
     else if (mEngSettings.style == "Charcoal") {
         ch::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
     }
+	else if (mEngSettings.style == "Water Memory") {
+		wm::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
+	}
     return MS::kSuccess;
 }
 
