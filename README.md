@@ -1,3 +1,8 @@
+Repository, as this was required.
+
+Most of the files originate from MNPR repo: https://github.com/semontesdeoca/MNPR
+Should I find a better way to maintain the repo, I might remove all the excessive files, but right now I have no estimate of what files need to be changed.
+
 # MNPR
 MNPR is an expressive non-photorealistic rendering framework for real-time, filter-based stylization pipelines within Maya (2016.5+). It extends the Maya API and simplifies the creation of Viewport 2.0 render overrides, while still preserving all the low-level options that the Maya API provides.
 
