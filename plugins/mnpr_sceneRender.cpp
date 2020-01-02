@@ -25,10 +25,10 @@
 
 
 SceneRender::SceneRender(const MString &name,
-    MHWRender::MSceneRender::MSceneFilterOption sceneFilter, int clearMask, MRenderTargetList &targetList)
-    : MSceneRender(name)
-    , mSceneRenderFilter(sceneFilter)
-    , mTargetList(&targetList) {
+                         MHWRender::MSceneRender::MSceneFilterOption sceneFilter,
+                         int clearMask,
+                         MRenderTargetList &targetList)
+    : MSceneRender(name), mSceneRenderFilter(sceneFilter), mTargetList(&targetList) {
 
     mClearOperation.setMask(clearMask);             // custom clear mask (avoid calling clearOperation each frame)
     float clearColor[4] = { 0.0, 0.0 , 0.0, 0.0 };  // black clear color
@@ -44,7 +44,7 @@ SceneRender::~SceneRender() {}
 MHWRender::MRenderTarget* const* SceneRender::targetOverrideList(unsigned int &listSize) {
     if (mTargetList) {
         operationTargets = mTargetList->getOperationOutputs(name());
-        listSize = (unsigned int)(operationTargets.size());
+        listSize = (unsigned int) (operationTargets.size());
         return &operationTargets[0];
     }
     listSize = 0;
@@ -83,19 +83,16 @@ const bool* SceneRender::shadowEnableOverride() {
 }
 
 
-MObject SceneRender::getSourceNodeConnectedTo(const MObject& node, const MString& attribute)
-{
+MObject SceneRender::getSourceNodeConnectedTo(const MObject& node, const MString& attribute) {
     MStatus status;
     MFnDependencyNode dgFn(node);
     MPlug plug = dgFn.findPlug(attribute, &status);
-    if (status == MS::kSuccess && plug.isConnected())
-    {
+    if (status == MS::kSuccess && plug.isConnected()) {
         // Get the connection - there can be at most one input to a plug
         MPlugArray connections;
         plug.connectedTo(connections, true, false);
         size_t length = connections.length();
-        if (connections.length() > 0)
-        {
+        if (connections.length() > 0) {
             return connections[0].node();
         }
     }
@@ -120,8 +117,7 @@ void SceneRender::computePreviousScreenSpacePositions(MFnMesh &fnMesh, const MMa
     MColorArray previousScreenPositions;
     if (fnMesh.hasColorChannels(iSetName)) {
         fnMesh.getVertexColors(previousScreenPositions, &iSetName);
-    }
-    else {
+    } else {
         previousScreenPositions = MColorArray(fnMesh.numVertices(), MColor(0.0, 0.0, 0.0, 0.0));
     }
 
@@ -153,7 +149,7 @@ void SceneRender::computePreviousScreenSpacePositions(MFnMesh &fnMesh, const MMa
 
 void SceneRender::postRender() {
     MHWRender::MRenderer* theRenderer = MHWRender::MRenderer::theRenderer(false);
-    MNPROverride* mmnpr_renderer = (MNPROverride*)theRenderer->findRenderOverride(PLUGIN_NAME);
+    MNPROverride* mmnpr_renderer = (MNPROverride*) theRenderer->findRenderOverride(PLUGIN_NAME);
     if (!mmnpr_renderer) {
         cout << "WARNING: No render override instance was found" << endl;
         return;
@@ -249,8 +245,7 @@ void SceneRender::postRender() {
                 pAttr.setValue(pObj);
                 worldMatrixChanged = true;
             }
-        }
-        else {
+        } else {
             MFnMatrixAttribute attr;
             attr.create("WorldPreviousMatrix", "WorldPreviousMatrix", MFnMatrixAttribute::kDouble);
             MAKE_INPUT(attr);
@@ -261,7 +256,7 @@ void SceneRender::postRender() {
 
         // apparently we cannot optimize here, because even though worldMatrix does not change, velocity still needs to be updated (with static viewProjectionMatrix)...
         //if (worldMatrixChanged || viewProjectionMatrixChanged) {
-            computePreviousScreenSpacePositions(fnMesh, viewProjectionPreviousMatrix, worldMatrix);
+        computePreviousScreenSpacePositions(fnMesh, viewProjectionPreviousMatrix, worldMatrix);
         //}
 
         // move to next node

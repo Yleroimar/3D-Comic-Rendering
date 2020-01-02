@@ -23,6 +23,8 @@ import mnpr_nFX as nFX
 logging.basicConfig()  # errors and everything else (2 separate log groups)
 logger = logging.getLogger("mnpr_FX")  # create a logger for this file
 logger.setLevel(logging.DEBUG)  # defines the logging level (INFO for releases)
+
+
 # logger.setLevel(logging.INFO)  # defines the logging level (DEBUG for debugging)
 
 
@@ -107,7 +109,9 @@ class MNPR_FX:
     MNPR_FX class contains the required information to create an art-directed effect and
     automatically generate the required UI widgets to control
     """
-    def __init__(self, name, description, controlSet, channels, paintOptions=["Increase", "Decrease"], procOptions=["noise"]):
+
+    def __init__(self, name, description, controlSet, channels,
+                 paintOptions=["Increase", "Decrease"], procOptions=["noise"]):
         self.name = name  # effect name
         self.description = description  # description of effect
         self.controlSet = controlSet  # vtx control set containing this effect
@@ -122,40 +126,63 @@ def getStyleFX():
     Returns: style effects (list of MNPR_FX)
     """
     # general effects
-    distortionFX = MNPR_FX("distortion", "Substrate distortion", "controlSetB", [[1, 0, 0, 0]], ["distort", "revert"], ["noise"])
-    gapsOverlapsFX = MNPR_FX("gaps-overlaps", "Gaps and overlaps", "controlSetC", [[0, 0, 1, 0]], ["overlaps", "gaps"], ["noise"])
+    distortionFX = MNPR_FX("distortion", "Substrate distortion", "controlSetB",
+                           [[1, 0, 0, 0]], ["distort", "revert"], ["noise"])
+    gapsOverlapsFX = MNPR_FX("gaps-overlaps", "Gaps and overlaps", "controlSetC",
+                             [[0, 0, 1, 0]], ["overlaps", "gaps"], ["noise"])
 
     # watercolor effects
-    densityFX_WC = MNPR_FX("density", "Pigment turbulence", "controlSetA", [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_WC = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA", [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
-    blendingFX_WC = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC", [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
-    edgeFX_WC = MNPR_FX("edge manip", "Edge darkening", "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]], ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
+    densityFX_WC = MNPR_FX("density", "Pigment turbulence", "controlSetA",
+                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
+    applicationFX_WC = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA",
+                               [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
+    blendingFX_WC = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC",
+                            [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
+    edgeFX_WC = MNPR_FX("edge manip", "Edge darkening", "controlSetC",
+                        [[1, 0, 0, 0], [0, 1, 0, 0]],
+                        ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
     watercolorFX = [densityFX_WC, applicationFX_WC, distortionFX, edgeFX_WC, gapsOverlapsFX, blendingFX_WC]
 
     # oil effects
-    densityFX_OP = MNPR_FX("density", "Pigment turbulence", "controlSetA", [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    blendingFX_OP = MNPR_FX("blending", "Paint stroke length", "controlSetC", [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
-    detailFX_OP = MNPR_FX("detail", "Paint stroke width", "controlSetA", [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
-    applicationFX_OP = MNPR_FX("application", "Impasto | Dry-brush", "controlSetA", [[0, 1, 0, 0]], ["impasto", "dry-brush"], ["noise"])
+    densityFX_OP = MNPR_FX("density", "Pigment turbulence", "controlSetA",
+                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
+    blendingFX_OP = MNPR_FX("blending", "Paint stroke length", "controlSetC",
+                            [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
+    detailFX_OP = MNPR_FX("detail", "Paint stroke width", "controlSetA",
+                          [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
+    applicationFX_OP = MNPR_FX("application", "Impasto | Dry-brush", "controlSetA",
+                               [[0, 1, 0, 0]], ["impasto", "dry-brush"], ["noise"])
     oilFX = [densityFX_OP, blendingFX_OP, detailFX_OP, applicationFX_OP, distortionFX, gapsOverlapsFX]
 
     # charcoal effects
-    densityFX_CH = MNPR_FX("density", "Pigment density", "controlSetA", [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_CH = MNPR_FX("application", "Pigment application", "controlSetA", [[0, 1, 0, 0]], ["even", "granulation"], ["noise"])
-    mixingFX_CH = MNPR_FX("mixing", "Mixing", "controlSetC", [[0, 0, 0, 1]], ["mix", "separate"], ["noise"])
-    smudgingFX_CH = MNPR_FX("smudging", "Smudging", "controlSetA", [[0, 0, 0, 1]], ["smudge", "revert"], ["noise"])
-    edgeFX_CH = MNPR_FX("edge manip", "Edge manipulation", "controlSetC", [[1, 0, 0, 0]], ["soften", "revert"], ["n. soften", "n. darken"])
+    densityFX_CH = MNPR_FX("density", "Pigment density", "controlSetA",
+                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
+    applicationFX_CH = MNPR_FX("application", "Pigment application", "controlSetA",
+                               [[0, 1, 0, 0]], ["even", "granulation"], ["noise"])
+    mixingFX_CH = MNPR_FX("mixing", "Mixing", "controlSetC",
+                          [[0, 0, 0, 1]], ["mix", "separate"], ["noise"])
+    smudgingFX_CH = MNPR_FX("smudging", "Smudging", "controlSetA",
+                            [[0, 0, 0, 1]], ["smudge", "revert"], ["noise"])
+    edgeFX_CH = MNPR_FX("edge manip", "Edge manipulation", "controlSetC",
+                        [[1, 0, 0, 0]], ["soften", "revert"], ["n. soften", "n. darken"])
     charcoalFX = [distortionFX, densityFX_CH, applicationFX_CH, mixingFX_CH, smudgingFX_CH, edgeFX_CH]
 
-    # watercolor effects
-    densityFX_WM = MNPR_FX("density", "Pigment turbulence", "controlSetA", [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA", [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
-    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC", [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
-    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening", "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]], ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
+    # waterMemory effects
+    densityFX_WM = MNPR_FX("density", "Pigment turbulence", "controlSetA",
+                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
+    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA",
+                               [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
+    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC",
+                            [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
+    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening", "controlSetC",
+                        [[1, 0, 0, 0], [0, 1, 0, 0]],
+                        ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
     waterMemoryFX = [densityFX_WM, applicationFX_WM, distortionFX, edgeFX_WM, gapsOverlapsFX, blendingFX_WM]
 
     # query mnpr style and return
-    style = cmds.mnpr(style=True, q=True).encode('latin1')  # some users have had problems without encode('latin1')
+
+    # some users have had problems without encode('latin1')
+    style = cmds.mnpr(style=True, q=True).encode('latin1')
     if style == "Watercolor":
         return watercolorFX
     elif style == "Oil":
@@ -189,11 +216,11 @@ class MNPR_FX_UI(qt.CoopMayaUI):
 
         # initialize
         self.tab = tab
-        super(MNPR_FX_UI, self).__init__(self.windowTitle, dock=dock, rebuild=rebuild, brand=mnpr_info.brand, tooltip="Paint local stylization effects")
-
+        super(MNPR_FX_UI, self).__init__(self.windowTitle,
+                                         dock=dock, rebuild=rebuild, brand=mnpr_info.brand,
+                                         tooltip="Paint local stylization effects")
 
     def buildUI(self):
-
         self.setGeometry(100, 100, 270 * self.dpiS, 720 * self.dpiS)
         self.setMaximumWidth(280 * self.dpiS)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -201,8 +228,11 @@ class MNPR_FX_UI(qt.CoopMayaUI):
 
         # scroll area
         scrollWidget = QtWidgets.QWidget()
+
+        # avoid spacing between elements when resizing
         scrollWidget.setSizePolicy(QtWidgets.QSizePolicy.Maximum,
-                                   QtWidgets.QSizePolicy.Maximum)  # avoid spacing between elements when resizing
+                                   QtWidgets.QSizePolicy.Maximum)
+
         self.scrollLayout = QtWidgets.QVBoxLayout(scrollWidget)
         self.scrollLayout.setContentsMargins(0, 0, 0, 0)
         self.scrollLayout.setSpacing(0)
@@ -213,13 +243,16 @@ class MNPR_FX_UI(qt.CoopMayaUI):
         self.layout.addWidget(scrollArea)
 
         # tabs
-        self.tabWidget = QtWidgets.QTabWidget()
-        self.tabWidget.setStyleSheet(
-            "QTabWidget::pane{ border: 0; } QTabBar::tab:selected{background-color: rgb(69, 69, 69);} QTabBar::tab{background-color: rgb(40, 40, 40);}")
+        # self.tabWidget = QtWidgets.QTabWidget()
+        self.tabWidget.setStyleSheet("QTabWidget::pane{ border: 0; } "
+                                     "QTabBar::tab:selected{background-color: rgb(69, 69, 69);} "
+                                     "QTabBar::tab{background-color: rgb(40, 40, 40);}")
         self.scrollLayout.addWidget(self.tabWidget)
         materialSpaceWidget = QtWidgets.QWidget()
+
+        # avoid spacing between elements when resizing
         materialSpaceWidget.setSizePolicy(QtWidgets.QSizePolicy.Maximum,
-                                        QtWidgets.QSizePolicy.Maximum)  # avoid spacing between elements when resizing
+                                          QtWidgets.QSizePolicy.Maximum)
         materialSpaceLayout = QtWidgets.QVBoxLayout(materialSpaceWidget)
         materialSpaceLayout.setContentsMargins(0, 0, 0, 0)
         materialSpaceLayout.setSpacing(5 * self.dpiS)
@@ -270,7 +303,8 @@ class MNPR_FX_UI(qt.CoopMayaUI):
             materialSpaceLayout.addWidget(nWidget)
 
         # world scale slider
-        self.wScaleSld = LabeledSlider("World Scale", self.dpiS, leftMargin=10, rightMargin=10, topMargin=10, bottomMargin=10)
+        self.wScaleSld = LabeledSlider("World Scale", self.dpiS,
+                                       leftMargin=10, rightMargin=10, topMargin=10, bottomMargin=10)
         self.wScaleSld.slider.valueChanged.connect(lambda: nFX.noiseWorldScale(self.wScaleSld))
         materialSpaceLayout.addWidget(self.wScaleSld)
         materialSpaceLayout.addStretch()
@@ -359,7 +393,8 @@ class PaintWidget(QtWidgets.QWidget):
         style = cmds.mnpr(q=True, style=True)
         iconName = lib.toCamelCase("{0}_{1}.png".format(self.fx.name, style))
         paintIconDir = os.path.join(self.iconDir, iconName)
-        paintBtn = qt.IconButton(paintIconDir, "Paint {0}".format(self.fx.description), [45 * self.dpiS, 45 * self.dpiS])
+        paintBtn = qt.IconButton(paintIconDir, "Paint {0}".format(self.fx.description),
+                                 [45 * self.dpiS, 45 * self.dpiS])
         paintKeyColumnLayout.addWidget(paintBtn)
         # key buttons
         keysWidget = QtWidgets.QWidget()
@@ -368,13 +403,16 @@ class PaintWidget(QtWidgets.QWidget):
         keysLayout.setContentsMargins(0, 0, 0, 10 * self.dpiS)
         keysLayout.setSpacing(0)
         insertKeyDir = os.path.join(self.iconDir, "insertKey.png")
-        insertKeyBtn = qt.IconButton(insertKeyDir, "Keyframe", [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
+        insertKeyBtn = qt.IconButton(insertKeyDir, "Keyframe",
+                                     [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
         keysLayout.addWidget(insertKeyBtn)
         showKeyedTimelineDir = os.path.join(self.iconDir, "timeline.png")
-        showKeyedTimelineBtn = qt.IconButton(showKeyedTimelineDir, "Show keys in timeline", [16 * self.dpiS, 8 * self.dpiS], hColor=(100, 100, 100))
+        showKeyedTimelineBtn = qt.IconButton(showKeyedTimelineDir, "Show keys in timeline",
+                                             [16 * self.dpiS, 8 * self.dpiS], hColor=(100, 100, 100))
         keysLayout.addWidget(showKeyedTimelineBtn)
         removeKeyDir = os.path.join(self.iconDir, "removeKey.png")
-        removeKeyBtn = qt.IconButton(removeKeyDir, "Delete Keyframe", [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
+        removeKeyBtn = qt.IconButton(removeKeyDir, "Delete Keyframe",
+                                     [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
         keysLayout.addWidget(removeKeyBtn)
 
         # settings column
@@ -396,7 +434,7 @@ class PaintWidget(QtWidgets.QWidget):
         groupBoxLayout.setSpacing(0)
         self.groupBoxWidget.setAutoFillBackground(True)
         self.groupBoxWidget.setStyleSheet(
-            "QGroupBox { background-color: rgb(60, 60, 60); border: 0px; font-style: italic; font-weight: bold; }");
+            "QGroupBox { background-color: rgb(60, 60, 60); border: 0px; font-style: italic; font-weight: bold; }")
         # add radio buttons dynamically
         row = 1
         column = 1
@@ -474,7 +512,8 @@ class NoiseWidget(QtWidgets.QWidget):
         style = cmds.mnpr(q=True, style=True)
         iconName = lib.toCamelCase("{0}_{1}.png".format(self.fx.name, style))
         noiseIconDir = os.path.join(self.iconDir, iconName)
-        noiseBtn = qt.IconButton(noiseIconDir, "Noise {0}".format(self.fx.name), [45 * self.dpiS, 45 * self.dpiS], hColor=(100, 100, 100))
+        noiseBtn = qt.IconButton(noiseIconDir, "Noise {0}".format(self.fx.name),
+                                 [45 * self.dpiS, 45 * self.dpiS], hColor=(100, 100, 100))
         typeColumnLayout.addWidget(noiseBtn)
         # type options
         typeOptionsGrp = QtWidgets.QWidget()
@@ -483,10 +522,12 @@ class NoiseWidget(QtWidgets.QWidget):
         typeOptionsLayout.setContentsMargins(0, 0, 0, 0)
         typeOptionsLayout.setSpacing(0)
         toggleIconDir = os.path.join(self.iconDir, "io.png")
-        toggleBtn = qt.IconButton(toggleIconDir, "On | Off", [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
+        toggleBtn = qt.IconButton(toggleIconDir, "On | Off",
+                                  [14 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
         typeOptionsLayout.addWidget(toggleBtn)
         typeIconDir = os.path.join(self.iconDir, "3D2D.png")
-        typeBtn = qt.IconButton(typeIconDir, "3D | 2D", [28 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
+        typeBtn = qt.IconButton(typeIconDir, "3D | 2D",
+                                [28 * self.dpiS, 14 * self.dpiS], hColor=(100, 100, 100))
         typeOptionsLayout.addWidget(typeBtn)
 
         # settings column
@@ -495,7 +536,7 @@ class NoiseWidget(QtWidgets.QWidget):
         settingsColumnWidget.setFixedWidth(186 * self.dpiS)
         layout.addWidget(settingsColumnWidget)
         settingsColumnLayout = QtWidgets.QGridLayout(settingsColumnWidget)
-        settingsColumnLayout.setContentsMargins(pad, pad, pad, pad*1.5)
+        settingsColumnLayout.setContentsMargins(pad, pad, pad, pad * 1.5)
         settingsColumnLayout.setSpacing(pad)
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.Background, QtGui.QColor(60, 60, 60, 255))
@@ -513,10 +554,13 @@ class NoiseWidget(QtWidgets.QWidget):
         groupBoxLayout.setContentsMargins(pad, top, 0, 0)
         groupBoxLayout.setSpacing(spacing)
         self.groupBoxWidget.setAutoFillBackground(True)
-        self.groupBoxWidget.setStyleSheet("QGroupBox { background-color: rgb(60, 60, 60); border: 0px; font-style: italic; font-weight: bold; }");
+        self.groupBoxWidget.setStyleSheet(
+            "QGroupBox { background-color: rgb(60, 60, 60); "
+            "border: 0px; font-style: italic; font-weight: bold; }")
         # add radio buttons dynamically
         self.optionsDict["scale"] = LabeledSlider("scale", dpiS=self.dpiS, labelWidth=40)
-        self.optionsDict["scale"].slider.valueChanged.connect(lambda: nFX.noiseSlide(self.fx, self.optionsDict["scale"]))
+        self.optionsDict["scale"].slider.valueChanged.connect(
+            lambda: nFX.noiseSlide(self.fx, self.optionsDict["scale"]))
         groupBoxLayout.addWidget(self.optionsDict["scale"])
         for option in self.fx.procOptions:
             self.optionsDict[option] = LabeledSlider(option, dpiS=self.dpiS, labelWidth=40)
@@ -525,7 +569,8 @@ class NoiseWidget(QtWidgets.QWidget):
 
         # reset and shift
         resetIconDir = os.path.join(self.iconDir, "reset.png")
-        resetBtn = qt.IconButton(resetIconDir, "Reset {0}".format(self.fx.name), [14 * self.dpiS, 14 * self.dpiS], bColor=(60, 60, 60), hColor=(100,100,100))
+        resetBtn = qt.IconButton(resetIconDir, "Reset {0}".format(self.fx.name),
+                                 [14 * self.dpiS, 14 * self.dpiS], bColor=(60, 60, 60), hColor=(100, 100, 100))
         settingsColumnLayout.addWidget(resetBtn, 1, 3, 1, 1)
         self.shiftSlider = qt.RelativeSlider(QtCore.Qt.Vertical)
         settingsColumnLayout.addWidget(self.shiftSlider, 2, 3, 2, 1)
@@ -581,7 +626,7 @@ class LabeledSlider(QtWidgets.QWidget):
         self.dpiS = dpiS
         self.label = label
         self.labelWidth = labelWidth
-        self.margins = [leftMargin*dpiS, topMargin*dpiS, rightMargin*dpiS, bottomMargin*dpiS]
+        self.margins = [leftMargin * dpiS, topMargin * dpiS, rightMargin * dpiS, bottomMargin * dpiS]
         # build UI
         self.buildUI()
 

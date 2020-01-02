@@ -71,7 +71,7 @@ struct EngineSettings {
     std::vector<float> substrateShading = std::vector<float>{ 0.5f };			        ///< deferred shading of substrate
     std::vector<float> substrateLightDir = std::vector<float>{ 180.0f };			    ///< direction of substrate deferred lighting
     std::vector<float> substrateLightTilt = std::vector<float>{ 45.0f };			    ///< tilt of substrate deferred lighting
-    std::vector<float> substrateScale = std::vector<float>{ 1.0f };    			        ///< scale of the substrate texture
+    std::vector<float> substrateScale = std::vector<float>{1.0f};    			        ///< scale of the substrate texture
     std::vector<float> substrateUpdate = std::vector<float>{ 0.0f };				    ///< times/s for each substrate refresh
     std::vector<float> substrateRoughness = std::vector<float>{ 1.0f };		            ///< roughness of the substrate profile
     std::vector<float> substrateUVOffset = std::vector<float>{ 0.0f, 0.0f };		    ///< UV Offset of substrate texture
@@ -116,7 +116,6 @@ struct FXParameters {
     std::vector<float> saturation = std::vector<float>{ 1.0f };
     std::vector<float> contrast = std::vector<float>{ 1.0f };
     std::vector<float> brightness = std::vector<float>{ 1.0f };
-
     // watercolor parameters
     std::vector<float> bleedingThreshold = std::vector<float>{ 0.0002f };
     std::vector<float> bleedingRadius = std::vector<float>{ 10.0f };
@@ -126,7 +125,6 @@ struct FXParameters {
     std::vector<float> gapsOverlapsWidth = std::vector<float>{ 3.0f };
     std::vector<float> pigmentDensity = std::vector<float>{ 5.0f };
     std::vector<float> dryBrushThreshold = std::vector<float>{ 15.0f };
-
     // oilpaint parameters
     std::vector<float> opColorSmoothing = std::vector<float>{ 8.0f };
     std::vector<float> opSTSmoothing = std::vector<float>{ 2.5f };
@@ -134,7 +132,6 @@ struct FXParameters {
     std::vector<float> opBumpScale = std::vector<float>{ 60.0f };
     std::vector<float> opBrushScale = std::vector<float>{ 0.75f };
     std::vector<float> opBrushMicro = std::vector<float>{ 2.0f };
-
     // charcoal parameters
     std::vector<float> dryMediaThreshold = std::vector<float>{ 0.5f };
 
@@ -143,24 +140,23 @@ struct FXParameters {
         cout << "Saturation -> " << saturation[0] << endl;
         cout << "Contrast -> " << contrast[0] << endl;
         cout << "Brightness -> " << brightness[0] << endl;
-
         // TODO: SWITCH
         if (false) {
-            // watercolor parameters
+        // watercolor parameters
             cout << "Bleeding threshold ->" << bleedingThreshold[0] << endl;
             cout << "Bleeding radius ->" << bleedingRadius[0] << endl;
             cout << "Bleeding weigths -> [ ";
-
-            for (int x = 0; x <= bleedingRadius[0] * 2; x++)
+            for (int x = 0; x <= bleedingRadius[0] * 2; x++) {
                 cout << bleedingWeigths[x] << ", ";
-            
+            }
             cout << "]" << endl;
             cout << "Edge darkening intensity -> " << edgeDarkeningIntensity[0] << endl;
             cout << "Edge darkening width -> " << edgeDarkeningWidth[0] << endl;
             cout << "Gaps and Overlaps width -> " << gapsOverlapsWidth[0] << endl;
             cout << "Pigment density -> " << pigmentDensity[0] << endl;
             cout << "Dry brush threshold -> " << dryBrushThreshold[0] << endl;
-        } else {
+        }
+        else {
             // oil paint parameters
             cout << "Paint stroke length ->" << opColorSmoothing[0] << endl;
             cout << "Paint stroke width ->" << opSTSmoothing[0] << endl;

@@ -41,13 +41,16 @@ MStatus MNPROverride::addCustomTargets() {
     // CUSTOM TARGETS FOR STYLIZATION
     if (mEngSettings.style == "Watercolor") {
         wc::addTargets(mRenderTargets);
-    } else if (mEngSettings.style == "Oil") {
-        op::addTargets(mRenderTargets);
-    } else if (mEngSettings.style == "Charcoal") {
-        ch::addTargets(mRenderTargets);
-    } else if (mEngSettings.style == "Water Memory") {
-        wm::addTargets(mRenderTargets);
     }
+    else if (mEngSettings.style == "Oil") {
+        op::addTargets(mRenderTargets);
+    }
+    else if (mEngSettings.style == "Charcoal") {
+        ch::addTargets(mRenderTargets);
+    }
+	else if (mEngSettings.style == "Water Memory") {
+		wm::addTargets(mRenderTargets);
+	}
     return MS::kSuccess;
 }
 
@@ -56,13 +59,16 @@ MStatus MNPROverride::addCustomOperations() {
     // STYLIZATION OPERATIONS
     if (mEngSettings.style == "Watercolor") {
         wc::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
-    } else if (mEngSettings.style == "Oil") {
-        op::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
-    } else if (mEngSettings.style == "Charcoal") {
-        ch::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
-    } else if (mEngSettings.style == "Water Memory") {
-        wm::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
     }
+    else if (mEngSettings.style == "Oil") {
+        op::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
+    }
+    else if (mEngSettings.style == "Charcoal") {
+        ch::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
+    }
+	else if (mEngSettings.style == "Water Memory") {
+		wm::addOperations(mOperations, mRenderTargets, mEngSettings, mFxParams);
+	}
     return MS::kSuccess;
 }
 
@@ -94,58 +100,35 @@ void MNPROverride::initializeMNPR() {
     unsigned int tWidth = 1;
     unsigned int tHeight = 1;
     int MSAA = 1;
-
     unsigned arraySliceCount = 0;
     bool isCubeMap = false;
-    
     MHWRender::MRasterFormat userDepth = colorDepths[mEngSettings.colorDepth];
     MHWRender::MRasterFormat rgba8 = MHWRender::kR8G8B8A8_SNORM;
     MHWRender::MRasterFormat rgb8 = MHWRender::kR8G8B8X8;
     MHWRender::MRasterFormat rgba16f = MHWRender::kR16G16B16A16_FLOAT;
     MHWRender::MRasterFormat rgba32f = MHWRender::kR32G32B32A32_FLOAT;
-    
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "colorTarget", tWidth, tHeight, MSAA, userDepth, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "depthTarget", tWidth, tHeight, MSAA, MHWRender::kD24S8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "diffuseTarget", tWidth, tHeight, MSAA, userDepth, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "specularTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "pigmentCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "substrateCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "edgeCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "abstractCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "substrateTarget", tWidth, tHeight, 1, rgba16f, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "linearDepth", tWidth, tHeight, 1,
-        MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap)); // previous frame encoded in y-channel
-
-    //mRenderTargets.append(MHWRender::MRenderTargetDescription(
-    //    "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
-    //mRenderTargets.append(MHWRender::MRenderTargetDescription(
-    //    "worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
-
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "edgeTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "velocity", tWidth, tHeight, 1, MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("colorTarget", tWidth, tHeight, MSAA, userDepth, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("depthTarget", tWidth, tHeight, MSAA, MHWRender::kD24S8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("diffuseTarget", tWidth, tHeight, MSAA, userDepth, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("specularTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("pigmentCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("substrateCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("edgeCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("abstractCtrlTarget", tWidth, tHeight, MSAA, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("substrateTarget", tWidth, tHeight, 1, rgba16f, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("linearDepth", tWidth, tHeight, 1, MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap)); // previous frame encoded in y-channel
+    // mRenderTargets.append(MHWRender::MRenderTargetDescription("normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    // mRenderTargets.append(MHWRender::MRenderTargetDescription("worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("edgeTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("velocity", tWidth, tHeight, 1, MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap));
 
     // CUSTOM TARGETS
     addCustomTargets();
 
     // OUTPUT TARGETS
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "stylizationTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "outputTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
-    mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "presentTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("stylizationTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("outputTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription("presentTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
 
     // dPrintTargets(mRenderTargets);  // print all targets to debug
 
@@ -161,9 +144,8 @@ void MNPROverride::initializeMNPR() {
                               MHWRender::MClearOperation::kClearAll,        // clear mask
                               mRenderTargets);                              // render targets
     mOperations.append(sceneOp);
-    std::vector<MString> mnprTargetNames = {
-        "colorTarget", "depthTarget", "diffuseTarget", "specularTarget",
-        "pigmentCtrlTarget", "substrateCtrlTarget", "edgeCtrlTarget", "abstractCtrlTarget", "velocity" };
+    std::vector<MString> mnprTargetNames = { "colorTarget", "depthTarget", "diffuseTarget", "specularTarget",
+                                             "pigmentCtrlTarget", "substrateCtrlTarget", "edgeCtrlTarget", "abstractCtrlTarget", "velocity" };
     mRenderTargets.setOperationOutputs(opName, mnprTargetNames);
 
 
@@ -201,9 +183,9 @@ void MNPROverride::initializeMNPR() {
     opShader->addTargetParameter("gColorTex", mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
     opShader->addTargetParameter("gDepthTex", mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
     quadOp = new QuadRender(opName,
-                            MHWRender::MClearOperation::kClearNone,
-                            mRenderTargets,
-                            *opShader);
+        MHWRender::MClearOperation::kClearNone,
+        mRenderTargets,
+        *opShader);
     mOperations.append(quadOp);
     mRenderTargets.setOperationOutputs(opName, { "edgeTarget" });
 
@@ -219,12 +201,12 @@ void MNPROverride::initializeMNPR() {
     opShader->addParameter("gRenderScale", mEngSettings.renderScale);
     opShader->addParameter("gAntialiasingQuality", mEngSettings.antialiasing);
     quadOp = new QuadRender(opName,
-                            MHWRender::MClearOperation::kClearNone,
-                            mRenderTargets,
-                            *opShader);
+        MHWRender::MClearOperation::kClearNone,
+        mRenderTargets,
+        *opShader);
     mOperations.append(quadOp);
     mRenderTargets.setOperationOutputs(opName, { "outputTarget" });
-
+    
     // deferred substrate lighting
     opName = "[quad] substrate lighting";
     if (mEngSettings.style == "Oil") {
@@ -239,9 +221,9 @@ void MNPROverride::initializeMNPR() {
     opShader->addParameter("gSubstrateLightTilt", mEngSettings.substrateLightTilt);
     opShader->addParameter("gSubstrateShading", mEngSettings.substrateShading);
     quadOp = new QuadRender(opName,
-                            MHWRender::MClearOperation::kClearNone,
-                            mRenderTargets,
-                            *opShader);
+        MHWRender::MClearOperation::kClearNone,
+        mRenderTargets,
+        *opShader);
     mOperations.append(quadOp);
     mRenderTargets.setOperationOutputs(opName, { "outputTarget" });
 
@@ -253,18 +235,18 @@ void MNPROverride::initializeMNPR() {
     opShader->addParameter("gColorChannels", mEngSettings.colorChannels);
     opShader->addParameter("gColorTransform", mEngSettings.colorTransformationMode);
     quadOp = new QuadRender(opName,
-                            MHWRender::MClearOperation::kClearNone,
-                            mRenderTargets,
-                            *opShader);
+        MHWRender::MClearOperation::kClearNone,
+        mRenderTargets,
+        *opShader);
     mOperations.append(quadOp);
     mRenderTargets.setOperationOutputs(opName, { "presentTarget" });
 
     // normal Maya UI render
     opName = "[scene] Maya Scene UI";
     sceneOp = new SceneRender(opName,  // name
-                              MHWRender::MSceneRender::kRenderUIItems,  // filter
-                              (unsigned int) (MHWRender::MClearOperation::kClearNone),
-                              mRenderTargets);  // don't clear anything
+        MHWRender::MSceneRender::kRenderUIItems,  // filter
+        (unsigned int)(MHWRender::MClearOperation::kClearNone),
+        mRenderTargets);  // don't clear anything
     mOperations.append(sceneOp);
     mRenderTargets.setOperationOutputs(opName, { "presentTarget", "depthTarget" });
 
@@ -335,7 +317,7 @@ EngineSettings* MNPROverride::engineSettings() {
 // get render targets
 MStringArray MNPROverride::renderTargets() {
     MStringArray targetNames;
-    for (int i = 0; i < mRenderTargets.length() - 1; i++) {
+    for (int i = 0; i < mRenderTargets.length()-1; i++) {
         targetNames.append(mRenderTargets[i]->name());
     }
     return targetNames;
@@ -343,7 +325,7 @@ MStringArray MNPROverride::renderTargets() {
 // get operation names
 MStringArray MNPROverride::renderOperations() {
     MStringArray operationNames;
-    for (int i = 0; i < mOperations.length() - 1; i++) {
+    for (int i = 0; i < mOperations.length()-1; i++) {
         operationNames.append(mOperations[i]->name());
     }
     return operationNames;
@@ -374,25 +356,22 @@ void MNPROverride::resetStylization() {
 }
 
 // reset shader instances to force reload of shaders
-// operationIndex: set to -1 (default) to reload all shaders or
-//  an to operation index to reload only specific shaders
+// operationIndex: set to -1 (default) to reload all shaders or an to operation index to reload only specific shaders
 void MNPROverride::resetShaderInstances(int operationIndex) {
     MOperationShader* opShader;
     QuadRender* quadOp;
     //SceneRender* sceneOp;
 
     for (int i = 0; i < mOperations.length(); i++) {
-        if ((operationIndex == -1 || operationIndex == i)
-            && mOperations[i]->operationType() == MHWRender::MRenderOperation::kQuadRender) {
+        if ((operationIndex == -1 || operationIndex == i) && mOperations[i]->operationType() == MHWRender::MRenderOperation::kQuadRender) {
             cout << "-> Resetting shader instance of " << mOperations[i]->name() << " (QuadRender)" << endl;
-            quadOp = (QuadRender *) mOperations[i];
+            quadOp = (QuadRender *)mOperations[i];
             opShader = quadOp->getOperationShader();
             opShader->resetShaderInstance();
             continue;
         }
-        if ((operationIndex == -1 || operationIndex == i)
-            && mOperations[i]->operationType() == MHWRender::MRenderOperation::kSceneRender) {
-            cout << "-> Resetting shader instance of " << mOperations[i]->name() << " (SceneRender)" << endl;
+        if ((operationIndex == -1 || operationIndex == i) && mOperations[i]->operationType() == MHWRender::MRenderOperation::kSceneRender) {
+            cout << "-> Resetting shader instance of "  << mOperations[i]->name() << " (SceneRender)" << endl;
             // scene renders can also present shader overrides, implement a reset shader instance when necessary
             continue;
         }
@@ -428,7 +407,7 @@ void MNPROverride::changeMSAA(unsigned int t_MSAA) {
 // change the present target
 void MNPROverride::changeActiveTarget(unsigned int activeTargetIndex) {
     MOperationShader* opShader;
-    QuadRender* quadOp = (QuadRender*) renderOperation("[quad] debugger");
+    QuadRender* quadOp = (QuadRender*)renderOperation("[quad] debugger");
     opShader = quadOp->getOperationShader();
     if (opShader) {
         opShader->addTargetParameter("gColorTex", mRenderTargets.target(activeTargetIndex));
@@ -509,8 +488,7 @@ MStatus MNPROverride::mUpdateRenderer() {
     // get current viewport description
     frameContext = this->getFrameContext();
     MHWRender::MRenderTargetDescription viewportDescription;
-    MHWRender::MRenderTarget* colorTarget =
-        const_cast<MHWRender::MRenderTarget*>(frameContext->getCurrentColorRenderTarget());
+    MHWRender::MRenderTarget* colorTarget = const_cast<MHWRender::MRenderTarget*>(frameContext->getCurrentColorRenderTarget());
     colorTarget->targetDescription(viewportDescription);
 
     // time in milliseconds
@@ -520,14 +498,13 @@ MStatus MNPROverride::mUpdateRenderer() {
 
     // three random numbers between 0 and 254 (integer)
     for (int i = 0; i < 3; ++i) {
-        srand((unsigned int) mEngSettings.time[0] + i);
+        srand((unsigned int)mEngSettings.time[0]+i);
         mEngSettings.random[i] = static_cast<float>(rand() % 255);
     }
 
     // get gamma settings
-    if (mEngSettings.mnprGamma[0] == 0.0) {
-        mEngSettings.mayaGamma[0] =
-            frameContext->getPostEffectEnabled(MHWRender::MFrameContext::kGammaCorrection);
+    if (mEngSettings.mnprGamma[0] == 0.0){
+        mEngSettings.mayaGamma[0] = frameContext->getPostEffectEnabled(MHWRender::MFrameContext::kGammaCorrection);
     }
 
     // update viewport size
@@ -557,17 +534,17 @@ MStatus MNPROverride::mUpdateRenderer() {
 
     // update frame based attributes
     if (mEngSettings.substrateUpdate[0]) {
-        timeMs = (float) animControl.currentTime().as(MTime::kMilliseconds);
+        timeMs = (float)animControl.currentTime().as(MTime::kMilliseconds);
         // update position of substrate
         if (abs(timeMs - prevTimeMs) > (mEngSettings.substrateUpdate[0])) {
             // get uv offset in engine
             double intPart = 3.0;
-            mEngSettings.substrateUVOffset[0] = (float) modf(sin(timeMs) * 0.5453, &intPart);
-            mEngSettings.substrateUVOffset[1] = (float) modf(sin(timeMs) * 0.8317, &intPart);
+            mEngSettings.substrateUVOffset[0] = (float)modf(sin(timeMs) * 0.5453, &intPart);
+            mEngSettings.substrateUVOffset[1] = (float)modf(sin(timeMs) * 0.8317, &intPart);
             prevTimeMs = timeMs;
 
             // update in shader
-            quadOp = (QuadRender*) renderOperation("[quad] adjust-load");
+            quadOp = (QuadRender*)renderOperation("[quad] adjust-load");
             opShader = quadOp->getOperationShader();
             opShader->textureParameters["gSubstrateTex"]->setUVOffset(&mEngSettings.substrateUVOffset[0]);
             opShader->textureParameters["gSubstrateTex"]->setParams();
