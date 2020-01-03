@@ -30,8 +30,10 @@ namespace wm {
         MHWRender::MRasterFormat rgba8 = MHWRender::kR8G8B8A8_SNORM;
         MHWRender::MRasterFormat rgb8 = MHWRender::kR8G8B8X8;
 
+        /*
         targetList.append(MHWRender::MRenderTargetDescription(
             "bleedingTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+        */
     }
 
 
@@ -43,15 +45,28 @@ namespace wm {
         MOperationShader* opShader;
         QuadRender* quadOp;
 
+        opName = "[quad] cel shading outlines";
+        opShader = new MOperationShader("quadCelShader", "celOutlines1");
+        opShader->addTargetParameter("gColorTex",
+                                     mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
+        opShader->addTargetParameter("gDepthTex",
+                                     mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+        
         /*
         opName = "[quad] edge detection";
-        auto opShader = new MOperationShader("quadEdgeDetection", "dogRGBDEdgeDetection");
+        opShader = new MOperationShader("quadEdgeDetection", "dogRGBDEdgeDetection");
         opShader->addSamplerState("gSampler",
                                   MHWRender::MSamplerState::kTexClamp,
                                   MHWRender::MSamplerState::kMinMagMipPoint);
         opShader->addTargetParameter("gDepthTex",
                                      mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
-        auto quadOp = new QuadRender(opName,
+        quadOp = new QuadRender(opName,
                                      MHWRender::MClearOperation::kClearNone,
                                      mRenderTargets,
                                      *opShader);
@@ -59,6 +74,7 @@ namespace wm {
         mRenderTargets.setOperationOutputs(opName, { "edgeTarget" });
         */
 
+        /*
         opName = "[quad] separable H";
         opShader = new MOperationShader("wc", "quadSeparable", "blurH");
         opShader->addSamplerState("gSampler",
@@ -79,9 +95,9 @@ namespace wm {
         opShader->addParameter("gEdgeDarkeningKernel", mFxParams.edgeDarkeningWidth);
         opShader->addParameter("gGapsOverlapsKernel", mFxParams.gapsOverlapsWidth);
         quadOp = new QuadRender(opName,
-                                     MHWRender::MClearOperation::kClearNone,
-                                     mRenderTargets,
-                                     *opShader);
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "bleedingTarget", "edgeTarget" });
 
@@ -143,10 +159,11 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
-        
+        */
 
 
-        /*opName = "[quad] edge darkening";
+        /*
+        opName = "[quad] edge darkening";
         opShader = new MOperationShader("quadEdgeManipulation", "testOutputWM");
         opShader->addTargetParameter("gColorTex",
                                      mRenderTargets.target(mRenderTargets.indexOf("edgeTarget")));
@@ -155,14 +172,13 @@ namespace wm {
                                 mRenderTargets,
                                 *opShader);
         mOperations.append(quadOp);
-        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });*/
+        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+        */
 
 
         /*
-        MString opName = "";
-
         opName = "[quad] pigment density";
-        auto opShader = new MOperationShader("quadPigmentManipulation", "pigmentDensityWC");
+        opShader = new MOperationShader("quadPigmentManipulation", "pigmentDensityWC");
 
         opShader->addTargetParameter(
             "gColorTex", mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
@@ -170,7 +186,7 @@ namespace wm {
             "gControlTex", mRenderTargets.target(mRenderTargets.indexOf("pigmentCtrlTarget")));
         opShader->addParameter("gSubstrateColor", mEngSettings.substrateColor);
 
-        auto quadOp = new QuadRender(opName,
+        quadOp = new QuadRender(opName,
                                      MHWRender::MClearOperation::kClearNone,
                                      mRenderTargets,
                                      *opShader);
@@ -310,10 +326,8 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
-        */
 
 
-        /*
         opName = "[quad] substrate distortion";
         opShader = new MOperationShader("quadSubstrate", "substrateDistortion");
 

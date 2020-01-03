@@ -33,10 +33,12 @@ namespace wm {
         // disable/enable engine settings
         mEngSettings->velocityPV[0] = 0.0;
 
+        /*
         {
             // color bleeding threshold
             aBleedingThreshold = nAttr.create("bleedingThreshold", "bleedingThreshold",
-                                              MFnNumericData::kFloat, mFxParams->bleedingThreshold[0], &status);
+                                              MFnNumericData::kFloat,
+                                              mFxParams->bleedingThreshold[0], &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setSoftMax(0.003);
@@ -47,14 +49,13 @@ namespace wm {
         {
             // color bleeding radius
             aBleedingRadius = nAttr.create("bleedingRadius", "bleedingRadius",
-                                           MFnNumericData::kInt, mFxParams->bleedingRadius[0], &status);
+                                           MFnNumericData::kInt,
+                                           mFxParams->bleedingRadius[0], &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(1.0);
             nAttr.setMax(40.0);
             ConfigNode::enableAttribute(aBleedingRadius);
         }
-        /*
-        */
 
         {
             // edge darkening intensity
@@ -71,18 +72,19 @@ namespace wm {
         {
             // edge darkening width
             aEdgeDarkeningWidth = nAttr.create("edgeDarkeningWidth", "edgeDarkeningWidth",
-                                               MFnNumericData::kInt, mFxParams->edgeDarkeningWidth[0], &status);
+                                               MFnNumericData::kInt,
+                                               mFxParams->edgeDarkeningWidth[0], &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(1);
             nAttr.setMax(50);
             ConfigNode::enableAttribute(aEdgeDarkeningWidth);
         }
 
-        /*
         {
             // gaps and overlaps width
             aGapsOverlapsWidth = nAttr.create("maxGapsOverlapsWidth", "maxGapsOverlapsWidth",
-                                              MFnNumericData::kInt, mFxParams->gapsOverlapsWidth[0], &status);
+                                              MFnNumericData::kInt,
+                                              mFxParams->gapsOverlapsWidth[0], &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(1);
             nAttr.setSoftMax(5);
@@ -93,7 +95,8 @@ namespace wm {
         {
             // pigment density
             aPigmentDensity = nAttr.create("pigmentDensity", "pigmentDensity",
-                                           MFnNumericData::kFloat, mFxParams->pigmentDensity[0]);
+                                           MFnNumericData::kFloat,
+                                           mFxParams->pigmentDensity[0]);
             MAKE_INPUT(nAttr);
             nAttr.setSoftMin(0.0);
             nAttr.setSoftMax(10.0);
@@ -103,12 +106,14 @@ namespace wm {
         {
             // drybrush threshold
             aDryBrushThreshold = nAttr.create("drybrushThreshold", "drybrushThreshold",
-                                              MFnNumericData::kFloat, mFxParams->dryBrushThreshold[0]);
+                                              MFnNumericData::kFloat,
+                                              mFxParams->dryBrushThreshold[0]);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setSoftMax(20.0);
             ConfigNode::enableAttribute(aDryBrushThreshold);
-        }*/
+        }
+        */
     }
 
 
@@ -118,12 +123,12 @@ namespace wm {
                            EngineSettings *mEngSettings) {
         MStatus status;
 
+        /*
         // BLEEDING
         mFxParams->bleedingThreshold[0] = data.inputValue(aBleedingThreshold, &status).asFloat();
         int bleedingRadius =
             (int) (data.inputValue(aBleedingRadius, &status).asShort() * mEngSettings->renderScale[0]);
 
-        /*
         if ((mFxParams->bleedingRadius[0] != bleedingRadius) || (!mEngSettings->initialized)) {
             mFxParams->bleedingRadius[0] = (float) bleedingRadius;
 
@@ -167,13 +172,12 @@ namespace wm {
                     "gGaussianWeights", &mFxParams->bleedingWeigths[0], (bleedingRadius * 2) + 1);
             }
         }
-        */
+
         // EDGE DARKENING
         mFxParams->edgeDarkeningIntensity[0] =
             data.inputValue(aEdgeDarkeningIntensity, &status).asFloat() * mEngSettings->renderScale[0];
         mFxParams->edgeDarkeningWidth[0] =
             roundf(data.inputValue(aEdgeDarkeningWidth, &status).asShort() * mEngSettings->renderScale[0]);
-        /*
         // GAPS & OVERLAPS
         mFxParams->gapsOverlapsWidth[0] =
             roundf(data.inputValue(aGapsOverlapsWidth, &status).asShort() * mEngSettings->renderScale[0]);
