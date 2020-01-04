@@ -67,6 +67,11 @@ struct MRenderTargetList {
         return nullptr;
     }
 
+    /// Function/method with the goal of making code shorter and more readable.
+    MHWRender::MRenderTarget* getTarget(MString t_descName) {
+        return target(indexOf(t_descName));
+    }
+
     /// update targets with their respective description
     void updateTargetDescriptions() {
         for (int i = 0; i < length(); i++) {
