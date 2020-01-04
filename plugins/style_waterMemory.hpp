@@ -46,11 +46,13 @@ namespace wm {
         QuadRender* quadOp;
 
         opName = "[quad] cel shading outlines";
-        opShader = new MOperationShader("quadCelShader", "celOutlines1");
-        opShader->addTargetParameter("gColorTex",
-                                     mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
-        opShader->addTargetParameter("gDepthTex",
-                                     mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
+        opShader = new MOperationShader("quadCelShader", "celSurfaces1");
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        //opShader->addTargetParameter("gColorTex", mRenderTargets.target(0));
+        //opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
+        opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
+        opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
                                 mRenderTargets,

@@ -126,10 +126,12 @@ void MNPROverride::initializeMNPR() {
         "linearDepth", tWidth, tHeight, 1,
         MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap)); // previous frame encoded in y-channel
 
-    //mRenderTargets.append(MHWRender::MRenderTargetDescription(
-    //    "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
-    //mRenderTargets.append(MHWRender::MRenderTargetDescription(
-    //    "worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    /*
+    mRenderTargets.append(MHWRender::MRenderTargetDescription(
+        "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    mRenderTargets.append(MHWRender::MRenderTargetDescription(
+        "worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    */
 
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "edgeTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
@@ -558,6 +560,7 @@ MStatus MNPROverride::mUpdateRenderer() {
     // update frame based attributes
     if (mEngSettings.substrateUpdate[0]) {
         timeMs = (float) animControl.currentTime().as(MTime::kMilliseconds);
+
         // update position of substrate
         if (abs(timeMs - prevTimeMs) > (mEngSettings.substrateUpdate[0])) {
             // get uv offset in engine
@@ -597,6 +600,7 @@ void MNPROverride::dPrintOperations(MHWRender::MRenderOperationList& opsList) {
     cout << "DEBUG: PRINTING OPERATIONS" << endl;
     unsigned int mayaOperations = opsList.length();
     cout << "Total of mOperations: " << mayaOperations << endl;
+
     for (unsigned int i = 0; i < mayaOperations; i++) {
         cout << "-> " << opsList[i]->name() << endl;
         cout << "OperationType: " << opsList[i]->operationType() << endl;
@@ -608,6 +612,7 @@ void MNPROverride::dPrintTargets(MRenderTargetList & targetList) {
     cout << "DEBUG: PRINTING TARGETS" << endl;
     unsigned int mayaTargets = targetList.length();
     cout << "Total of mTargets: " << mayaTargets << endl;
+
     for (unsigned int i = 0; i < mayaTargets; i++) {
         // from targets themselves
         cout << "DEBUG: FROM TARGETS" << endl;
