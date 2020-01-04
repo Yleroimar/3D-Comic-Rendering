@@ -97,13 +97,13 @@ void MNPROverride::initializeMNPR() {
 
     unsigned arraySliceCount = 0;
     bool isCubeMap = false;
-    
+
     MHWRender::MRasterFormat userDepth = colorDepths[mEngSettings.colorDepth];
     MHWRender::MRasterFormat rgba8 = MHWRender::kR8G8B8A8_SNORM;
     MHWRender::MRasterFormat rgb8 = MHWRender::kR8G8B8X8;
     MHWRender::MRasterFormat rgba16f = MHWRender::kR16G16B16A16_FLOAT;
     MHWRender::MRasterFormat rgba32f = MHWRender::kR32G32B32A32_FLOAT;
-    
+
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "colorTarget", tWidth, tHeight, MSAA, userDepth, arraySliceCount, isCubeMap));
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
@@ -182,11 +182,11 @@ void MNPROverride::initializeMNPR() {
     opShader->addParameter("gAtmosphereRange", mEngSettings.atmosphereRange);
     opShader->addParameter("gEnableVelocityPV", mEngSettings.velocityPV);
     opShader->addTargetParameter("gColorTex", mRenderTargets.target(0));
-    opShader->addTargetParameter("gZBuffer", mRenderTargets.target(mRenderTargets.indexOf("depthTarget")));
-    opShader->addTargetParameter("gDiffuseTex", mRenderTargets.target(mRenderTargets.indexOf("diffuseTarget")));
-    opShader->addTargetParameter("gSpecularTex", mRenderTargets.target(mRenderTargets.indexOf("specularTarget")));
-    opShader->addTargetParameter("gLinearDepthTex", mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
-    opShader->addTargetParameter("gVelocityTex", mRenderTargets.target(mRenderTargets.indexOf("velocity")));
+    opShader->addTargetParameter("gZBuffer", mRenderTargets.getTarget("depthTarget"));
+    opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+    opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
+    opShader->addTargetParameter("gLinearDepthTex", mRenderTargets.getTarget("linearDepth"));
+    opShader->addTargetParameter("gVelocityTex", mRenderTargets.getTarget("velocity"));
     opShader->addTextureParameter("gSubstrateTex", mEngSettings.substrateTexFilename);
     opShader->addParameter("gSubstrateRoughness", mEngSettings.substrateRoughness);
     quadOp = new QuadRender(opName,
@@ -200,8 +200,8 @@ void MNPROverride::initializeMNPR() {
     // edge detection
     opName = "[quad] edge detection";
     opShader = new MOperationShader("quadEdgeDetection", "sobelRGBDEdgeDetection");
-    opShader->addTargetParameter("gColorTex", mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
-    opShader->addTargetParameter("gDepthTex", mRenderTargets.target(mRenderTargets.indexOf("linearDepth")));
+    opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
+    opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
     quadOp = new QuadRender(opName,
                             MHWRender::MClearOperation::kClearNone,
                             mRenderTargets,
@@ -217,7 +217,7 @@ void MNPROverride::initializeMNPR() {
     // antialiasing
     opName = "[quad] antialiasing";
     opShader = new MOperationShader("quadAA", "FXAA");
-    opShader->addTargetParameter("gColorTex", mRenderTargets.target(mRenderTargets.indexOf("stylizationTarget")));
+    opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
     opShader->addParameter("gRenderScale", mEngSettings.renderScale);
     opShader->addParameter("gAntialiasingQuality", mEngSettings.antialiasing);
     quadOp = new QuadRender(opName,
@@ -234,8 +234,8 @@ void MNPROverride::initializeMNPR() {
     } else {
         opShader = new MOperationShader("quadSubstrate", "deferredLighting");
     }
-    opShader->addTargetParameter("gColorTex", mRenderTargets.target(mRenderTargets.indexOf("outputTarget")));
-    opShader->addTargetParameter("gSubstrateTex", mRenderTargets.target(mRenderTargets.indexOf("substrateTarget")));
+    opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("outputTarget"));
+    opShader->addTargetParameter("gSubstrateTex", mRenderTargets.getTarget("substrateTarget"));
     opShader->addParameter("gGamma", mEngSettings.mayaGamma);
     opShader->addParameter("gSubstrateLightDir", mEngSettings.substrateLightDir);
     opShader->addParameter("gSubstrateLightTilt", mEngSettings.substrateLightTilt);
@@ -250,7 +250,7 @@ void MNPROverride::initializeMNPR() {
     // present quad operation (with debugging information)
     opName = "[quad] debugger";
     opShader = new MOperationShader("quadDebug", "debugPresentMNPR");
-    opShader->addTargetParameter("gColorTex", mRenderTargets.target(mRenderTargets.indexOf("outputTarget")));
+    opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("outputTarget"));
     opShader->addParameter("gMnprGamma", mEngSettings.mnprGamma);
     opShader->addParameter("gColorChannels", mEngSettings.colorChannels);
     opShader->addParameter("gColorTransform", mEngSettings.colorTransformationMode);

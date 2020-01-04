@@ -51,6 +51,7 @@ namespace wm {
         //opShader->addTargetParameter("gColorTex", mRenderTargets.target(0));
         //opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
         opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
+        // opShader->addTargetParameter("gNormalTex", mRenderTargets.getTarget("normalsTarget"));
         opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
         opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
         quadOp = new QuadRender(opName,
