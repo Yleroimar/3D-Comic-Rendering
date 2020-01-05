@@ -15,7 +15,23 @@
 ///////////////////////////////////////////////////////////////////////////////////
 #include "mnpr_renderer.h"
 #include "mnpr_nodes.h"
-#include "node_watercolor.hpp"
+//#include "node_watercolor.hpp"
+
+
+// stylization attributes
+// Cel Outline
+static MObject aEdgePower;
+static MObject aEdgeMultiplier;
+
+// Cel Surface
+static MObject aSurfaceThresholdHigh;
+static MObject aSurfaceThresholdMid;
+static MObject aSurfaceHighIntensity;
+static MObject aSurfaceMidIntensity;
+static MObject aSurfaceLowIntensity;
+static MObject aDiffuseCoefficient;
+static MObject aSpecularCoefficient;
+static MObject aSpecularPower;
 
 
 namespace wm {
@@ -33,87 +49,117 @@ namespace wm {
         // disable/enable engine settings
         mEngSettings->velocityPV[0] = 0.0;
 
-        /*
+        // Cel Outline
         {
-            // color bleeding threshold
-            aBleedingThreshold = nAttr.create("bleedingThreshold", "bleedingThreshold",
-                                              MFnNumericData::kFloat,
-                                              mFxParams->bleedingThreshold[0], &status);
+            aEdgePower = nAttr.create("edgePower", "edgePower",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->edgePower[0], &status);
+
             MAKE_INPUT(nAttr);
-            nAttr.setMin(0.0);
-            nAttr.setSoftMax(0.003);
-            nAttr.setMax(1.0);
-            ConfigNode::enableAttribute(aBleedingThreshold);
+            nAttr.setMin(0.01);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aEdgePower);
         }
 
         {
-            // color bleeding radius
-            aBleedingRadius = nAttr.create("bleedingRadius", "bleedingRadius",
-                                           MFnNumericData::kInt,
-                                           mFxParams->bleedingRadius[0], &status);
-            MAKE_INPUT(nAttr);
-            nAttr.setMin(1.0);
-            nAttr.setMax(40.0);
-            ConfigNode::enableAttribute(aBleedingRadius);
-        }
-
-        {
-            // edge darkening intensity
-            aEdgeDarkeningIntensity = nAttr.create("edgeDarkeningIntensity", "edgeDarkeningIntensity",
-                                                   MFnNumericData::kFloat,
-                                                   mFxParams->edgeDarkeningIntensity[0], &status);
-            MAKE_INPUT(nAttr);
-            nAttr.setMin(0.0);
-            nAttr.setSoftMax(3.0);
-            nAttr.setMax(25.0);
-            ConfigNode::enableAttribute(aEdgeDarkeningIntensity);
-        }
-
-        {
-            // edge darkening width
-            aEdgeDarkeningWidth = nAttr.create("edgeDarkeningWidth", "edgeDarkeningWidth",
-                                               MFnNumericData::kInt,
-                                               mFxParams->edgeDarkeningWidth[0], &status);
-            MAKE_INPUT(nAttr);
-            nAttr.setMin(1);
-            nAttr.setMax(50);
-            ConfigNode::enableAttribute(aEdgeDarkeningWidth);
-        }
-
-        {
-            // gaps and overlaps width
-            aGapsOverlapsWidth = nAttr.create("maxGapsOverlapsWidth", "maxGapsOverlapsWidth",
-                                              MFnNumericData::kInt,
-                                              mFxParams->gapsOverlapsWidth[0], &status);
-            MAKE_INPUT(nAttr);
-            nAttr.setMin(1);
-            nAttr.setSoftMax(5);
-            nAttr.setMax(10);
-            ConfigNode::enableAttribute(aGapsOverlapsWidth);
-        }
-
-        {
-            // pigment density
-            aPigmentDensity = nAttr.create("pigmentDensity", "pigmentDensity",
+            aEdgeMultiplier = nAttr.create("edgeMultiplier", "edgeMultiplier",
                                            MFnNumericData::kFloat,
-                                           mFxParams->pigmentDensity[0]);
-            MAKE_INPUT(nAttr);
-            nAttr.setSoftMin(0.0);
-            nAttr.setSoftMax(10.0);
-            ConfigNode::enableAttribute(aPigmentDensity);
-        }
+                                           mFxParams->edgeMultiplier[0], &status);
 
-        {
-            // drybrush threshold
-            aDryBrushThreshold = nAttr.create("drybrushThreshold", "drybrushThreshold",
-                                              MFnNumericData::kFloat,
-                                              mFxParams->dryBrushThreshold[0]);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
-            nAttr.setSoftMax(20.0);
-            ConfigNode::enableAttribute(aDryBrushThreshold);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aEdgeMultiplier);
         }
-        */
+
+        // Cel Surface
+        {
+            aSurfaceThresholdHigh = nAttr.create("surfaceThresholdHigh", "surfaceThresholdHigh",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->surfaceThresholdHigh[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aSurfaceThresholdHigh);
+        }
+        
+        {
+            aSurfaceThresholdMid = nAttr.create("surfaceThresholdMid", "surfaceThresholdMid",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->surfaceThresholdMid[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aSurfaceThresholdMid);
+        }
+        
+        {
+            aSurfaceHighIntensity = nAttr.create("surfaceHighIntensity", "surfaceHighIntensity",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->surfaceHighIntensity[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aSurfaceHighIntensity);
+        }
+        
+        {
+            aSurfaceMidIntensity = nAttr.create("surfaceMidIntensity", "surfaceMidIntensity",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->surfaceMidIntensity[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aSurfaceMidIntensity);
+        }
+        
+        {
+            aSurfaceLowIntensity = nAttr.create("surfaceLowIntensity", "surfaceLowIntensity",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->surfaceLowIntensity[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aSurfaceLowIntensity);
+        }
+        
+        {
+            aDiffuseCoefficient = nAttr.create("diffuseCoefficient", "diffuseCoefficient",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->diffuseCoefficient[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aDiffuseCoefficient);
+        }
+        
+        {
+            aSpecularCoefficient = nAttr.create("specularCoefficient", "specularCoefficient",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->specularCoefficient[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(2.0);
+            ConfigNode::enableAttribute(aSpecularCoefficient);
+        }
+        
+        {
+            aSpecularPower = nAttr.create("specularPower", "specularPower",
+                                      MFnNumericData::kFloat,
+                                      mFxParams->specularPower[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.01);
+            nAttr.setMax(10.0);
+            ConfigNode::enableAttribute(aSpecularPower);
+        }
     }
 
 
@@ -122,6 +168,32 @@ namespace wm {
                            FXParameters *mFxParams,
                            EngineSettings *mEngSettings) {
         MStatus status;
+
+        // Cel Outline
+        mFxParams->edgePower[0] =
+            data.inputValue(aEdgePower, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->edgeMultiplier[0] =
+            data.inputValue(aEdgeMultiplier, &status).asFloat() * mEngSettings->renderScale[0];
+
+        // Cel Surface
+        mFxParams->surfaceThresholdHigh[0] =
+            data.inputValue(aSurfaceThresholdHigh, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->surfaceThresholdMid[0] =
+            data.inputValue(aSurfaceThresholdMid, &status).asFloat() * mEngSettings->renderScale[0];
+
+        mFxParams->surfaceHighIntensity[0] =
+            data.inputValue(aSurfaceHighIntensity, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->surfaceMidIntensity[0] =
+            data.inputValue(aSurfaceMidIntensity, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->surfaceLowIntensity[0] =
+            data.inputValue(aSurfaceLowIntensity, &status).asFloat() * mEngSettings->renderScale[0];
+
+        mFxParams->diffuseCoefficient[0] =
+            data.inputValue(aDiffuseCoefficient, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->specularCoefficient[0] =
+            data.inputValue(aSpecularCoefficient, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->specularPower[0] =
+            data.inputValue(aSpecularPower, &status).asFloat() * mEngSettings->renderScale[0];
 
         /*
         // BLEEDING
@@ -172,7 +244,8 @@ namespace wm {
                     "gGaussianWeights", &mFxParams->bleedingWeigths[0], (bleedingRadius * 2) + 1);
             }
         }
-
+        */
+        /*
         // EDGE DARKENING
         mFxParams->edgeDarkeningIntensity[0] =
             data.inputValue(aEdgeDarkeningIntensity, &status).asFloat() * mEngSettings->renderScale[0];

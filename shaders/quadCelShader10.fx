@@ -16,6 +16,7 @@
 
 // TEXTURES
 //Texture2D gColorTex;
+Texture2D gEdgeTex;
 Texture2D gDepthTex;
 Texture2D gNormalTex;
 Texture2D gSpecularTex;
@@ -23,8 +24,8 @@ Texture2D gDiffuseTex;
 
 /*
 struct appData2 {
-	float3 vertex 		: POSITION;
-	float3 normal		: NORMAL;
+    float3 vertex 		: POSITION;
+    float3 normal		: NORMAL;
 };
 
 struct vertexOutput2 {
@@ -35,10 +36,24 @@ struct vertexOutput2 {
 
 
 // VARIABLES
-/*
-float3 gSubstrateColor = float3(1.0, 1.0, 1.0);
-float gEdgeIntensity = 1.0;
-*/
+
+// Outline Shading
+float edgePower = 0.1;
+float edgeMultiplier = 10.0;
+
+// Surface Shading
+float surfaceThresholdHigh = 0.9;
+float surfaceThresholdMid = 0.5;
+
+float surfaceHighIntensity = 1.1;
+float surfaceMidIntensity = 0.7;
+float surfaceLowIntensity = 0.5;
+
+float diffuseCoefficient = 0.6;
+float specularCoefficient = 0.4;
+
+float specularPower = 1.0;
+
 
 
 //     __ _           _ _                                                  _     
@@ -77,7 +92,7 @@ float4 findNormals1(vertexOutput i) : SV_Target{
 // but couldn't find a way to render the entire scene with a custom shader
 vertexOutput2 vs(appData2 v) {
     vertexOutput2 o;
-    
+
     o.pos = mul(float4(v.vertex, 1.0f), gWVP);
     o.vNormal = normalize(mul(float4(v.normal, 1.0f), gWVP));
 
@@ -93,41 +108,18 @@ vertexOutput2 vs(appData2 v) {
 //   | |__|  __/ |  | |_| | |_| | |_| | | | | |  __/\__ \
 //    \____\___|_|   \___/ \__,_|\__|_|_|_| |_|\___||___/
 //                                                       
-
-// Contributor: Oliver Vainumäe
-
+// applies CelOutlines on to gColorTex. Uses gEdgeTex texture of found edges.
 float4 celOutlines1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
 
     // get pixel values
-    float4 renderTex = gColorTex.Load(loc);
-    float4 depthTex = gDepthTex.Load(loc);
-    float4 normalTex = gNormalTex.Load(loc);
+    float3 renderTex = gColorTex.Load(loc).rgb;
+    float3 edgeTex = gEdgeTex.Load(loc).rgb;
 
-    /*
-    float ctrlIntensity = gControlTex.Load(loc).r;  // edge control target (r)
+    float darken = edgeTex.r;
+    darken = edgeMultiplier * pow(darken, edgePower);
 
-    // calculate edge intensity
-    if (ctrlIntensity > 0) {
-        ctrlIntensity *= 5;
-    }
-    float paintedIntensity = 1 + ctrlIntensity;
-    float dEdge = edgeBlur.x * gEdgeIntensity * paintedIntensity;
-
-
-    // EDGE MODULATION
-    // get rid of edges with color similar to substrate
-    dEdge = lerp(0.0, dEdge, saturate(length(renderTex.rgb - gSubstrateColor)*5.0));
-    // get rid of edges at bleeded areas
-    dEdge = lerp(0.0, dEdge, saturate(1.0 - (edgeBlur.y*3.0)));
-
-    // color modification model
-    float density = 1.0 + dEdge;
-    float3 darkenedEdgeCM = pow(renderTex.rgb, density);
-    */
-
-    // return float4(depthTex.rgb, 1.0);
-    return float4(depthTex.rgb, 1.0);
+    return float4(renderTex - darken.xxx, 1.0);
 }
 
 
@@ -139,72 +131,55 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
 //    \____\___|_|   |____/ \__,_|_|  |_|  \__,_|\___\___||___/
 //                                                             
 // Contributor: Oliver Vainumäe
-
+// Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
 float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
 
     // get pixel values
     float4 renderTex = gColorTex.Load(loc);
-    float4 depthTex = gDepthTex.Load(loc);
-    float4 normalTex = gNormalTex.Load(loc);
     float4 specularTex = gSpecularTex.Load(loc);
     float4 diffuseTex = gDiffuseTex.Load(loc);
 
     float diffuse = diffuseTex.r;
     float spec = specularTex.r;
-    spec = max(dot(spec, 30.0f), 0.0f);
-    spec = 1.0f * spec;
+    spec = dot(spec, specularPower);
 
-    float intensity = 0.6 * diffuse + 0.4 * spec;
-    //float intensity = spec;
+    float intensity = diffuseCoefficient * diffuse + specularCoefficient * spec;
 
-    if (intensity > 0.9)
- 		intensity = 1.1;
- 	else if (intensity > 0.5)
- 		intensity = 0.7;
- 	else
- 		intensity = 0.5;
+    if (intensity > surfaceThresholdHigh)
+        intensity = surfaceHighIntensity;
+    else if (intensity > surfaceThresholdMid)
+        intensity = surfaceMidIntensity;
+    else
+        intensity = surfaceLowIntensity;
 
-    // return float4(depthTex.rgb, 1.0);
     return float4(renderTex.rgb * intensity, 1.0);
-    // return float4(0.1 * diffuseTex.rgb, 1.0);
-    // return float4(spec, spec, spec, 1.0);
-    // return float4(renderTex.rgb, 1.0);
 }
 
-/*
-float4 strongEdgesWMFrag(vertexOutput i) : SV_Target{
+
+
+
+// Just a simple fragment shader to place the gColorTex on top of a white background.
+float4 fixBackgroundFrag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
 
     // get pixel values
     float4 renderTex = gColorTex.Load(loc);
-    float2 edgeBlur = gEdgeTex.Load(loc).ga;
-    float ctrlIntensity = gControlTex.Load(loc).r;  // edge control target (r)
+    float depth = gDepthTex.Load(loc).r;
 
-    // calculate edge intensity
-    if (ctrlIntensity > 0) {
-        ctrlIntensity *= 100;
-    }
-    float paintedIntensity = 1 + ctrlIntensity;
-    float dEdge = edgeBlur.x * gEdgeIntensity * paintedIntensity;
+    if (length(renderTex.rgb) == 0.0f && depth >= 1.0f)
+        return float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // color modification model
-    float density = 1.0 + dEdge;
-    float3 darkenedEdgeCM = pow(renderTex.rgb, density);
-
-    return float4(darkenedEdgeCM, renderTex.a);
+    return float4(renderTex.rgb, 1.0);
 }
 
 
-float4 testOutputWMFrag(vertexOutput i) : SV_Target{
-    int3 loc = int3(i.pos.xy, 0); // coordinates for loading
-
-    // get pixel values
-    float4 renderTex = gColorTex.Load(loc);
-
-    return renderTex;
+// Just a simple fragment shader to output the input texture
+// I use it to debug: I can move the contents of one target to the other target
+float4 displayFrag(vertexOutput i) : SV_Target{
+    return gColorTex.Load(int3(i.pos.xy, 0));
 }
-*/
+
 
 
 
@@ -237,3 +212,21 @@ technique11 celSurfaces1 {
         SetPixelShader(CompileShader(ps_5_0, celSurfaces1Frag()));
     }
 };
+
+technique11 fixBackground {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, fixBackgroundFrag()));
+    }
+};
+
+technique11 display {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, displayFrag()));
+    }
+};
+
+

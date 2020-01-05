@@ -138,6 +138,19 @@ struct FXParameters {
     // charcoal parameters
     std::vector<float> dryMediaThreshold = std::vector<float>{ 0.5f };
 
+    // waterMemory parameters
+    std::vector<float> edgePower = std::vector<float>{ 0.1f };
+    std::vector<float> edgeMultiplier = std::vector<float>{ 10.0f };
+    std::vector<float> surfaceThresholdHigh = std::vector<float>{ 0.9f };
+    std::vector<float> surfaceThresholdMid = std::vector<float>{ 0.5f };
+    std::vector<float> surfaceHighIntensity = std::vector<float>{ 1.1f };
+    std::vector<float> surfaceMidIntensity = std::vector<float>{ 0.7f };
+    std::vector<float> surfaceLowIntensity = std::vector<float>{ 0.5f };
+    std::vector<float> diffuseCoefficient = std::vector<float>{ 0.6f };
+    std::vector<float> specularCoefficient = std::vector<float>{ 0.4f };
+    std::vector<float> specularPower = std::vector<float>{ 1.0f };
+    
+
     /// print fx parameters (DEBUG)
     void dPrint() {
         cout << "Saturation -> " << saturation[0] << endl;

@@ -66,8 +66,13 @@ float3 sobelRGBDFrag(vertexOutput i) : SV_Target{
 	//  0   0   0       -2   0   2
 	//  1   2   1       -1   0   1
 
-	float4 hKernelMul = (1 * topLeft) + (2 * topMiddle) + (1 * topRight) + (-1 * bottomLeft) + (-2 * bottomMiddle) + (-1 * bottomRight);
-	float4 vKernelMul = (1 * topLeft) + (-1 * topRight) + (2 * midLeft) + (-2 * midRight) + (1 * bottomLeft) + (-1 * bottomRight);
+	float4 hKernelMul =
+        (1 * topLeft) + (2 * topMiddle) + (1 * topRight) +
+        (-1 * bottomLeft) + (-2 * bottomMiddle) + (-1 * bottomRight);
+	float4 vKernelMul =
+        (1 * topLeft) + (-1 * topRight) +
+        (2 * midLeft) + (-2 * midRight) +
+        (1 * bottomLeft) + (-1 * bottomRight);
 
 	hKernelMul.a *= 5;  // modulate depth
 	float rgbdHorizontal = length(hKernelMul);
@@ -112,7 +117,8 @@ float3 dogRGBDFrag(vertexOutput i) : SV_Target{
 	// 0.123317   0.195346   0.123317
 	// 0.077847   0.123317   0.077847
 
-	float4 gaussianKernelMul = (0.077847 * topLeft) + (0.123317 * topMiddle) + (0.077847 * topRight) +
+	float4 gaussianKernelMul =
+        (0.077847 * topLeft) + (0.123317 * topMiddle) + (0.077847 * topRight) +
 		(0.123317 * midLeft) + (0.195346 * middle) + (0.123317 * midRight) +
 		(0.077847 * bottomLeft) + (0.123317 * bottomMiddle) + (0.077847 * bottomRight);
 
