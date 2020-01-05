@@ -57,7 +57,7 @@ namespace wm {
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.01);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMax(10.0);
             ConfigNode::enableAttribute(aEdgePower);
         }
 
@@ -67,8 +67,8 @@ namespace wm {
                                            mFxParams->edgeMultiplier[0], &status);
 
             MAKE_INPUT(nAttr);
-            nAttr.setMin(0.0);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMin(0.0);
+            nAttr.setSoftMax(10.0);
             ConfigNode::enableAttribute(aEdgeMultiplier);
         }
 
@@ -102,7 +102,7 @@ namespace wm {
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceHighIntensity);
         }
         
@@ -113,7 +113,7 @@ namespace wm {
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceMidIntensity);
         }
         
@@ -124,7 +124,7 @@ namespace wm {
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceLowIntensity);
         }
         
@@ -134,8 +134,8 @@ namespace wm {
                                       mFxParams->diffuseCoefficient[0], &status);
 
             MAKE_INPUT(nAttr);
-            nAttr.setMin(0.0);
-            nAttr.setMax(1.0);
+            nAttr.setSoftMin(0.0);
+            nAttr.setSoftMax(1.0);
             ConfigNode::enableAttribute(aDiffuseCoefficient);
         }
         
@@ -145,8 +145,8 @@ namespace wm {
                                       mFxParams->specularCoefficient[0], &status);
 
             MAKE_INPUT(nAttr);
-            nAttr.setMin(0.0);
-            nAttr.setMax(2.0);
+            nAttr.setSoftMin(0.0);
+            nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSpecularCoefficient);
         }
         
@@ -157,7 +157,7 @@ namespace wm {
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.01);
-            nAttr.setMax(10.0);
+            nAttr.setSoftMax(10.0);
             ConfigNode::enableAttribute(aSpecularPower);
         }
     }
