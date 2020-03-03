@@ -91,8 +91,7 @@ namespace wm {
         opName = "[quad] edge detection (WM)";
         //opShader = new MOperationShader("quadEdgeDetection", "sobelRGBDEdgeDetection");
         opShader = new MOperationShader("quadEdgeDetection", "dogRGBDEdgeDetection");
-        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("linearDepth"));
-        //opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
         opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
@@ -100,7 +99,7 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "edgeTargetWM" });
-        
+
 
         opName = "[quad] display outlines";
         opShader = new MOperationShader("quadCelShader", "celOutlines1");
@@ -114,6 +113,7 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+
 
         /*
         opName = "[quad] move";
@@ -131,7 +131,7 @@ namespace wm {
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
         */
-                
+
 
         /*
         opName = "[quad] edge detection";

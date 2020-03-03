@@ -18,7 +18,7 @@
 //Texture2D gColorTex;
 Texture2D gEdgeTex;
 Texture2D gDepthTex;
-Texture2D gNormalTex;
+Texture2D gNormalsTex;
 Texture2D gSpecularTex;
 Texture2D gDiffuseTex;
 
@@ -53,6 +53,72 @@ float diffuseCoefficient = 0.6;
 float specularCoefficient = 0.4;
 
 float specularPower = 1.0;
+
+
+float3 ambientColor = float3(0.5, 0.5, 0.5);
+
+
+float3 RGBtoHSV(float3 rgb) {
+    float M = max(max(rgb.r, rgb.g), rgb.b);
+    float m = min(min(rgb.r, rgb.g), rgb.b);
+
+    float c = M - m;
+
+    float hue = 0.0;
+
+    if (c != 0.0) {
+        if (M == rgb.r)
+            hue = fmod((rgb.g - rgb.b) / c, 6.0);
+        else if (M == rgb.g)
+            hue = (rgb.b - rgb.r) / c + 2.0;
+        else if (M == rgb.b)
+            hue = (rgb.r - rgb.g) / c + 4.0;
+    }
+
+    hue = 60.0 * hue;
+
+    float value = M;
+
+    float saturation = value == 0.0 ? 0.0 : c / value;
+
+    return float3(hue, value, saturation);
+}
+
+
+float3 HSVtoRGB(float3 hsv) {
+    float c = hsv.z * hsv.y;
+
+    float hue = hsv.x / 60.0;
+
+    float x = c * (1.0 - abs(fmod(hue, 2.0) - 1.0));
+
+    float3 rgb = float3(c, x, 0.0);
+
+    if (5 < hue) rgb = float3(c, 0.0, x);
+    else if (4 < hue) rgb = float3(x, 0.0, c);
+    else if (3 < hue) rgb = float3(0.0, x, c);
+    else if (2 < hue) rgb = float3(0.0, c, x);
+    else if (1 < hue) rgb = float3(x, c, 0.0);
+
+    float m = hsv.z - c;
+
+    return rgb + m;
+}
+
+
+//float4 desaturateColorWithShadows(vertexOutput i) : SV_Target{
+//    int3 loc = int3(i.pos.xy, 0);
+//
+//    float3 renderTex = gColorTex.Load(loc).rgb;
+//    float3 diffuseTex = gDiffuseTex.Load(loc).rgb;
+//    float3 specularTex = gSpecularTex.Load(loc).rgb;
+//
+//    float3 remainder = RGBtoHSV(renderTex);
+//
+//    float3 color = remainder;
+//
+//    return float4(color, 1.0);
+//}
 
 
 
@@ -153,6 +219,7 @@ float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     else
         intensity = surfaceLowIntensity;
 
+    //return float4(HSVtoRGB(RGBtoHSV(renderTex.rgb * intensity)), 1.0);
     return float4(renderTex.rgb * intensity, 1.0);
 }
 
@@ -180,6 +247,18 @@ float4 displayFrag(vertexOutput i) : SV_Target{
     return gColorTex.Load(int3(i.pos.xy, 0));
 }
 
+
+float4 clampTestFrag(vertexOutput i) : SV_Target{
+    int3 loc = int3(i.pos.xy, 0);
+
+    float3 normal = gNormalsTex.Load(loc).rgb;
+
+    if (length(normal) < 0.01) return float4(0.0, 0.0, 0.0, 1.0);
+
+    float3 v = float3(0.0, 0.0, 1.0);
+
+    return float4(1.0 - pow(dot(normal, v), 0.1), 0.0, 0.0, 1.0);
+}
 
 
 
@@ -226,6 +305,14 @@ technique11 display {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, displayFrag()));
+    }
+};
+
+technique11 celClampTest {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, clampTestFrag()));
     }
 };
 

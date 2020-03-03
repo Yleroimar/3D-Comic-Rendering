@@ -126,9 +126,9 @@ void MNPROverride::initializeMNPR() {
         "linearDepth", tWidth, tHeight, 1,
         MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap)); // previous frame encoded in y-channel
 
-    /*
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+    /*
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
     */
@@ -165,7 +165,7 @@ void MNPROverride::initializeMNPR() {
     mOperations.append(sceneOp);
     std::vector<MString> mnprTargetNames = {
         "colorTarget", "depthTarget", "diffuseTarget", "specularTarget",
-        "pigmentCtrlTarget", "substrateCtrlTarget", "edgeCtrlTarget", "abstractCtrlTarget", "velocity" };
+        "pigmentCtrlTarget", "substrateCtrlTarget", "edgeCtrlTarget", "abstractCtrlTarget", "normalsTarget" };
     mRenderTargets.setOperationOutputs(opName, mnprTargetNames);
 
 
