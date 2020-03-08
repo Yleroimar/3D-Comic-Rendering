@@ -59,14 +59,16 @@ namespace wm {
         // opShader->addTargetParameter("gNormalTex", mRenderTargets.getTarget("normalsTarget"));
         opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
         opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
-        opShader->addParameter("surfaceThresholdHigh", mFxParams.surfaceThresholdHigh);
-        opShader->addParameter("surfaceThresholdMid", mFxParams.surfaceThresholdMid);
-        opShader->addParameter("surfaceHighIntensity", mFxParams.surfaceHighIntensity);
-        opShader->addParameter("surfaceMidIntensity", mFxParams.surfaceMidIntensity);
-        opShader->addParameter("surfaceLowIntensity", mFxParams.surfaceLowIntensity);
-        opShader->addParameter("diffuseCoefficient", mFxParams.diffuseCoefficient);
-        opShader->addParameter("specularCoefficient", mFxParams.specularCoefficient);
-        opShader->addParameter("specularPower", mFxParams.specularPower);
+        opShader->addParameter("gSurfaceThresholdHigh", mFxParams.surfaceThresholdHigh);
+        opShader->addParameter("gSurfaceThresholdMid", mFxParams.surfaceThresholdMid);
+        opShader->addParameter("gTransitionHighMid", mFxParams.transitionHighMid);
+        opShader->addParameter("gTransitionMidLow", mFxParams.transitionMidLow);
+        opShader->addParameter("gSurfaceHighIntensity", mFxParams.surfaceHighIntensity);
+        opShader->addParameter("gSurfaceMidIntensity", mFxParams.surfaceMidIntensity);
+        opShader->addParameter("gSurfaceLowIntensity", mFxParams.surfaceLowIntensity);
+        opShader->addParameter("gDiffuseCoefficient", mFxParams.diffuseCoefficient);
+        opShader->addParameter("gSpecularCoefficient", mFxParams.specularCoefficient);
+        opShader->addParameter("gSpecularPower", mFxParams.specularPower);
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
                                 mRenderTargets,
@@ -105,8 +107,8 @@ namespace wm {
         opShader = new MOperationShader("quadCelShader", "celOutlines1");
         opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
         opShader->addTargetParameter("gEdgeTex", mRenderTargets.getTarget("edgeTargetWM"));
-        opShader->addParameter("edgePower", mFxParams.edgePower);
-        opShader->addParameter("edgeMultiplier", mFxParams.edgeMultiplier);
+        opShader->addParameter("gEdgePower", mFxParams.edgePower);
+        opShader->addParameter("gEdgeMultiplier", mFxParams.edgeMultiplier);
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
                                 mRenderTargets,

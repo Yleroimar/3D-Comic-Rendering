@@ -27,74 +27,24 @@ Texture2D gDiffuseTex;
 // VARIABLES
 
 // Outline Shading
-float edgePower = 0.1;
-float edgeMultiplier = 10.0;
+float gEdgePower = 0.1;
+float gEdgeMultiplier = 10.0;
 
 // Surface Shading
-float surfaceThresholdHigh = 0.9;
-float surfaceThresholdMid = 0.5;
-float transitionHighMid = 0.025;
-float transitionMidLow = 0.025;
+float gSurfaceThresholdHigh = 0.9;
+float gSurfaceThresholdMid = 0.5;
 
-float surfaceHighIntensity = 1.1;
-float surfaceMidIntensity = 0.7;
-float surfaceLowIntensity = 0.5;
+float gTransitionHighMid = 0.025;
+float gTransitionMidLow = 0.025;
 
-float diffuseCoefficient = 0.6;
-float specularCoefficient = 0.4;
+float gSurfaceHighIntensity = 1.1;
+float gSurfaceMidIntensity = 0.7;
+float gSurfaceLowIntensity = 0.5;
 
-float specularPower = 1.0;
+float gDiffuseCoefficient = 0.6;
+float gSpecularCoefficient = 0.4;
 
-
-float3 ambientColor = float3(0.5, 0.5, 0.5);
-
-
-float3 RGBtoHSL(float3 rgb) {
-    float M = max(max(rgb.r, rgb.g), rgb.b);
-    float m = min(min(rgb.r, rgb.g), rgb.b);
-
-    float c = M - m;
-
-    float h = 0.0;
-
-    if (c != 0.0) {
-        if (M == rgb.r)
-            h = mod((rgb.g - rgb.b) / c, 6.0);
-        else if (M == rgb.g)
-            h = (rgb.b - rgb.r) / c + 2.0;
-        else if (M == rgb.b)
-            h = (rgb.r - rgb.g) / c + 4.0;
-    }
-
-    h = 60.0 * h;
-
-    float l = 0.5 * (M + m);
-
-    float s = l == 0.0 || l == 1.0 ? 0 : (c / (1.0 - abs(2.0 * l - 1.0)));
-
-    return float3(h, s, l);
-}
-
-
-float3 HSLtoRGB(float3 hsl) {
-    float c = (1 - abs(2.0 * hsl.z - 1.0)) * hsl.y;
-
-    float h = hsl.x / 60.0;
-
-    float x = c * (1.0 - abs(mod(h, 2.0) - 1.0));
-
-    float3 rgb = float3(c, x, 0.0);
-
-    if (5 < h) rgb = float3(c, 0.0, x);
-    else if (4 < h) rgb = float3(x, 0.0, c);
-    else if (3 < h) rgb = float3(0.0, x, c);
-    else if (2 < h) rgb = float3(0.0, c, x);
-    else if (1 < h) rgb = float3(x, c, 0.0);
-
-    float m = hsl.z - 0.5 * c;
-
-    return rgb + m;
-}
+float gSpecularPower = 1.0;
 
 
 //float4 desaturateColorWithShadows(vertexOutput i) : SV_Target{
@@ -161,7 +111,7 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
     float3 edgeTex = gEdgeTex.Load(loc).rgb;
 
     float darken = edgeTex.r;
-    darken = edgeMultiplier * pow(darken, edgePower);
+    darken = gEdgeMultiplier * pow(darken, gEdgePower);
 
     return float4(renderTex - darken.xxx, 1.0);
 }
@@ -186,25 +136,25 @@ float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
 
     float diffuse = diffuseTex.r;
     float spec = specularTex.r;
-    spec = dot(spec, specularPower);
+    spec = dot(spec, gSpecularPower);
 
-    float intensity = diffuseCoefficient * diffuse + specularCoefficient * spec;
+    float intensity = gDiffuseCoefficient * diffuse + gSpecularCoefficient * spec;
 
-    float high2midMin = surfaceThresholdHigh - 0.5 * transitionHighMid;
-    float mid2lowMin = surfaceThresholdMid - 0.5 * transitionMidLow;
+    float high2midMin = gSurfaceThresholdHigh - 0.5 * gTransitionHighMid;
+    float mid2lowMin = gSurfaceThresholdMid - 0.5 * gTransitionMidLow;
 
-    if (intensity > surfaceThresholdHigh + 0.5 * transitionHighMid)
-        intensity = surfaceHighIntensity;
+    if (intensity > gSurfaceThresholdHigh + 0.5 * gTransitionHighMid)
+        intensity = gSurfaceHighIntensity;
     else if (intensity > high2midMin)
-        intensity = lerp(surfaceMidIntensity, surfaceHighIntensity,
-                        (intensity - high2midMin) / transitionHighMid);
-    else if (intensity > surfaceThresholdMid + 0.5 * transitionMidLow)
-        intensity = surfaceMidIntensity;
+        intensity = lerp(gSurfaceMidIntensity, gSurfaceHighIntensity,
+                        (intensity - high2midMin) / gTransitionHighMid);
+    else if (intensity > gSurfaceThresholdMid + 0.5 * gTransitionMidLow)
+        intensity = gSurfaceMidIntensity;
     else if (intensity > mid2lowMin)
-        intensity = lerp(surfaceLowIntensity, surfaceMidIntensity,
-                        (intensity - mid2lowMin) / transitionMidLow);
+        intensity = lerp(gSurfaceLowIntensity, gSurfaceMidIntensity,
+                        (intensity - mid2lowMin) / gTransitionMidLow);
     else
-        intensity = surfaceLowIntensity;
+        intensity = gSurfaceLowIntensity;
 
     float3 color = renderTex.rgb;
 

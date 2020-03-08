@@ -143,6 +143,8 @@ struct FXParameters {
     std::vector<float> edgeMultiplier = std::vector<float>{ 10.0f };
     std::vector<float> surfaceThresholdHigh = std::vector<float>{ 0.9f };
     std::vector<float> surfaceThresholdMid = std::vector<float>{ 0.5f };
+    std::vector<float> transitionHighMid = std::vector<float>{ 0.025f };
+    std::vector<float> transitionMidLow = std::vector<float>{ 0.025f };
     std::vector<float> surfaceHighIntensity = std::vector<float>{ 1.1f };
     std::vector<float> surfaceMidIntensity = std::vector<float>{ 0.7f };
     std::vector<float> surfaceLowIntensity = std::vector<float>{ 0.5f };

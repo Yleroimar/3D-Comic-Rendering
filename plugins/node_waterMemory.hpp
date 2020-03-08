@@ -26,6 +26,8 @@ static MObject aEdgeMultiplier;
 // Cel Surface
 static MObject aSurfaceThresholdHigh;
 static MObject aSurfaceThresholdMid;
+static MObject aTransitionHighMid;
+static MObject aTransitionMidLow;
 static MObject aSurfaceHighIntensity;
 static MObject aSurfaceMidIntensity;
 static MObject aSurfaceLowIntensity;
@@ -75,85 +77,107 @@ namespace wm {
         // Cel Surface
         {
             aSurfaceThresholdHigh = nAttr.create("surfaceThresholdHigh", "surfaceThresholdHigh",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->surfaceThresholdHigh[0], &status);
+                                                 MFnNumericData::kFloat,
+                                                 mFxParams->surfaceThresholdHigh[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setMax(1.0);
             ConfigNode::enableAttribute(aSurfaceThresholdHigh);
         }
-        
+
         {
             aSurfaceThresholdMid = nAttr.create("surfaceThresholdMid", "surfaceThresholdMid",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->surfaceThresholdMid[0], &status);
+                                                MFnNumericData::kFloat,
+                                                mFxParams->surfaceThresholdMid[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setMax(1.0);
             ConfigNode::enableAttribute(aSurfaceThresholdMid);
         }
-        
+
+        {
+            aTransitionHighMid = nAttr.create("transitionHighMid", "transitionHighMid",
+                                                 MFnNumericData::kFloat,
+                                                 mFxParams->transitionHighMid[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aTransitionHighMid);
+        }
+
+        {
+            aTransitionMidLow = nAttr.create("transitionMidLow", "transitionMidLow",
+                                                MFnNumericData::kFloat,
+                                                mFxParams->transitionMidLow[0], &status);
+
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aTransitionMidLow);
+        }
+
         {
             aSurfaceHighIntensity = nAttr.create("surfaceHighIntensity", "surfaceHighIntensity",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->surfaceHighIntensity[0], &status);
+                                                 MFnNumericData::kFloat,
+                                                 mFxParams->surfaceHighIntensity[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceHighIntensity);
         }
-        
+
         {
             aSurfaceMidIntensity = nAttr.create("surfaceMidIntensity", "surfaceMidIntensity",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->surfaceMidIntensity[0], &status);
+                                                MFnNumericData::kFloat,
+                                                mFxParams->surfaceMidIntensity[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceMidIntensity);
         }
-        
+
         {
             aSurfaceLowIntensity = nAttr.create("surfaceLowIntensity", "surfaceLowIntensity",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->surfaceLowIntensity[0], &status);
+                                                MFnNumericData::kFloat,
+                                                mFxParams->surfaceLowIntensity[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSurfaceLowIntensity);
         }
-        
+
         {
             aDiffuseCoefficient = nAttr.create("diffuseCoefficient", "diffuseCoefficient",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->diffuseCoefficient[0], &status);
+                                               MFnNumericData::kFloat,
+                                               mFxParams->diffuseCoefficient[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setSoftMin(0.0);
             nAttr.setSoftMax(1.0);
             ConfigNode::enableAttribute(aDiffuseCoefficient);
         }
-        
+
         {
             aSpecularCoefficient = nAttr.create("specularCoefficient", "specularCoefficient",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->specularCoefficient[0], &status);
+                                                MFnNumericData::kFloat,
+                                                mFxParams->specularCoefficient[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setSoftMin(0.0);
             nAttr.setSoftMax(2.0);
             ConfigNode::enableAttribute(aSpecularCoefficient);
         }
-        
+
         {
             aSpecularPower = nAttr.create("specularPower", "specularPower",
-                                      MFnNumericData::kFloat,
-                                      mFxParams->specularPower[0], &status);
+                                          MFnNumericData::kFloat,
+                                          mFxParams->specularPower[0], &status);
 
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.01);
@@ -180,6 +204,11 @@ namespace wm {
             data.inputValue(aSurfaceThresholdHigh, &status).asFloat() * mEngSettings->renderScale[0];
         mFxParams->surfaceThresholdMid[0] =
             data.inputValue(aSurfaceThresholdMid, &status).asFloat() * mEngSettings->renderScale[0];
+
+        mFxParams->transitionHighMid[0] =
+            data.inputValue(aTransitionHighMid, &status).asFloat() * mEngSettings->renderScale[0];
+        mFxParams->transitionMidLow[0] =
+            data.inputValue(aTransitionMidLow, &status).asFloat() * mEngSettings->renderScale[0];
 
         mFxParams->surfaceHighIntensity[0] =
             data.inputValue(aSurfaceHighIntensity, &status).asFloat() * mEngSettings->renderScale[0];
