@@ -101,4 +101,8 @@ float4 unpremultiply(float4 color) {
 	return color;
 }
 
+float mod(float x, float y) {
+    return x - y * floor(x / y);
+}
+
 #endif /* _QUADCOMMON_FXH */
