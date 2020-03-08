@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadCelShader.fx (HLSL)
 // Brief: Cel shading algorithms
-// Contributors: Oliver Vainum‰e
+// Contributors: Oliver Vainum√§e
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //     ____     _    ____  _               _           
 //    / ___|___| |  / ___|| |__   __ _  __| | ___ _ __ 
@@ -13,6 +13,7 @@
 // This shader provides alorithms for cel shading.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "include\\quadCommon.fxh"
+#include "include\\quadColorTransform.fxh"
 
 // TEXTURES
 //Texture2D gColorTex;
@@ -21,18 +22,6 @@ Texture2D gDepthTex;
 Texture2D gNormalsTex;
 Texture2D gSpecularTex;
 Texture2D gDiffuseTex;
-
-/*
-struct appData2 {
-    float3 vertex 		: POSITION;
-    float3 normal		: NORMAL;
-};
-
-struct vertexOutput2 {
-    float4 pos : SV_POSITION;
-    float4 vNormal : NORMAL;
-};
-*/
 
 
 // VARIABLES
@@ -44,6 +33,8 @@ float edgeMultiplier = 10.0;
 // Surface Shading
 float surfaceThresholdHigh = 0.9;
 float surfaceThresholdMid = 0.5;
+float transitionHighMid = 0.025;
+float transitionMidLow = 0.025;
 
 float surfaceHighIntensity = 1.1;
 float surfaceMidIntensity = 0.7;
@@ -58,49 +49,49 @@ float specularPower = 1.0;
 float3 ambientColor = float3(0.5, 0.5, 0.5);
 
 
-float3 RGBtoHSV(float3 rgb) {
+float3 RGBtoHSL(float3 rgb) {
     float M = max(max(rgb.r, rgb.g), rgb.b);
     float m = min(min(rgb.r, rgb.g), rgb.b);
 
     float c = M - m;
 
-    float hue = 0.0;
+    float h = 0.0;
 
     if (c != 0.0) {
         if (M == rgb.r)
-            hue = fmod((rgb.g - rgb.b) / c, 6.0);
+            h = mod((rgb.g - rgb.b) / c, 6.0);
         else if (M == rgb.g)
-            hue = (rgb.b - rgb.r) / c + 2.0;
+            h = (rgb.b - rgb.r) / c + 2.0;
         else if (M == rgb.b)
-            hue = (rgb.r - rgb.g) / c + 4.0;
+            h = (rgb.r - rgb.g) / c + 4.0;
     }
 
-    hue = 60.0 * hue;
+    h = 60.0 * h;
 
-    float value = M;
+    float l = 0.5 * (M + m);
 
-    float saturation = value == 0.0 ? 0.0 : c / value;
+    float s = l == 0.0 || l == 1.0 ? 0 : (c / (1.0 - abs(2.0 * l - 1.0)));
 
-    return float3(hue, value, saturation);
+    return float3(h, s, l);
 }
 
 
-float3 HSVtoRGB(float3 hsv) {
-    float c = hsv.z * hsv.y;
+float3 HSLtoRGB(float3 hsl) {
+    float c = (1 - abs(2.0 * hsl.z - 1.0)) * hsl.y;
 
-    float hue = hsv.x / 60.0;
+    float h = hsl.x / 60.0;
 
-    float x = c * (1.0 - abs(fmod(hue, 2.0) - 1.0));
+    float x = c * (1.0 - abs(mod(h, 2.0) - 1.0));
 
     float3 rgb = float3(c, x, 0.0);
 
-    if (5 < hue) rgb = float3(c, 0.0, x);
-    else if (4 < hue) rgb = float3(x, 0.0, c);
-    else if (3 < hue) rgb = float3(0.0, x, c);
-    else if (2 < hue) rgb = float3(0.0, c, x);
-    else if (1 < hue) rgb = float3(x, c, 0.0);
+    if (5 < h) rgb = float3(c, 0.0, x);
+    else if (4 < h) rgb = float3(x, 0.0, c);
+    else if (3 < h) rgb = float3(0.0, x, c);
+    else if (2 < h) rgb = float3(0.0, c, x);
+    else if (1 < h) rgb = float3(x, c, 0.0);
 
-    float m = hsv.z - c;
+    float m = hsl.z - 0.5 * c;
 
     return rgb + m;
 }
@@ -153,19 +144,6 @@ float4 findNormals1(vertexOutput i) : SV_Target{
     */
 }
 
-/*
-// I was about to try to get normals from the entire scene,
-// but couldn't find a way to render the entire scene with a custom shader
-vertexOutput2 vs(appData2 v) {
-    vertexOutput2 o;
-
-    o.pos = mul(float4(v.vertex, 1.0f), gWVP);
-    o.vNormal = normalize(mul(float4(v.normal, 1.0f), gWVP));
-
-    return o;
-}
-*/
-
 
 
 //     ____     _     ___        _   _ _                 
@@ -196,7 +174,7 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
 //   | |__|  __/ |    ___) | |_| | |  |  _| (_| | (_|  __/\__ \
 //    \____\___|_|   |____/ \__,_|_|  |_|  \__,_|\___\___||___/
 //                                                             
-// Contributor: Oliver Vainum‰e
+// Contributor: Oliver Vainum√§e
 // Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
 float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
@@ -212,18 +190,46 @@ float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
 
     float intensity = diffuseCoefficient * diffuse + specularCoefficient * spec;
 
-    if (intensity > surfaceThresholdHigh)
+    float high2midMin = surfaceThresholdHigh - 0.5 * transitionHighMid;
+    float mid2lowMin = surfaceThresholdMid - 0.5 * transitionMidLow;
+
+    if (intensity > surfaceThresholdHigh + 0.5 * transitionHighMid)
         intensity = surfaceHighIntensity;
-    else if (intensity > surfaceThresholdMid)
+    else if (intensity > high2midMin)
+        intensity = lerp(surfaceMidIntensity, surfaceHighIntensity,
+                        (intensity - high2midMin) / transitionHighMid);
+    else if (intensity > surfaceThresholdMid + 0.5 * transitionMidLow)
         intensity = surfaceMidIntensity;
+    else if (intensity > mid2lowMin)
+        intensity = lerp(surfaceLowIntensity, surfaceMidIntensity,
+                        (intensity - mid2lowMin) / transitionMidLow);
     else
         intensity = surfaceLowIntensity;
 
-    //return float4(HSVtoRGB(RGBtoHSV(renderTex.rgb * intensity)), 1.0);
-    return float4(renderTex.rgb * intensity, 1.0);
+    float3 color = renderTex.rgb;
+
+    color = rgb2hsv2(color);
+
+    /*
+    if (color.z > 0.5) {
+        if (color.y > 0.75)
+            return float4(1.0, 1.0, 0.0, 1.0);
+
+        return float4(1.0, 0.0, 0.0, 1.0);
+    }
+
+    if (color.y > 0.75)
+        return float4(0.0, 1.0, 0.0, 1.0);
+    */
+
+    color.y = color.y * intensity;
+    color.z = color.z * intensity;
+
+    color = hsv2rgb(color);
+
+    return float4(color, 1.0);
+    //return float4(renderTex.rgb * intensity, 1.0);
 }
-
-
 
 
 // Just a simple fragment shader to place the gColorTex on top of a white background.
