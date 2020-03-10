@@ -53,7 +53,7 @@ namespace wm {
 
         opName = "[quad] cel shading surfaces";
         opShader = new MOperationShader("quadCelShader", "celSurfaces1");
-        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
         //opShader->addTargetParameter("gColorTex", mRenderTargets.target(0));
         opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
         // opShader->addTargetParameter("gNormalTex", mRenderTargets.getTarget("normalsTarget"));
@@ -74,7 +74,7 @@ namespace wm {
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
 
-
+        /*
         opName = "[quad] cel shading background";
         opShader = new MOperationShader("quadCelShader", "fixBackground");
         opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
@@ -85,7 +85,7 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
-
+        */
 
         // edge detection
         opName = "[quad] edge detection (WM)";
