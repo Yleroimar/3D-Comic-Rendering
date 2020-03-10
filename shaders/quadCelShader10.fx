@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadCelShader.fx (HLSL)
 // Brief: Cel shading algorithms
-// Contributors: Oliver Vainumäe
+// Contributors: Oliver VainumÃ¤e
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //     ____     _    ____  _               _           
 //    / ___|___| |  / ___|| |__   __ _  __| | ___ _ __ 
@@ -13,46 +13,53 @@
 // This shader provides alorithms for cel shading.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "include\\quadCommon.fxh"
+#include "include\\quadColorTransform.fxh"
 
 // TEXTURES
 //Texture2D gColorTex;
 Texture2D gEdgeTex;
 Texture2D gDepthTex;
-Texture2D gNormalTex;
+Texture2D gNormalsTex;
 Texture2D gSpecularTex;
 Texture2D gDiffuseTex;
-
-/*
-struct appData2 {
-    float3 vertex 		: POSITION;
-    float3 normal		: NORMAL;
-};
-
-struct vertexOutput2 {
-    float4 pos : SV_POSITION;
-    float4 vNormal : NORMAL;
-};
-*/
 
 
 // VARIABLES
 
 // Outline Shading
-float edgePower = 0.1;
-float edgeMultiplier = 10.0;
+float gEdgePower = 0.1;
+float gEdgeMultiplier = 10.0;
 
 // Surface Shading
-float surfaceThresholdHigh = 0.9;
-float surfaceThresholdMid = 0.5;
+float gSurfaceThresholdHigh = 0.9;
+float gSurfaceThresholdMid = 0.5;
 
-float surfaceHighIntensity = 1.1;
-float surfaceMidIntensity = 0.7;
-float surfaceLowIntensity = 0.5;
+float gTransitionHighMid = 0.025;
+float gTransitionMidLow = 0.025;
 
-float diffuseCoefficient = 0.6;
-float specularCoefficient = 0.4;
+float gSurfaceHighIntensity = 1.1;
+float gSurfaceMidIntensity = 0.7;
+float gSurfaceLowIntensity = 0.5;
 
-float specularPower = 1.0;
+float gDiffuseCoefficient = 0.6;
+float gSpecularCoefficient = 0.4;
+
+float gSpecularPower = 1.0;
+
+
+//float4 desaturateColorWithShadows(vertexOutput i) : SV_Target{
+//    int3 loc = int3(i.pos.xy, 0);
+//
+//    float3 renderTex = gColorTex.Load(loc).rgb;
+//    float3 diffuseTex = gDiffuseTex.Load(loc).rgb;
+//    float3 specularTex = gSpecularTex.Load(loc).rgb;
+//
+//    float3 remainder = RGBtoHSV(renderTex);
+//
+//    float3 color = remainder;
+//
+//    return float4(color, 1.0);
+//}
 
 
 
@@ -87,19 +94,6 @@ float4 findNormals1(vertexOutput i) : SV_Target{
     */
 }
 
-/*
-// I was about to try to get normals from the entire scene,
-// but couldn't find a way to render the entire scene with a custom shader
-vertexOutput2 vs(appData2 v) {
-    vertexOutput2 o;
-
-    o.pos = mul(float4(v.vertex, 1.0f), gWVP);
-    o.vNormal = normalize(mul(float4(v.normal, 1.0f), gWVP));
-
-    return o;
-}
-*/
-
 
 
 //     ____     _     ___        _   _ _                 
@@ -117,7 +111,7 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
     float3 edgeTex = gEdgeTex.Load(loc).rgb;
 
     float darken = edgeTex.r;
-    darken = edgeMultiplier * pow(darken, edgePower);
+    darken = gEdgeMultiplier * pow(darken, gEdgePower);
 
     return float4(renderTex - darken.xxx, 1.0);
 }
@@ -130,7 +124,7 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
 //   | |__|  __/ |    ___) | |_| | |  |  _| (_| | (_|  __/\__ \
 //    \____\___|_|   |____/ \__,_|_|  |_|  \__,_|\___\___||___/
 //                                                             
-// Contributor: Oliver Vainumäe
+// Contributor: Oliver VainumÃ¤e
 // Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
 float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
@@ -142,21 +136,50 @@ float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
 
     float diffuse = diffuseTex.r;
     float spec = specularTex.r;
-    spec = dot(spec, specularPower);
+    spec = dot(spec, gSpecularPower);
 
-    float intensity = diffuseCoefficient * diffuse + specularCoefficient * spec;
+    float intensity = gDiffuseCoefficient * diffuse + gSpecularCoefficient * spec;
 
-    if (intensity > surfaceThresholdHigh)
-        intensity = surfaceHighIntensity;
-    else if (intensity > surfaceThresholdMid)
-        intensity = surfaceMidIntensity;
+    float high2midMin = gSurfaceThresholdHigh - 0.5 * gTransitionHighMid;
+    float mid2lowMin = gSurfaceThresholdMid - 0.5 * gTransitionMidLow;
+
+    if (intensity > gSurfaceThresholdHigh + 0.5 * gTransitionHighMid)
+        intensity = gSurfaceHighIntensity;
+    else if (intensity > high2midMin)
+        intensity = lerp(gSurfaceMidIntensity, gSurfaceHighIntensity,
+                        (intensity - high2midMin) / gTransitionHighMid);
+    else if (intensity > gSurfaceThresholdMid + 0.5 * gTransitionMidLow)
+        intensity = gSurfaceMidIntensity;
+    else if (intensity > mid2lowMin)
+        intensity = lerp(gSurfaceLowIntensity, gSurfaceMidIntensity,
+                        (intensity - mid2lowMin) / gTransitionMidLow);
     else
-        intensity = surfaceLowIntensity;
+        intensity = gSurfaceLowIntensity;
 
-    return float4(renderTex.rgb * intensity, 1.0);
+    float3 color = renderTex.rgb;
+
+    color = rgb2hsv2(color);
+
+    /*
+    if (color.z > 0.5) {
+        if (color.y > 0.75)
+            return float4(1.0, 1.0, 0.0, 1.0);
+
+        return float4(1.0, 0.0, 0.0, 1.0);
+    }
+
+    if (color.y > 0.75)
+        return float4(0.0, 1.0, 0.0, 1.0);
+    */
+
+    color.y = color.y * intensity;
+    color.z = color.z * intensity;
+
+    color = hsv2rgb(color);
+
+    return float4(color, 1.0);
+    //return float4(renderTex.rgb * intensity, 1.0);
 }
-
-
 
 
 // Just a simple fragment shader to place the gColorTex on top of a white background.
@@ -180,6 +203,18 @@ float4 displayFrag(vertexOutput i) : SV_Target{
     return gColorTex.Load(int3(i.pos.xy, 0));
 }
 
+
+float4 clampTestFrag(vertexOutput i) : SV_Target{
+    int3 loc = int3(i.pos.xy, 0);
+
+    float3 normal = gNormalsTex.Load(loc).rgb;
+
+    if (length(normal) < 0.01) return float4(0.0, 0.0, 0.0, 1.0);
+
+    float3 v = float3(0.0, 0.0, 1.0);
+
+    return float4(1.0 - pow(dot(normal, v), 0.1), 0.0, 0.0, 1.0);
+}
 
 
 
@@ -226,6 +261,14 @@ technique11 display {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, displayFrag()));
+    }
+};
+
+technique11 celClampTest {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, clampTestFrag()));
     }
 };
 

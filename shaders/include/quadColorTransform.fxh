@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadColorTransform.fxh (HLSL)
 // Brief: Common color transformation snippets for MNPR
-// Contributors: Amir Semmo, Pierre Bénard
+// Contributors: Amir Semmo, Pierre Bï¿½nard
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //              _                _                        __                      
 //     ___ ___ | | ___  _ __    | |_ _ __ __ _ _ __  ___ / _| ___  _ __ _ __ ___  
@@ -35,6 +35,109 @@ float3 rgb2hsv(in float3 c)
    float e = 1.0e-10;
    
    return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+
+float3 rgb2hsv2(in float3 rgb) {
+    float M = max(max(rgb.r, rgb.g), rgb.b);
+    float m = min(min(rgb.r, rgb.g), rgb.b);
+
+    float c = M - m;
+
+    float h = 0.0;
+
+    if (c != 0.0) {
+        if (M == rgb.r)
+            h = mod((rgb.g - rgb.b) / c, 6.0);
+        else if (M == rgb.g)
+            h = (rgb.b - rgb.r) / c + 2.0;
+        else if (M == rgb.b)
+            h = (rgb.r - rgb.g) / c + 4.0;
+    }
+
+    h = 60.0 * h;
+
+    float v = M;
+
+    float s = v == 0.0 ? 0.0 : c / v;
+
+    return float3(h, s, v);
+}
+
+
+float3 hsv2rgb(in float3 hsv) {
+    float c = hsv.z * hsv.y;
+
+    float h = hsv.x / 60.0;
+
+    float x = c * (1.0 - abs(mod(h, 2.0) - 1.0));
+
+    float3 rgb = float3(c, x, 0.0);
+
+    if (5 < h) rgb = float3(c, 0.0, x);
+    else if (4 < h) rgb = float3(x, 0.0, c);
+    else if (3 < h) rgb = float3(0.0, x, c);
+    else if (2 < h) rgb = float3(0.0, c, x);
+    else if (1 < h) rgb = float3(x, c, 0.0);
+
+    float m = hsv.z - c;
+
+    return rgb + m;
+}
+
+
+
+//    ____   ____ ____       ____      _   _ ____  _     
+//   |  _ \ / ___| __ )     / /\ \    | | | / ___|| |    
+//   | |_) | |  _|  _ \    / /  \ \   | |_| \___ \| |    
+//   |  _ <| |_| | |_) |   \ \  / /   |  _  |___) | |___ 
+//   |_| \_\\____|____/     \_\/_/    |_| |_|____/|_____|
+//                                                       
+float3 rgb2hsl(float3 rgb) {
+    float M = max(max(rgb.r, rgb.g), rgb.b);
+    float m = min(min(rgb.r, rgb.g), rgb.b);
+
+    float c = M - m;
+
+    float h = 0.0;
+
+    if (c != 0.0) {
+        if (M == rgb.r)
+            h = mod((rgb.g - rgb.b) / c, 6.0);
+        else if (M == rgb.g)
+            h = (rgb.b - rgb.r) / c + 2.0;
+        else if (M == rgb.b)
+            h = (rgb.r - rgb.g) / c + 4.0;
+    }
+
+    h = 60.0 * h;
+
+    float l = 0.5 * (M + m);
+
+    float s = l == 0.0 || l == 1.0 ? 0 : (c / (1.0 - abs(2.0 * l - 1.0)));
+
+    return float3(h, s, l);
+}
+
+
+float3 hsl2rgb(float3 hsl) {
+    float c = (1 - abs(2.0 * hsl.z - 1.0)) * hsl.y;
+
+    float h = hsl.x / 60.0;
+
+    float x = c * (1.0 - abs(mod(h, 2.0) - 1.0));
+
+    float3 rgb = float3(c, x, 0.0);
+
+    if (5 < h) rgb = float3(c, 0.0, x);
+    else if (4 < h) rgb = float3(x, 0.0, c);
+    else if (3 < h) rgb = float3(0.0, x, c);
+    else if (2 < h) rgb = float3(0.0, c, x);
+    else if (1 < h) rgb = float3(x, c, 0.0);
+
+    float m = hsl.z - 0.5 * c;
+
+    return rgb + m;
 }
 
 
@@ -119,7 +222,7 @@ float3 lab2rgb(float3 color) {
 //   |  _ <| |_| | |_) |   \ \  / /   |  _ < | | | |_) |
 //   |_| \_\\____|____/     \_\/_/    |_| \_\|_| |____/ 
 //                                                      
-//  Contributor: Pierre Bénard
+//  Contributor: Pierre Bï¿½nard
 //  Convert between RGB (red, green, blue) to RYB (red, yellow, blue)
 
 float3 rgb2ryb(float3 rgb_color) {

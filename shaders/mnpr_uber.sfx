@@ -4,11 +4,11 @@ GroupVersion=-1.000000
 Advanced=0
 HelpID=0
 ParentMaterial=0
-NumberOfNodes=794
+NumberOfNodes=792
 #NT=20001 0
 	PC=5
-	posx=1 v=2003 589.981140
-	posy=1 v=2003 -126.567955
+	posx=1 v=2003 321.787231
+	posy=1 v=2003 -127.014336
 	config=2 e=0 v=5012 1
 	shadername=2 e=1 v=5000 C:/Users/santy/Dropbox/DEV/MNPR-framework/shaders/sfx/puber.fx
 	saveshadertodisk=2 e=0 v=5015 
@@ -21,8 +21,8 @@ NumberOfNodes=794
 #NT=20002 0
 	PC=4
 	name=1 v=5000 painterlyTechnique
-	posx=1 v=2003 246.955292
-	posy=1 v=2003 -41.683727
+	posx=1 v=2003 105.006447
+	posy=1 v=2003 -40.863403
 	techniquename=1 v=5000 diffuseLighting
 	group=50
 	ISC=1
@@ -162,8 +162,8 @@ NumberOfNodes=794
 #NT=20109 0
 	PC=3
 	name=1 v=5000 lightNr
-	posx=1 v=2003 448.922272
-	posy=1 v=2003 -297.052032
+	posx=1 v=2003 76.927887
+	posy=1 v=2003 -275.416809
 	group=50
 	ISC=2
 		SVT=2002 2002 1 0 0 
@@ -176,8 +176,8 @@ NumberOfNodes=794
 #NT=20117 0
 	PC=4
 	name=1 v=5000 lightNrDefault
-	posx=1 v=2003 243.675507
-	posy=1 v=2003 -332.478912
+	posx=1 v=2003 -140.083344
+	posy=1 v=2003 -323.785095
 	value=2 e=1 v=2002 3
 	group=50
 	ISC=0
@@ -189,8 +189,8 @@ NumberOfNodes=794
 #NT=20117 0
 	PC=7
 	name=1 v=5000 maxLights
-	posx=1 v=2003 246.375458
-	posy=1 v=2003 -221.997009
+	posx=1 v=2003 -146.795105
+	posy=1 v=2003 -201.538437
 	value=2 e=1 v=2002 3
 	exposesetting=1 v=2001 1
 	uiorder=2 e=0 v=2002 100
@@ -434,7 +434,7 @@ NumberOfNodes=794
 	OSC=3
 		SVT=5001 3003 0 Color or Texture
 		CC=1
-			C=21 0 0 782 0 1 0
+			C=21 0 0 777 0 1 0
 			CPC=0
 		SVT=5001 3002 0 Color Tint
 		CC=1
@@ -708,8 +708,8 @@ NumberOfNodes=794
 #NT=10100 0
 	PC=6
 	name=1 v=5000 ShadowMapPass
-	posx=1 v=2003 -167.982025
-	posy=1 v=2003 116.755585
+	posx=1 v=2003 -173.007767
+	posy=1 v=2003 123.729889
 	grpPosX=1 v=2003 -1264.729980
 	grpPosY=1 v=2003 -10.868100
 	value_Shadow=2 e=5 v=2001 1
@@ -962,32 +962,40 @@ NumberOfNodes=794
 		SVT=2001 2001 4 
 		CC=0
 #NT=10100 0
-	PC=62
+	PC=59
 	name=1 v=5000 Material
 	posx=1 v=2003 -1482.654541
 	posy=1 v=2003 -314.123535
 	grpnodecolor=1 v=5012 4
 	grpPosX=1 v=2003 -2322.000000
 	grpPosY=1 v=2003 69.500000
-	colorsetindex_Vertex=2 e=1 v=2002 0
-	value_vtxControls=2 e=1 v=2001 0
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
 	options_reflectanceModel=2 e=1 v=5012 0
 	options_specularModel=2 e=1 v=5012 1
-	value_Application_Procedural_MNPR=2 e=1 v=2001 0
+	value_Transparent=2 e=1 v=2001 0
 	shadername_HwShader=2 e=1 v=5000 C:/Users/santy/Dropbox/DEV/MNPR-framework/shaders/sfx/puber.fx
 	uigroup_maxLights=2 e=1 v=5000 Reflectance
+	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
 	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
+	value_Variation_3D_MNPR=2 e=1 v=2001 1
+	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
+	value_enableDepth=2 e=1 v=2001 1
+	value_maxLights=2 e=1 v=2002 3
+	value_uIncline_3D_MNPR=2 e=1 v=2001 1
+	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
+	value_vIncline_3D_MNPR=2 e=1 v=2001 1
+	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
 	value_Application_3D_MNPR=2 e=1 v=2001 1
+	value_Application_Procedural_MNPR=2 e=1 v=2001 0
 	value_Blending_3D_MNPR=2 e=1 v=2001 1
 	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
+	value_vtxControls=2 e=1 v=2001 0
 	value_Density_3D_MNPR=2 e=1 v=2001 1
 	value_Density_Procedural_MNPR=2 e=1 v=2001 0
 	value_Detail_3D_MNPR=2 e=1 v=2001 1
-	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
+	value_lightNrDefault=2 e=1 v=2002 3
 	value_Diffuse_Factor=2 e=1 v=2003 0.200000
 	value_Distortion_3D_MNPR=2 e=1 v=2001 1
 	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
@@ -1001,25 +1009,14 @@ NumberOfNodes=794
 	value_Specularity=2 e=1 v=2001 0
 	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
 	value_Transition_3D_MNPR=2 e=1 v=2001 1
-	value_Transparent=2 e=1 v=2001 0
-	value_Variation_3D_MNPR=2 e=1 v=2001 1
-	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
-	value_enableDepth=2 e=1 v=2001 1
-	value_lightNrDefault=2 e=1 v=2002 3
-	value_maxLights=2 e=1 v=2002 3
-	value_uIncline_3D_MNPR=2 e=1 v=2001 1
-	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
-	value_vIncline_3D_MNPR=2 e=1 v=2001 1
-	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
-	colorsetname_Vertex=2 e=2 v=5000 velocity
+	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
 	uvindex_UVs=2 e=2 v=2002 0
-	perinstanceunshared_Vertex=2 e=3 v=2001 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
-	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
 	uiorder_reflectanceModel=2 e=5 v=2002 0
-	value_Shadow=2 e=5 v=2001 1
+	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
 	valueX_Tile=2 e=5 v=2003 5.000000
+	value_Shadow=2 e=5 v=2001 1
 	valueY_Tile=2 e=6 v=2003 5.000000
 	valueX_Offset=2 e=7 v=2003 0.000000
 	valueY_Offset=2 e=8 v=2003 0.000000
@@ -1303,58 +1300,55 @@ NumberOfNodes=794
 		SVT=5001 1002 0 
 		CC=0
 #NT=10100 0
-	PC=56
+	PC=53
 	name=1 v=5000 ForwardRenderPasses
-	posx=1 v=2003 -464.198364
-	posy=1 v=2003 -108.185898
+	posx=1 v=2003 -469.224060
+	posy=1 v=2003 -101.211517
 	grpPosX=1 v=2003 -2009.000000
 	grpPosY=1 v=2003 -570.500000
-	value_vtxControls=2 e=1 v=2001 0
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
-	colorsetindex_Vertex=2 e=1 v=2002 0
 	options_reflectanceModel=2 e=1 v=5012 0
 	options_specularModel=2 e=1 v=5012 1
-	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
-	uiorder_Diffuse_Factor=2 e=1 v=2002 100
-	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Application_3D_MNPR=2 e=1 v=2001 1
-	value_Application_Procedural_MNPR=2 e=1 v=2001 0
-	value_Blending_3D_MNPR=2 e=1 v=2001 1
-	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
-	value_Density_3D_MNPR=2 e=1 v=2001 1
-	value_Density_Procedural_MNPR=2 e=1 v=2001 0
-	value_Detail_3D_MNPR=2 e=1 v=2001 1
-	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
-	value_Distortion_3D_MNPR=2 e=1 v=2001 1
-	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
-	value_Edge_3D_MNPR=2 e=1 v=2001 1
-	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
-	value_Flip-Back-Faces=2 e=1 v=2001 0
-	value_Shape_3D_MNPR=2 e=1 v=2001 1
-	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
-	value_Specular-In-Transparent=2 e=1 v=2001 0
-	value_SpecularInTransparent=2 e=1 v=2001 1
-	value_Specularity=2 e=1 v=2001 0
-	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
-	value_Transition_3D_MNPR=2 e=1 v=2001 1
-	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
-	value_Transparent=2 e=1 v=2001 0
 	value_Variation_3D_MNPR=2 e=1 v=2001 1
 	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
+	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
+	uiorder_Diffuse_Factor=2 e=1 v=2002 100
 	value_enableDepth=2 e=1 v=2001 1
 	value_uIncline_3D_MNPR=2 e=1 v=2001 1
 	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
 	value_vIncline_3D_MNPR=2 e=1 v=2001 1
 	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
-	colorsetname_Vertex=2 e=2 v=5000 velocity
+	value_vtxControls=2 e=1 v=2001 0
+	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
+	value_Application_3D_MNPR=2 e=1 v=2001 1
+	value_Application_Procedural_MNPR=2 e=1 v=2001 0
+	value_Blending_3D_MNPR=2 e=1 v=2001 1
+	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
+	value_Distortion_3D_MNPR=2 e=1 v=2001 1
+	value_Density_3D_MNPR=2 e=1 v=2001 1
+	value_Density_Procedural_MNPR=2 e=1 v=2001 0
+	value_Detail_3D_MNPR=2 e=1 v=2001 1
+	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
+	uiorder_Dilute_Color=2 e=1 v=2002 125
+	value_Shape_3D_MNPR=2 e=1 v=2001 1
+	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
+	value_Edge_3D_MNPR=2 e=1 v=2001 1
+	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
+	value_Flip-Back-Faces=2 e=1 v=2001 0
+	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
+	value_Specular-In-Transparent=2 e=1 v=2001 0
+	value_SpecularInTransparent=2 e=1 v=2001 1
+	value_Specularity=2 e=1 v=2001 0
+	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Transition_3D_MNPR=2 e=1 v=2001 1
+	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
+	value_Transparent=2 e=1 v=2001 0
 	uvindex_UVs=2 e=2 v=2002 0
-	perinstanceunshared_Vertex=2 e=3 v=2001 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
-	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
 	uiorder_reflectanceModel=2 e=5 v=2002 0
 	valueX_Tile=2 e=5 v=2003 5.000000
+	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
 	valueY_Tile=2 e=6 v=2003 5.000000
 	valueX_Offset=2 e=7 v=2003 0.000000
 	valueY_Offset=2 e=8 v=2003 0.000000
@@ -1475,7 +1469,7 @@ NumberOfNodes=794
 		SVT=1001 1002 0 0 0 
 	OSC=3
 		SVT=5001 2003 0 Surface Mask
-		CC=6
+		CC=5
 			C=66 0 0 12 0 0 0
 			CPC=0
 			C=66 0 0 162 1 2 0
@@ -1485,8 +1479,6 @@ NumberOfNodes=794
 			C=66 0 0 339 5 6 0
 			CPC=0
 			C=66 0 0 354 5 6 0
-			CPC=0
-			C=66 0 0 759 0 0 0
 			CPC=0
 		SVT=5001 2003 0 Surface Mask Cutoff
 		CC=1
@@ -2139,7 +2131,7 @@ NumberOfNodes=794
 		CC=2
 			C=104 0 0 158 1 2 0
 			CPC=0
-			C=104 0 0 784 0 0 0
+			C=104 0 0 779 0 0 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -3286,8 +3278,8 @@ NumberOfNodes=794
 #NT=10100 0
 	PC=11
 	name=1 v=5000 specularPass
-	posx=1 v=2003 -94.909927
-	posy=1 v=2003 -361.693176
+	posx=1 v=2003 -184.909927
+	posy=1 v=2003 -226.693176
 	grpPosX=1 v=2003 -2009.000000
 	grpPosY=1 v=2003 -570.500000
 	value_SpecularInTransparent=2 e=1 v=2001 1
@@ -6443,27 +6435,24 @@ NumberOfNodes=794
 			C=339 2 9 151 0 1 2
 			CPC=0
 #NT=10100 0
-	PC=50
+	PC=47
 	name=1 v=5000 Color-DiffusePass
-	posx=1 v=2003 -85.000015
-	posy=1 v=2003 -672.220581
+	posx=1 v=2003 -241.250015
+	posy=1 v=2003 -799.720581
 	grpPosX=1 v=2003 -1211.000000
 	grpPosY=1 v=2003 -577.000000
-	colorsetindex_Vertex=2 e=1 v=2002 0
-	value_Application_Procedural_MNPR=2 e=1 v=2001 0
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
 	options_reflectanceModel=2 e=1 v=5012 0
-	value_Blending_3D_MNPR=2 e=1 v=2001 1
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
 	value_Density_3D_MNPR=2 e=1 v=2001 1
 	value_Density_Procedural_MNPR=2 e=1 v=2001 0
 	value_Detail_3D_MNPR=2 e=1 v=2001 1
 	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
-	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
+	value_Diffuse_Factor=2 e=1 v=2003 0.200000
 	value_Distortion_3D_MNPR=2 e=1 v=2001 1
-	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
-	value_Edge_3D_MNPR=2 e=1 v=2001 1
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
+	value_Edge_3D_MNPR=2 e=1 v=2001 1
+	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
 	value_Flip-Back-Faces=2 e=1 v=2001 0
 	value_Shape_3D_MNPR=2 e=1 v=2001 1
 	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
@@ -6477,14 +6466,14 @@ NumberOfNodes=794
 	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
 	value_vIncline_3D_MNPR=2 e=1 v=2001 1
 	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
-	value_vtxControls=2 e=1 v=2001 0
+	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
 	uiorder_Dilute_Color=2 e=1 v=2002 125
 	value_Application_3D_MNPR=2 e=1 v=2001 1
-	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
-	colorsetname_Vertex=2 e=2 v=5000 velocity
+	value_vtxControls=2 e=1 v=2001 0
+	value_Application_Procedural_MNPR=2 e=1 v=2001 0
+	value_Blending_3D_MNPR=2 e=1 v=2001 1
 	uvindex_UVs=2 e=2 v=2002 0
-	perinstanceunshared_Vertex=2 e=3 v=2001 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
 	valueX_Tile=2 e=5 v=2003 5.000000
@@ -6563,8 +6552,8 @@ NumberOfNodes=794
 #NT=20116 0
 	PC=7
 	name=1 v=5000 Transparent
-	posx=1 v=2003 -568.088135
-	posy=1 v=2003 -526.227905
+	posx=1 v=2003 -538.088135
+	posy=1 v=2003 -498.727905
 	collapsed=1 v=2001 1
 	value=2 e=1 v=2001 0
 	exposesetting=1 v=2001 1
@@ -6583,8 +6572,8 @@ NumberOfNodes=794
 #NT=20088 0
 	PC=9
 	name=1 v=5000 Normal_Map
-	posx=1 v=2003 -566.284363
-	posy=1 v=2003 -437.529358
+	posx=1 v=2003 -533.784363
+	posy=1 v=2003 -401.279358
 	collapsed=1 v=2001 1
 	value=2 e=0 v=2001 0
 	defineinheader=2 e=0 v=2001 1
@@ -6604,8 +6593,8 @@ NumberOfNodes=794
 	PC=12
 	name=1 v=5000 VertexShader
 	version=1 v=2003 1.030000
-	posx=1 v=2003 -363.227722
-	posy=1 v=2003 -780.058960
+	posx=1 v=2003 -463.227722
+	posy=1 v=2003 -990.058960
 	classname=1 v=5000 Vertex Shader Grp
 	submenuname=1 v=5000 Core
 	bitmapnodeindex=1 v=2002 2
@@ -6631,8 +6620,8 @@ NumberOfNodes=794
 	PC=12
 	name=1 v=5000 VertexShader
 	version=1 v=2003 1.030000
-	posx=1 v=2003 -368.684723
-	posy=1 v=2003 -176.375565
+	posx=1 v=2003 -484.934753
+	posy=1 v=2003 -105.125580
 	classname=1 v=5000 Vertex Shader Grp
 	submenuname=1 v=5000 Core
 	bitmapnodeindex=1 v=2002 2
@@ -6654,8 +6643,8 @@ NumberOfNodes=794
 		CC=0
 #NT=20091 0
 	PC=2
-	posx=1 v=2003 277.738831
-	posy=1 v=2003 -354.100677
+	posx=1 v=2003 159.072128
+	posy=1 v=2003 -332.767456
 	group=63
 	ISC=2
 		SVT=2001 2001 1 0 0 
@@ -6668,8 +6657,8 @@ NumberOfNodes=794
 #NT=20116 0
 	PC=7
 	name=1 v=5000 Specularity
-	posx=1 v=2003 95.404091
-	posy=1 v=2003 -353.207001
+	posx=1 v=2003 -23.262600
+	posy=1 v=2003 -331.873779
 	collapsed=1 v=2001 1
 	value=2 e=1 v=2001 0
 	exposesetting=1 v=2001 1
@@ -7619,17 +7608,17 @@ NumberOfNodes=794
 	OSC=4
 		SVT=5001 3002 0 Color
 		CC=2
-			C=401 0 0 762 0 1 0
+			C=401 0 0 757 0 1 0
 			CPC=0
-			C=401 0 0 788 0 1 0
+			C=401 0 0 783 0 1 0
 			CPC=0
 		SVT=5001 2003 0 invNdotL
 		CC=1
-			C=401 1 0 765 2 0 0
+			C=401 1 0 760 2 0 0
 			CPC=0
 		SVT=5001 3002 0 Diffuse Contribution
 		CC=2
-			C=401 2 0 761 0 1 0
+			C=401 2 0 756 0 1 0
 			CPC=0
 			C=401 2 0 413 0 1 0
 			CPC=0
@@ -7705,9 +7694,9 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 1 
 		CC=2
-			C=405 0 1 764 0 1 0
+			C=405 0 1 759 0 1 0
 			CPC=0
-			C=405 0 1 786 2 3 0
+			C=405 0 1 781 2 3 0
 			CPC=0
 #NT=20112 0
 	PC=2
@@ -7731,7 +7720,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 2 
 		CC=1
-			C=407 0 2 783 0 1 0
+			C=407 0 2 778 0 1 0
 			CPC=0
 #NT=20017 0
 	PC=9
@@ -7788,7 +7777,7 @@ NumberOfNodes=794
 		CC=2
 			C=410 0 0 409 1 2 0
 			CPC=0
-			C=410 0 0 772 2 3 0
+			C=410 0 0 767 2 3 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -7822,7 +7811,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 3 
 		CC=1
-			C=412 0 3 788 1 2 0
+			C=412 0 3 783 1 2 0
 			CPC=0
 #NT=20026 0
 	PC=3
@@ -7836,7 +7825,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 3 
 		CC=1
-			C=413 0 3 775 0 1 0
+			C=413 0 3 770 0 1 0
 			CPC=0
 #NT=20163 0
 	PC=3
@@ -8044,7 +8033,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 3 
 		CC=1
-			C=427 0 3 785 1 2 0
+			C=427 0 3 780 1 2 0
 			CPC=0
 #NT=20163 0
 	PC=2
@@ -12922,7 +12911,7 @@ NumberOfNodes=794
 			CPC=0
 		SVT=5001 3002 0 Dilute Color
 		CC=1
-			C=669 1 0 785 0 1 0
+			C=669 1 0 780 0 1 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -14414,115 +14403,6 @@ NumberOfNodes=794
 			CPC=0
 			C=755 0 1 749 2 3 0
 			CPC=0
-#NT=10100 1 Vertex Color-Hw Shader Nodes-Inputs Common
-	PC=15
-	name=1 v=5000 velocity
-	version=1 v=2003 1.640000
-	posx=1 v=2003 -442.801270
-	posy=1 v=2003 29.112343
-	collapsed=1 v=2001 1
-	classname=1 v=5000 Vertex Color
-	submenuname=1 v=5000 Inputs Common
-	bitmapnodeindex=1 v=2002 70
-	helpid=1 v=2002 24
-	grpnodecolor=1 v=5012 5
-	grpPosX=1 v=2003 -546.642029
-	grpPosY=1 v=2003 -40.049500
-	colorsetindex_Vertex=2 e=1 v=2002 0
-	colorsetname_Vertex=2 e=2 v=5000 velocity
-	perinstanceunshared_Vertex=2 e=3 v=2001 0
-	group=759
-	ISC=4
-		SVT=2002 2002 0 0 0 
-		SVT=2001 2001 0 0 0 
-		SVT=5000 5000 0 0 0 
-		SVT=1001 1002 0 0 0 
-	OSC=7
-		SVT=5001 3003 0 _RGBA
-		CC=0
-		SVT=5001 3002 0 _RGB
-		CC=1
-			C=756 1 0 757 1 2 0
-			CPC=0
-		SVT=5001 2003 0 _Red
-		CC=0
-		SVT=5001 2003 0 _Green
-		CC=0
-		SVT=5001 2003 0 _Blue
-		CC=0
-		SVT=5001 2003 0 _Alpha
-		CC=0
-		SVT=5001 1002 0 
-		CC=0
-#NT=20016 0
-	PC=2
-	posx=1 v=2003 -231.130936
-	posy=1 v=2003 -64.575401
-	group=759
-	ISC=2
-		SVT=5001 2003 1 0 0 
-		SVT=5001 3002 2 0 0 
-	OSC=1
-		SVT=5001 3002 3 
-		CC=1
-			C=757 0 3 760 0 0 0
-			CPC=0
-#NT=20020 0
-	PC=3
-	posx=1 v=2003 49.166676
-	posy=1 v=2003 -83.339760
-	collapsed=1 v=2001 1
-	group=340
-	ISC=6
-		SVT=5001 2003 1 0 0 
-		SVT=5001 2003 2 0 0 
-		SVT=5001 3001 3 0 0 
-		SVT=5001 2003 4 0 0 
-		SVT=5001 3002 5 0 0 
-		SVT=5001 2003 6 0 0 
-	OSC=3
-		SVT=5001 3001 7 
-		CC=0
-		SVT=5001 3002 8 
-		CC=0
-		SVT=5001 3003 9 
-		CC=0
-#NT=10100 0
-	PC=8
-	name=1 v=5000 velocity_Contribution
-	posx=1 v=2003 -190.805435
-	posy=1 v=2003 -147.333389
-	grpPosX=1 v=2003 -1077.000000
-	grpPosY=1 v=2003 -21.500000
-	colorsetindex_Vertex=2 e=1 v=2002 0
-	colorsetname_Vertex=2 e=2 v=5000 velocity
-	perinstanceunshared_Vertex=2 e=3 v=2001 0
-	group=340
-	ISC=2
-		SVT=5001 2003 0 0 0 Surface Mask
-		SVT=1001 1002 0 0 0 
-	OSC=2
-		SVT=5001 2003 0 Surface Mask
-		CC=1
-			C=759 0 0 757 0 1 0
-			CPC=0
-		SVT=1001 1002 0 
-		CC=0
-#NT=10101 0
-	PC=2
-	posx=1 v=2003 -31.000000
-	posy=1 v=2003 -21.500000
-	group=759
-	ISC=2
-		SVT=5001 3002 0 0 0 
-		SVT=1001 1002 0 0 0 
-	OSC=2
-		SVT=5001 3002 0 
-		CC=1
-			C=760 0 0 758 4 5 0
-			CPC=0
-		SVT=1001 1002 0 
-		CC=0
 #NT=20123 0
 	PC=2
 	posx=1 v=2003 -423.980347
@@ -14533,7 +14413,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 2 
 		CC=1
-			C=761 0 2 762 2 3 0
+			C=756 0 2 757 2 3 0
 			CPC=0
 #NT=20031 0
 	PC=2
@@ -14547,7 +14427,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 4 
 		CC=1
-			C=762 0 4 402 1 2 0
+			C=757 0 4 402 1 2 0
 			CPC=0
 #NT=20143 0
 	PC=4
@@ -14560,7 +14440,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 1 
 		CC=1
-			C=763 0 1 414 1 2 0
+			C=758 0 1 414 1 2 0
 			CPC=0
 #NT=20123 0
 	PC=2
@@ -14572,7 +14452,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 2 
 		CC=1
-			C=764 0 2 765 0 0 0
+			C=759 0 2 760 0 0 0
 			CPC=0
 #NT=10100 0
 	PC=6
@@ -14591,17 +14471,17 @@ NumberOfNodes=794
 	OSC=4
 		SVT=5001 2003 0 minV
 		CC=2
-			C=765 0 0 768 1 2 0
+			C=760 0 0 763 1 2 0
 			CPC=0
-			C=765 0 0 770 1 2 0
+			C=760 0 0 765 1 2 0
 			CPC=0
 		SVT=5001 2003 0 maxV
 		CC=1
-			C=765 1 0 770 0 1 0
+			C=760 1 0 765 0 1 0
 			CPC=0
 		SVT=5001 2003 0 Value
 		CC=1
-			C=765 2 0 768 0 1 0
+			C=760 2 0 763 0 1 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -14609,14 +14489,14 @@ NumberOfNodes=794
 	PC=2
 	posx=1 v=2003 41.000000
 	posy=1 v=2003 -835.500000
-	group=765
+	group=760
 	ISC=2
 		SVT=5001 2003 0 0 0 
 		SVT=1001 1002 0 0 0 
 	OSC=2
 		SVT=5001 2003 0 
 		CC=1
-			C=766 0 0 786 1 2 0
+			C=761 0 0 781 1 2 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -14624,52 +14504,52 @@ NumberOfNodes=794
 	PC=2
 	posx=1 v=2003 0.138388
 	posy=1 v=2003 -691.404602
-	group=765
+	group=760
 	ISC=1
 		SVT=5001 2003 1 0 0 
 	OSC=1
 		SVT=5001 2003 2 
 		CC=1
-			C=767 0 2 766 0 0 0
+			C=762 0 2 761 0 0 0
 			CPC=0
 #NT=20022 0
 	PC=2
 	posx=1 v=2003 -483.050720
 	posy=1 v=2003 -733.050537
-	group=765
+	group=760
 	ISC=2
 		SVT=5001 2003 1 0 0 
 		SVT=5001 2003 2 0 0 
 	OSC=1
 		SVT=5001 2003 3 
 		CC=1
-			C=768 0 3 769 0 1 0
+			C=763 0 3 764 0 1 0
 			CPC=0
 #NT=20027 0
 	PC=2
 	posx=1 v=2003 -237.288147
 	posy=1 v=2003 -672.033813
-	group=765
+	group=760
 	ISC=2
 		SVT=5001 2003 1 0 0 
 		SVT=5001 2003 2 0 0 
 	OSC=1
 		SVT=5001 2003 3 
 		CC=1
-			C=769 0 3 767 0 1 0
+			C=764 0 3 762 0 1 0
 			CPC=0
 #NT=20022 0
 	PC=2
 	posx=1 v=2003 -481.355774
 	posy=1 v=2003 -581.356079
-	group=765
+	group=760
 	ISC=2
 		SVT=5001 2003 1 0 0 
 		SVT=5001 2003 2 0 0 
 	OSC=1
 		SVT=5001 2003 3 
 		CC=1
-			C=770 0 3 769 1 2 0
+			C=765 0 3 764 1 2 0
 			CPC=0
 #NT=20017 0
 	PC=2
@@ -14680,7 +14560,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 1 
 		CC=1
-			C=771 0 1 765 1 0 0
+			C=766 0 1 760 1 0 0
 			CPC=0
 #NT=20031 0
 	PC=2
@@ -14703,7 +14583,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 1 
 		CC=1
-			C=773 0 1 409 0 1 0
+			C=768 0 1 409 0 1 0
 			CPC=0
 #NT=20011 0
 	PC=7
@@ -14721,9 +14601,9 @@ NumberOfNodes=794
 		CC=0
 		SVT=5001 3002 2 
 		CC=2
-			C=774 1 2 412 0 1 0
+			C=769 1 2 412 0 1 0
 			CPC=0
-			C=774 1 2 762 1 2 0
+			C=769 1 2 757 1 2 0
 			CPC=0
 		SVT=5001 2003 3 
 		CC=0
@@ -14743,7 +14623,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 2 
 		CC=1
-			C=775 0 2 414 2 3 0
+			C=770 0 2 414 2 3 0
 			CPC=0
 #NT=10100 0
 	PC=5
@@ -14760,13 +14640,13 @@ NumberOfNodes=794
 	OSC=3
 		SVT=5001 3002 0 _Color
 		CC=2
-			C=776 0 0 778 0 0 0
+			C=771 0 0 773 0 0 0
 			CPC=0
-			C=776 0 0 780 2 3 0
+			C=771 0 0 775 2 3 0
 			CPC=0
 		SVT=5001 2003 0 
 		CC=1
-			C=776 1 0 781 5 6 0
+			C=771 1 0 776 5 6 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -14774,14 +14654,14 @@ NumberOfNodes=794
 	PC=2
 	posx=1 v=2003 -1108.000000
 	posy=1 v=2003 -900.000000
-	group=776
+	group=771
 	ISC=2
 		SVT=5001 3003 0 0 0 Albedo
 		SVT=1001 1002 0 0 0 
 	OSC=2
 		SVT=5001 3003 0 Albedo
 		CC=1
-			C=777 0 0 23 1 2 0
+			C=772 0 0 23 1 2 0
 			CPC=0
 		SVT=1001 1002 0 
 		CC=0
@@ -14799,14 +14679,14 @@ NumberOfNodes=794
 	grpnodecolor=1 v=5012 7
 	grpPosX=1 v=2003 -110.560997
 	grpPosY=1 v=2003 -207.921005
-	group=776
+	group=771
 	ISC=2
 		SVT=5001 3002 0 0 0 _Color
 		SVT=5001 1002 0 0 0 
 	OSC=2
 		SVT=5001 3002 0 _LinearColor
 		CC=1
-			C=778 0 0 780 1 2 0
+			C=773 0 0 775 1 2 0
 			CPC=0
 		SVT=5001 1002 0 
 		CC=0
@@ -14814,12 +14694,12 @@ NumberOfNodes=794
 	PC=2
 	posx=1 v=2003 -1675.000000
 	posy=1 v=2003 -966.000000
-	group=776
+	group=771
 	ISC=0
 	OSC=2
 		SVT=5001 2001 1 
 		CC=1
-			C=779 0 1 780 0 1 0
+			C=774 0 1 775 0 1 0
 			CPC=0
 		SVT=5001 2001 2 
 		CC=0
@@ -14827,7 +14707,7 @@ NumberOfNodes=794
 	PC=2
 	posx=1 v=2003 -1502.000000
 	posy=1 v=2003 -908.000000
-	group=776
+	group=771
 	ISC=4
 		SVT=5001 2001 1 0 0 
 		SVT=5001 3002 2 0 0 
@@ -14836,13 +14716,13 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 4 
 		CC=1
-			C=780 0 4 781 4 5 0
+			C=775 0 4 776 4 5 0
 			CPC=0
 #NT=20020 0
 	PC=2
 	posx=1 v=2003 -1308.000000
 	posy=1 v=2003 -916.000000
-	group=776
+	group=771
 	ISC=6
 		SVT=5001 2003 1 0 0 
 		SVT=5001 2003 2 0 0 
@@ -14857,7 +14737,7 @@ NumberOfNodes=794
 		CC=0
 		SVT=5001 3003 9 
 		CC=1
-			C=781 2 9 777 0 0 0
+			C=776 2 9 772 0 0 0
 			CPC=0
 #NT=20108 0
 	PC=3
@@ -14878,11 +14758,11 @@ NumberOfNodes=794
 		CC=0
 		SVT=5001 3002 6 
 		CC=1
-			C=782 4 6 776 0 0 0
+			C=777 4 6 771 0 0 0
 			CPC=0
 		SVT=5001 2003 7 
 		CC=1
-			C=782 5 7 776 1 0 0
+			C=777 5 7 771 1 0 0
 			CPC=0
 #NT=20016 0
 	PC=2
@@ -14895,7 +14775,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 3 
 		CC=1
-			C=783 0 3 69 5 6 0
+			C=778 0 3 69 5 6 0
 			CPC=0
 #NT=10100 1 Desaturate Color-Hw Shader Nodes-Lighting
 	PC=11
@@ -14917,7 +14797,7 @@ NumberOfNodes=794
 	OSC=2
 		SVT=5001 2003 0 _DesaturateColor
 		CC=1
-			C=784 0 0 783 1 2 0
+			C=779 0 0 778 1 2 0
 			CPC=0
 		SVT=5001 1002 0 
 		CC=0
@@ -14933,7 +14813,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 3 
 		CC=1
-			C=785 0 3 422 0 1 0
+			C=780 0 3 422 0 1 0
 			CPC=0
 #NT=20031 0
 	PC=2
@@ -14947,11 +14827,11 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 4 
 		CC=3
-			C=786 0 4 412 1 2 0
+			C=781 0 4 412 1 2 0
 			CPC=0
-			C=786 0 4 788 2 3 0
+			C=781 0 4 783 2 3 0
 			CPC=0
-			C=786 0 4 790 0 1 0
+			C=781 0 4 785 0 1 0
 			CPC=0
 #NT=20017 0
 	PC=3
@@ -14963,7 +14843,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 1 
 		CC=1
-			C=787 0 1 786 0 1 0
+			C=782 0 1 781 0 1 0
 			CPC=0
 #NT=20031 0
 	PC=3
@@ -14978,7 +14858,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 3002 4 
 		CC=1
-			C=788 0 4 402 2 3 0
+			C=783 0 4 402 2 3 0
 			CPC=0
 #NT=20020 0
 	PC=4
@@ -14999,7 +14879,7 @@ NumberOfNodes=794
 		CC=0
 		SVT=5001 3002 8 
 		CC=1
-			C=789 1 8 413 1 2 0
+			C=784 1 8 413 1 2 0
 			CPC=0
 		SVT=5001 3003 9 
 		CC=0
@@ -15015,11 +14895,11 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 3 
 		CC=3
-			C=790 0 3 789 0 1 0
+			C=785 0 3 784 0 1 0
 			CPC=0
-			C=790 0 3 789 1 2 0
+			C=785 0 3 784 1 2 0
 			CPC=0
-			C=790 0 3 789 3 4 0
+			C=785 0 3 784 3 4 0
 			CPC=0
 #NT=20017 0
 	PC=3
@@ -15031,7 +14911,7 @@ NumberOfNodes=794
 	OSC=1
 		SVT=5001 2003 1 
 		CC=1
-			C=791 0 1 790 1 2 0
+			C=786 0 1 785 1 2 0
 			CPC=0
 #NT=20017 0
 	PC=5
@@ -15039,7 +14919,7 @@ NumberOfNodes=794
 	note=1 v=5000 DO NOT TOUCH
 	posx=1 v=2003 -1483.750000
 	posy=1 v=2003 -482.500000
-	value=2 e=0 v=2003 1.100000
+	value=2 e=0 v=2003 1.200000
 	group=-1
 	ISC=0
 	OSC=1
@@ -15049,8 +14929,8 @@ NumberOfNodes=794
 	PC=11
 	name=1 v=5000 _WorldNormal
 	version=1 v=2003 1.660000
-	posx=1 v=2003 45.650478
-	posy=1 v=2003 30.125340
+	posx=1 v=2003 -206.430130
+	posy=1 v=2003 -108.038239
 	classname=1 v=5000 Vertex World Normal
 	submenuname=1 v=5000 Inputs Common
 	bitmapnodeindex=1 v=2002 60
@@ -15062,10 +14942,55 @@ NumberOfNodes=794
 	ISC=0
 	OSC=3
 		SVT=5001 3002 0 _WorldNormal
-		CC=0
-		SVT=5001 3003 0 _WorldNormalVertShader
 		CC=1
-			C=793 1 0 151 0 1 7
+			C=788 0 0 791 0 1 0
 			CPC=0
+		SVT=5001 3003 0 _WorldNormalVertShader
+		CC=0
 		SVT=5001 1002 0 
 		CC=0
+#NT=20073 0
+	PC=2
+	posx=1 v=2003 -246.250000
+	posy=1 v=2003 60.000000
+	group=340
+	ISC=0
+	OSC=1
+		SVT=5001 4900 1 
+		CC=1
+			C=789 0 1 791 1 2 0
+			CPC=0
+#NT=20020 0
+	PC=2
+	posx=1 v=2003 256.868469
+	posy=1 v=2003 -73.535324
+	group=340
+	ISC=6
+		SVT=5001 2003 1 0 0 
+		SVT=5001 2003 2 0 0 
+		SVT=5001 3001 3 0 0 
+		SVT=5001 2003 4 0 0 
+		SVT=5001 3002 5 0 0 
+		SVT=5001 2003 6 0 0 
+	OSC=3
+		SVT=5001 3001 7 
+		CC=0
+		SVT=5001 3002 8 
+		CC=0
+		SVT=5001 3003 9 
+		CC=1
+			C=790 2 9 151 0 1 7
+			CPC=0
+#NT=20016 0
+	PC=2
+	posx=1 v=2003 25.555569
+	posy=1 v=2003 -44.444439
+	group=340
+	ISC=2
+		SVT=5001 3002 1 0 0 
+		SVT=5001 4900 2 0 0 
+	OSC=1
+		SVT=5001 3002 3 
+		CC=1
+			C=791 0 3 790 4 5 0
+			CPC=0
