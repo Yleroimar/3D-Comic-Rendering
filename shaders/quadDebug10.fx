@@ -15,10 +15,23 @@
 #include "include\\quadCommon.fxh"
 #include "include\\quadColorTransform.fxh"
 
+
+// TEXTURES
+Texture2D gTargetTex;
+
+
 // VARIABLES
 float gMnprGamma;
 float4 gColorChannels = float4( 1.0, 1.0, 1.0, 0.0 );
 float  gColorTransform = 0.0; // 0.0: keep input, 1.0: RGB -> Lab, 2.0: Lab -> RGB
+
+float gScale = 0.5;
+float gTranslate = 0.5;
+
+
+float3 scale(float3 color, float by) { return by * color; }
+
+float3 translate(float3 color, float by) { return color + by; }
 
 
 
@@ -57,6 +70,18 @@ float4 debugPresentFrag(vertexOutput i) : SV_Target {
 }
 
 
+float4 transformColor(vertexOutput i) : SV_Target {
+    float3 color = gTargetTex.Load(int3(i.pos.xy, 0)).rgb;
+
+    return float4(translate(scale(color, gScale), gTranslate), 1.0);
+}
+
+
+float4 absoluteColor(vertexOutput i) : SV_Target {
+    return abs(gTargetTex.Load(int3(i.pos.xy, 0)));
+}
+
+
 
 //    _            _           _                       
 //   | |_ ___  ___| |__  _ __ (_) __ _ _   _  ___  ___ 
@@ -69,5 +94,22 @@ technique11 debugPresentMNPR {
     pass p0 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetPixelShader(CompileShader(ps_5_0, debugPresentFrag()));
+    }
+}
+
+// Color transforming
+technique11 debugTransformColor {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, transformColor()));
+    }
+}
+
+technique11 debugAbsoluteColor {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, absoluteColor()));
     }
 }

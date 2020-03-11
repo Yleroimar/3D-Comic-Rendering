@@ -31,7 +31,9 @@ namespace ch {
         MFnNumericAttribute nAttr;
 
         // dry media threshold
-        aDryMediaThreshold = nAttr.create("dryMediaThreshold", "dryMediaThreshold", MFnNumericData::kFloat, mFxParams->dryMediaThreshold[0], &status);
+        aDryMediaThreshold = nAttr.create("dryMediaThreshold", "dryMediaThreshold",
+                                          MFnNumericData::kFloat,
+                                          mFxParams->dryMediaThreshold[0], &status);
         MAKE_INPUT(nAttr);
         nAttr.setMin(0.0);
         nAttr.setSoftMax(1.0);
@@ -40,10 +42,12 @@ namespace ch {
     }
 
 
-    void computeParameters(MNPROverride* mmnpr_renderer, MDataBlock data, FXParameters *mFxParams, EngineSettings *mEngSettings) {
+    void computeParameters(MNPROverride* mmnpr_renderer,
+                           MDataBlock data,
+                           FXParameters *mFxParams,
+                           EngineSettings *mEngSettings) {
         MStatus status;
 
         mFxParams->dryMediaThreshold[0] = (float)data.inputValue(aDryMediaThreshold, &status).asFloat();
     }
-
 };
