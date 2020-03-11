@@ -1,6 +1,7 @@
 # Project files
 .idea/*
 *.idea/
+3D_Comic_Rendering.iml
 
 # Build files
 plugins/build/*
