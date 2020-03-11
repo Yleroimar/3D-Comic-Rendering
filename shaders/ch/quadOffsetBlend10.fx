@@ -61,12 +61,10 @@ fragmentOutput offsetBlend(vertexOutputSampler i, float2 dir) {
 	float4 offsetTex = gOffsetTex.Sample(gSampler, i.uv);
 
 	float depth = gDepthTex.Sample(gSampler, i.uv).r;
-	float ctrlAbs = 0;
-	if (dir.y > 0) {
-		ctrlAbs = offsetTex.r;
-	} else {
+	float ctrlAbs = offsetTex.r;
+	if (dir.y != 0)
 		ctrlAbs = gControlTex.Sample(gSampler, i.uv).b; // controlTargetSubstrate		
-	}
+	
 	//int kernelRadius = (dir.y > 0) ? ((1 + ctrlAbs) * 30) : (2-depth) * 30;
 	int kernelRadius = (1 + ctrlAbs) * 30; // for performance
 	float sigma = kernelRadius / 2.0;
@@ -79,36 +77,81 @@ fragmentOutput offsetBlend(vertexOutputSampler i, float2 dir) {
 	//[unroll(100)] for (int k = -kernelRadius; k < kernelRadius + 1; k++) {
 	kernelRadius = 40;
 	for (int k = -kernelRadius; k < kernelRadius + 1; k++) {
-		float2 destUV = saturate(i.uv + float2(k*gTexel*dir));
+		float2 destUV = saturate(i.uv + float2(k * gTexel * dir));
 		float4 destOffsetTex = gOffsetTex.Sample(gSampler, destUV);
 
 		float destDepth = gDepthTex.Sample(gSampler, destUV).r;
 
-		float destCtrlAbs = 0;
-		if (dir.y > 0) {
-			destCtrlAbs = destOffsetTex.r;
-		} else {
+		float destCtrlAbs = destOffsetTex.r;
+		if (dir.y != 0)
 			destCtrlAbs = gControlTex.Sample(gSampler, destUV).b; // controlTargetSubstrate
-		}
+		
 		bool destIsFront = false;
-
-		if (depth > destDepth) { // destination pixel is nearer to the camera
+		if (depth > destDepth)
+			// destination pixel is nearer to the camera
 			destIsFront = true;
-		}
-		if (destCtrlAbs && destIsFront || ctrlAbs && !destIsFront) {
+		
+		if (destCtrlAbs && destIsFront || ctrlAbs && !destIsFront)
 			blend = true;
-		}
 		
 		float weight = gaussianWeight(abs(k), sigma);
 		// Handle blurring differently for offsetTex
-		if (blend) {
+		if (blend)
 			offsetTexResult += destOffsetTex * weight;
-		}
-		else {
+		else 
 			offsetTexResult += offsetTex * weight;
-		}
+		
 		normDivisor += weight;
 	}
+
+	offsetTexResult = offsetTexResult / normDivisor;
+	result.outputTarget = float4(offsetTexResult.xy, offsetTex.b, offsetTexResult.a);
+	return result;
+}
+
+fragmentOutput offsetBlend2(vertexOutputSampler i, float2 dir) {
+	fragmentOutput result;
+
+	float4 offsetTex = gOffsetTex.Sample(gSampler, i.uv);
+	float depth = gDepthTex.Sample(gSampler, i.uv).r;
+
+	float ctrlAbs = offsetTex.r;
+
+	int kernelRadius = (1 + ctrlAbs) * 30; // for performance
+	float sigma = kernelRadius / 2.0;
+	float normalizer = 1.0 / kernelRadius;
+	
+	float4 offsetTexResult = float4(0,0,0,0);
+	float normDivisor = 0;
+	bool blend = false;
+
+	//[unroll(100)] for (int k = -kernelRadius; k < kernelRadius + 1; k++) {
+	kernelRadius = 40;
+	for (int k = -kernelRadius; k < kernelRadius + 1; k++) {
+		float2 destUV = saturate(i.uv + float2(k * gTexel * dir));
+		
+		float4 destOffsetTex = gOffsetTex.Sample(gSampler, destUV);
+		float destDepth = gDepthTex.Sample(gSampler, destUV).r;
+
+		float destCtrlAbs = destOffsetTex.r;
+		bool destIsFront = false;
+
+		if (depth > destDepth) // destination pixel is nearer to the camera
+			destIsFront = true;
+		
+		if (destCtrlAbs && destIsFront || ctrlAbs && !destIsFront)
+			blend = true;
+		
+		float weight = gaussianWeight(abs(k), sigma);
+		// Handle blurring differently for offsetTex
+		if (blend)
+			offsetTexResult += destOffsetTex * weight;
+		else
+			offsetTexResult += offsetTex * weight;
+		
+		normDivisor += weight;
+	}
+
 	offsetTexResult = offsetTexResult / normDivisor;
 	result.outputTarget = float4(offsetTexResult.xy, offsetTex.b, offsetTexResult.a);
 	return result;
