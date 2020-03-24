@@ -54,11 +54,11 @@ logger.setLevel(logging.DEBUG)  # defines the logging level (INFO for releases)
 #    GREEN - general   : PIGMENT APPLICATION
 #          - watercolor: pigment application (granulation - dry-brush)
 #          - oil paint : pigment application (impasto - dry-brush)
-#          - charcoal  : pigment application 
+#          - charcoal  : pigment application
 #    BLUE  - general   : PIGMENT DENSITY
 #          - watercolor: pigment density
 #          - oil paint : pigment density
-#          - charcoal  : pigment darkness 
+#          - charcoal  : pigment darkness
 #    ALPHA - general   : DETAIL | [RED in abstraction target]
 #          - watercolor: -
 #          - oil paint : color detail
@@ -90,7 +90,7 @@ logger.setLevel(logging.DEBUG)  # defines the logging level (INFO for releases)
 #    GREEN - general   : EDGE WIDTH
 #          - watercolor: edge width
 #          - oil paint : -
-#          - charcoal  : 
+#          - charcoal  :
 #    BLUE  - general   : EDGE TRANSITION
 #          - watercolor: gaps and overlaps
 #          - oil paint : gaps and overlaps
@@ -167,30 +167,20 @@ def getStyleFX():
                         [[1, 0, 0, 0]], ["soften", "revert"], ["n. soften", "n. darken"])
     charcoalFX = [distortionFX, densityFX_CH, applicationFX_CH, mixingFX_CH, smudgingFX_CH, edgeFX_CH]
 
-    # waterMemory effects
-    densityFX_WM = MNPR_FX("density", "Pigment turbulence", "controlSetA",
-                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA",
-                               [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
-    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC",
-                            [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
-    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening", "controlSetC",
-                        [[1, 0, 0, 0], [0, 1, 0, 0]],
-                        ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
-    waterMemoryFX = [densityFX_WM, applicationFX_WM, distortionFX, edgeFX_WM, gapsOverlapsFX, blendingFX_WM]
-
     # query mnpr style and return
 
     # some users have had problems without encode('latin1')
     style = cmds.mnpr(style=True, q=True).encode('latin1')
+
     if style == "Watercolor":
         return watercolorFX
-    elif style == "Oil":
+    if style == "Oil":
         return oilFX
-    elif style == "Charcoal":
+    if style == "Charcoal":
         return charcoalFX
-    elif style == "Water Memory":
-        return waterMemoryFX
+    if style == "Water Memory":
+        return watercolorFX
+
     return []
 
 
@@ -243,7 +233,7 @@ class MNPR_FX_UI(qt.CoopMayaUI):
         self.layout.addWidget(scrollArea)
 
         # tabs
-        # self.tabWidget = QtWidgets.QTabWidget()
+        self.tabWidget = QtWidgets.QTabWidget()
         self.tabWidget.setStyleSheet("QTabWidget::pane{ border: 0; } "
                                      "QTabBar::tab:selected{background-color: rgb(69, 69, 69);} "
                                      "QTabBar::tab{background-color: rgb(40, 40, 40);}")
@@ -272,12 +262,12 @@ class MNPR_FX_UI(qt.CoopMayaUI):
         # get style FX
         FX = getStyleFX()
 
-        #                    _            _       _                                    
-        #    _ __ ___   __ _| |_ ___ _ __(_) __ _| |          ___ _ __   __ _  ___ ___ 
+        #                    _            _       _
+        #    _ __ ___   __ _| |_ ___ _ __(_) __ _| |          ___ _ __   __ _  ___ ___
         #   | '_ ` _ \ / _` | __/ _ \ '__| |/ _` | |  _____  / __| '_ \ / _` |/ __/ _ \
         #   | | | | | | (_| | ||  __/ |  | | (_| | | |_____| \__ \ |_) | (_| | (_|  __/
         #   |_| |_| |_|\__,_|\__\___|_|  |_|\__,_|_|         |___/ .__/ \__,_|\___\___|
-        #                                                        |_|                   
+        #                                                        |_|
         # material-space tab
         pad = 5 * self.dpiS
         materialHeaderWidget = QtWidgets.QWidget()

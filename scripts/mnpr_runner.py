@@ -1,7 +1,6 @@
 """
 @license:       MIT
 @repository:    https://github.com/semontesdeoca/MNPR
-
   _ __ ___  _ __  _ __  _ __     _ __ _   _ _ __  _ __   ___ _ __
  | '_ ` _ \| '_ \| '_ \| '__|   | '__| | | | '_ \| '_ \ / _ \ '__|
  | | | | | | | | | |_) | |      | |  | |_| | | | | | | |  __/ |
@@ -24,14 +23,14 @@ import mnpr_UIs
 import mnpr_FX
 
 try:
-    reload         # Python 2
+    reload  # Python 2
 except NameError:  # Python 3
     from importlib import reload
 
 try:
-    long           # Python 2
+    long  # Python 2
 except NameError:
-    long = int     # Python 3
+    long = int  # Python 3
 
 
 def openPresets(rebuild=True):
@@ -41,11 +40,11 @@ def openPresets(rebuild=True):
     """
     mnpr_system.check()
     mnpr_presets.AttributeSetsUI(windowTitle="Stylization Presets",
-                                    setType="styles",
-                                    objects=mnpr_info.configNode,
-                                    rebuild=rebuild,
-                                    brand=mnpr_info.brand,
-                                    tooltip="Load/Save stylization presets")
+                                 setType="styles",
+                                 objects=mnpr_info.configNode,
+                                 rebuild=rebuild,
+                                 brand=mnpr_info.brand,
+                                 tooltip="Load/Save stylization presets")
 
 
 def openMaterialPresets(rebuild=True):
@@ -162,3 +161,12 @@ def downloadSubstrates():
     import thread
     import mnpr_setup
     thread.start_new_thread(mnpr_setup.getSubstrates, ())
+
+
+def charcoalContrast():
+    """ Modifies ShaderFX materials to generate contrast from lightness """
+    materials = cmds.ls(type="ShaderfxShader")
+    for mat in materials:
+        lib.setAttr(mat, "Shade_Override", 0)
+        lib.setAttr(mat, "Diffuse_Factor", 0.8)
+    lib.printInfo("ShaderFX materials changed for charcoal stylization")
