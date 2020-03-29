@@ -23,8 +23,14 @@ Texture2D gNormalsTex;
 Texture2D gSpecularTex;
 Texture2D gDiffuseTex;
 
+Texture2D gHatchTex;
+Texture2D gStylizationTex;
+Texture2D gSubstrateTex;
+
 
 // VARIABLES
+
+float gSubstrateThreshold = 0.5;
 
 // Outline Shading
 float gEdgePower = 0.1;
@@ -124,7 +130,7 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
 //   | |__|  __/ |    ___) | |_| | |  |  _| (_| | (_|  __/\__ \
 //    \____\___|_|   |____/ \__,_|_|  |_|  \__,_|\___\___||___/
 //                                                             
-// Contributor: Oliver Vainum√§e
+// Contributor: Oliver Vainum‰e
 // Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
 float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
@@ -216,6 +222,69 @@ float4 clampTestFrag(vertexOutput i) : SV_Target{
     return float4(1.0 - pow(dot(normal, v), 0.1), 0.0, 0.0, 1.0);
 }
 
+float colorHatchingIntensity(int3 loc, float hatchValue) {
+    float colorDarkness = length(gColorTex.Load(loc).rgb);
+
+    float darkThreshold = 0.2;
+
+    if (colorDarkness < darkThreshold && colorDarkness / darkThreshold < hatchValue)
+        return 1.0;
+
+    return 0.0;
+}
+
+float diffuseHatchingIntensity(int3 loc, float hatchValue) {
+    // diffuse is used for thresholding where the hatching appears
+    float hatchThreshold = 0.35;
+
+    if (hatchValue < hatchThreshold) return 0.0;
+
+    float diffuse = max3(gDiffuseTex.Load(loc).rgb);
+    
+    float diffuseThreshold = 0.85;
+
+    if (diffuse < diffuseThreshold
+            && (diffuse - hatchThreshold) / (diffuseThreshold - hatchThreshold) < hatchValue)
+        return 1.0;
+
+    return 0.0;
+}
+
+float hatchingIntensity(int3 loc) {
+    // specular is used to cancel the hatching
+    float specular = max3(gSpecularTex.Load(loc).rgb);
+    
+    // substrate height sets the texture of the hatching
+    // combined with hatching texture
+    float substrateHeight = gSubstrateTex.Load(loc).b;
+
+    float hatchValue = gHatchTex.Load(loc).g;
+
+    hatchValue = substrateHeight + substrateHeight * hatchValue;
+
+    float darkIntensity = colorHatchingIntensity(loc, hatchValue);
+    float diffIntensity = diffuseHatchingIntensity(loc, hatchValue);
+
+    //float intensity = max(0.0, max(diffIntensity, darkIntensity));
+    float intensity = diffIntensity;
+
+    float hatchCtrl = 0.0; // gHatchCtrl.Load(loc).rgb;
+
+    return intensity + intensity * hatchCtrl;
+}
+
+float4 hatchTestFrag(vertexOutput i) : SV_Target {
+    int3 loc = int3(i.pos.xy, 0); // coordinates for loading
+
+    float intensity = hatchingIntensity(loc);
+
+    float3 colorTex = gStylizationTex.Load(loc).rgb;
+
+    float reversed = 1.0 - intensity;
+
+    return float4(colorTex * reversed, 1.0);
+}
+
 
 
 //    _            _           _                       
@@ -272,4 +341,10 @@ technique11 celClampTest {
     }
 };
 
-
+technique11 hatchTest {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, hatchTestFrag()));
+    }
+};

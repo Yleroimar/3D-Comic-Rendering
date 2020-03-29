@@ -40,6 +40,9 @@ namespace wm {
         // would then delegate the object to the original append call? Shorter code...
         targetList.append(MHWRender::MRenderTargetDescription(
             "edgeTargetWM", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+
+        targetList.append(MHWRender::MRenderTargetDescription(
+            "hatchingTargetWM", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
     }
 
 
@@ -69,6 +72,25 @@ namespace wm {
         opShader->addParameter("gDiffuseCoefficient", mFxParams.diffuseCoefficient);
         opShader->addParameter("gSpecularCoefficient", mFxParams.specularCoefficient);
         opShader->addParameter("gSpecularPower", mFxParams.specularPower);
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+
+
+        /*
+        */
+        opName = "[quad] substrate-based hatching";
+        opShader = new MOperationShader("quadCelShader", "hatchTest");
+        opShader->addTargetParameter("gStylizationTex", mRenderTargets.getTarget("stylizationTarget"));
+        opShader->addTargetParameter("gHatchTex", mRenderTargets.getTarget("pigmentCtrlTarget"));
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gSubstrateTex", mRenderTargets.getTarget("substrateTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+        opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
+        opShader->addParameter("gSubstrateThreshold", mFxParams.testingValue);
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
                                 mRenderTargets,

@@ -105,4 +105,10 @@ float mod(float x, float y) {
     return x - y * floor(x / y);
 }
 
+float max3(float3 rgb) { return max(rgb.r, max(rgb.g, rgb.b)); }
+
+float min3(float3 rgb) { return min(rgb.r, min(rgb.g, rgb.b)); }
+
+float avg3(float3 rgb) { return (rgb.r + rgb.g + rgb.b) / 3.0; }
+
 #endif /* _QUADCOMMON_FXH */

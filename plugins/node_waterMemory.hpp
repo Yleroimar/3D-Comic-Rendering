@@ -19,6 +19,8 @@
 
 
 // stylization attributes
+static MObject aTestingValue;
+
 // Cel Outline
 static MObject aEdgePower;
 static MObject aEdgeMultiplier;
@@ -50,6 +52,14 @@ namespace wm {
 
         // disable/enable engine settings
         mEngSettings->velocityPV[0] = 0.0;
+        
+        aTestingValue = nAttr.create("testingValue", "testingValue",
+                                  MFnNumericData::kFloat,
+                                  mFxParams->testingValue[0], &status);
+        MAKE_INPUT(nAttr);
+        nAttr.setSoftMin(0.0);
+        nAttr.setSoftMax(1.0);
+        ConfigNode::enableAttribute(aTestingValue);
 
         // Cel Outline
         aEdgePower = nAttr.create("edgePower", "edgePower",
@@ -162,6 +172,8 @@ namespace wm {
         auto asFloat = [&](MObject attribute) -> float {
             return data.inputValue(attribute, &status).asFloat() * mEngSettings->renderScale[0];
         };
+
+        mFxParams->testingValue[0] = asFloat(aTestingValue);
 
         // Cel Outline
         mFxParams->edgePower[0] = asFloat(aEdgePower);

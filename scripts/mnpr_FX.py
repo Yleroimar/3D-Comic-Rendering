@@ -126,46 +126,75 @@ def getStyleFX():
     Returns: style effects (list of MNPR_FX)
     """
     # general effects
-    distortionFX = MNPR_FX("distortion", "Substrate distortion", "controlSetB",
-                           [[1, 0, 0, 0]], ["distort", "revert"], ["noise"])
-    gapsOverlapsFX = MNPR_FX("gaps-overlaps", "Gaps and overlaps", "controlSetC",
-                             [[0, 0, 1, 0]], ["overlaps", "gaps"], ["noise"])
+    distortionFX = MNPR_FX("distortion", "Substrate distortion",
+                           "controlSetB", [[1, 0, 0, 0]],
+                           ["distort", "revert"], ["noise"])
+    gapsOverlapsFX = MNPR_FX("gaps-overlaps", "Gaps and overlaps",
+                             "controlSetC", [[0, 0, 1, 0]],
+                             ["overlaps", "gaps"], ["noise"])
 
     # watercolor effects
-    densityFX_WC = MNPR_FX("density", "Pigment turbulence", "controlSetA",
-                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_WC = MNPR_FX("application", "Granulate | Dry-brush", "controlSetA",
-                               [[0, 1, 0, 0]], ["granulate", "dry-brush"], ["noise"])
-    blendingFX_WC = MNPR_FX("blending", "Color bleeding (wet-in-wet)", "controlSetC",
-                            [[0, 0, 0, 1]], ["bleed", "revert"], ["noise"])
-    edgeFX_WC = MNPR_FX("edge manip", "Edge darkening", "controlSetC",
-                        [[1, 0, 0, 0], [0, 1, 0, 0]],
+    densityFX_WC = MNPR_FX("density", "Pigment turbulence",
+                           "controlSetA", [[0, 0, 1, 0]],
+                           ["accumulate", "dilute"], ["noise"])
+    applicationFX_WC = MNPR_FX("application", "Granulate | Dry-brush",
+                               "controlSetA", [[0, 1, 0, 0]],
+                               ["granulate", "dry-brush"], ["noise"])
+    blendingFX_WC = MNPR_FX("blending", "Color bleeding (wet-in-wet)",
+                            "controlSetC", [[0, 0, 0, 1]],
+                            ["bleed", "revert"], ["noise"])
+    edgeFX_WC = MNPR_FX("edge manip", "Edge darkening",
+                        "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]],
                         ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
     watercolorFX = [densityFX_WC, applicationFX_WC, distortionFX, edgeFX_WC, gapsOverlapsFX, blendingFX_WC]
 
     # oil effects
-    densityFX_OP = MNPR_FX("density", "Pigment turbulence", "controlSetA",
-                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    blendingFX_OP = MNPR_FX("blending", "Paint stroke length", "controlSetC",
-                            [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
-    detailFX_OP = MNPR_FX("detail", "Paint stroke width", "controlSetA",
-                          [[0, 0, 0, 1]], ["increase", "decrease"], ["noise"])
-    applicationFX_OP = MNPR_FX("application", "Impasto | Dry-brush", "controlSetA",
-                               [[0, 1, 0, 0]], ["impasto", "dry-brush"], ["noise"])
+    densityFX_OP = MNPR_FX("density", "Pigment turbulence",
+                           "controlSetA", [[0, 0, 1, 0]],
+                           ["accumulate", "dilute"], ["noise"])
+    blendingFX_OP = MNPR_FX("blending", "Paint stroke length",
+                            "controlSetC", [[0, 0, 0, 1]],
+                            ["increase", "decrease"], ["noise"])
+    detailFX_OP = MNPR_FX("detail", "Paint stroke width",
+                          "controlSetA", [[0, 0, 0, 1]],
+                          ["increase", "decrease"], ["noise"])
+    applicationFX_OP = MNPR_FX("application", "Impasto | Dry-brush",
+                               "controlSetA", [[0, 1, 0, 0]],
+                               ["impasto", "dry-brush"], ["noise"])
     oilFX = [densityFX_OP, blendingFX_OP, detailFX_OP, applicationFX_OP, distortionFX, gapsOverlapsFX]
 
     # charcoal effects
-    densityFX_CH = MNPR_FX("density", "Pigment density", "controlSetA",
-                           [[0, 0, 1, 0]], ["accumulate", "dilute"], ["noise"])
-    applicationFX_CH = MNPR_FX("application", "Pigment application", "controlSetA",
-                               [[0, 1, 0, 0]], ["even", "granulation"], ["noise"])
-    mixingFX_CH = MNPR_FX("mixing", "Mixing", "controlSetC",
-                          [[0, 0, 0, 1]], ["mix", "separate"], ["noise"])
-    smudgingFX_CH = MNPR_FX("smudging", "Smudging", "controlSetA",
-                            [[0, 0, 0, 1]], ["smudge", "revert"], ["noise"])
-    edgeFX_CH = MNPR_FX("edge manip", "Edge manipulation", "controlSetC",
-                        [[1, 0, 0, 0]], ["soften", "revert"], ["n. soften", "n. darken"])
+    densityFX_CH = MNPR_FX("density", "Pigment density",
+                           "controlSetA", [[0, 0, 1, 0]],
+                           ["accumulate", "dilute"], ["noise"])
+    applicationFX_CH = MNPR_FX("application", "Pigment application",
+                               "controlSetA", [[0, 1, 0, 0]],
+                               ["even", "granulation"], ["noise"])
+    mixingFX_CH = MNPR_FX("mixing", "Mixing",
+                          "controlSetC", [[0, 0, 0, 1]],
+                          ["mix", "separate"], ["noise"])
+    smudgingFX_CH = MNPR_FX("smudging", "Smudging",
+                            "controlSetA", [[0, 0, 0, 1]],
+                            ["smudge", "revert"], ["noise"])
+    edgeFX_CH = MNPR_FX("edge manip", "Edge manipulation",
+                        "controlSetC", [[1, 0, 0, 0]],
+                        ["soften", "revert"], ["n. soften", "n. darken"])
     charcoalFX = [distortionFX, densityFX_CH, applicationFX_CH, mixingFX_CH, smudgingFX_CH, edgeFX_CH]
+
+    # water memory effects
+    placeholder1FX_WM = MNPR_FX("placeholder1", "Placeholder control 1",
+                                "controlSetA", [[0, 0, 1, 0]],
+                                ["ctrl1", "ctrl2"], ["noise"])
+    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush",
+                               "controlSetA", [[0, 1, 0, 0]],
+                               ["granulate", "dry-brush"], ["noise"])
+    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)",
+                            "controlSetC", [[0, 0, 0, 1]],
+                            ["bleed", "revert"], ["noise"])
+    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening",
+                        "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]],
+                        ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
+    watermemoryFX = [placeholder1FX_WM, applicationFX_WM, distortionFX, edgeFX_WM, gapsOverlapsFX, blendingFX_WM]
 
     # query mnpr style and return
 
@@ -179,7 +208,7 @@ def getStyleFX():
     if style == "Charcoal":
         return charcoalFX
     if style == "Water Memory":
-        return watercolorFX
+        return watermemoryFX
 
     return []
 
