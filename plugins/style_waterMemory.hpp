@@ -10,7 +10,7 @@
 //	 \brief Water memory stylization pipeline
 //	 Contains the water memory stylization pipeline with all necessary targets and operations
 //
-//   Developed by: Oliver Vainumäe
+//   Developed by: Oliver Vainumï¿½e
 //
 ///////////////////////////////////////////////////////////////////////////////////
 #include "mnpr_renderer.h"
@@ -56,7 +56,7 @@ namespace wm {
 
         opName = "[quad] cel shading surfaces";
         opShader = new MOperationShader("quadCelShader", "celSurfaces1");
-        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
         //opShader->addTargetParameter("gColorTex", mRenderTargets.target(0));
         opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
         // opShader->addTargetParameter("gNormalTex", mRenderTargets.getTarget("normalsTarget"));
