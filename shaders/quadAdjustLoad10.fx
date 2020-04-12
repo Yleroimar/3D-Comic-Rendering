@@ -114,8 +114,8 @@ fragmentOutput adjustLoadFrag(vertexOutputSampler i) {
         //renderTex.rgb *= lightingTex.rgb;
         // shade color embedded in negative values of lightingTex
         //float3 shadeColor = lerp(saturate(lightingTex * float3(-1, -1, -1)))
-        renderTex.rgb *= diffuseTex.rgb;
-        renderTex.rgb += gSpecularTex.Load(loc).rgb;  // add specular contribution
+        //renderTex.rgb *= diffuseTex.rgb;
+        //renderTex.rgb += gSpecularTex.Load(loc).rgb;  // add specular contribution
     }
 	// color operations
 	float luma = luminance(renderTex.rgb);
