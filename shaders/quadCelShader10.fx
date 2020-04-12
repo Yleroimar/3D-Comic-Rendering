@@ -132,13 +132,15 @@ float4 celOutlines1Frag(vertexOutput i) : SV_Target{
 //                                                             
 // Contributor: Oliver Vainumäe
 // Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
-float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
+float4 celSurfaces2Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
 
     // get pixel values
     float4 renderTex = gColorTex.Load(loc);
     float4 specularTex = gSpecularTex.Load(loc);
     float4 diffuseTex = gDiffuseTex.Load(loc);
+
+    if (renderTex.a == 0.0) return renderTex;
 
     float diffuse = diffuseTex.r;
     float spec = specularTex.r;
@@ -183,106 +185,94 @@ float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
 
     color = hsv2rgb(color);
 
-    return float4(color, 1.0);
+    return float4(color, renderTex.a);
     //return float4(renderTex.rgb * intensity, 1.0);
 }
 
 
-// Just a simple fragment shader to place the gColorTex on top of a white background.
-float4 fixBackgroundFrag(vertexOutput i) : SV_Target{
+float getIntensity(int3 loc, float4 diffuseTex, float4 specularTex) {
+    float diffuse = max3(diffuseTex.rgb);
+    float spec = max3(specularTex.rgb);
+    
+    spec = dot(spec, gSpecularPower);
+
+    float intensity = gDiffuseCoefficient * diffuse + gSpecularCoefficient * spec;
+
+    float high2midMax = gSurfaceThresholdHigh + 0.5 * gTransitionHighMid;
+    if (intensity > high2midMax)
+        return gSurfaceHighIntensity;
+    
+    float high2midMin = gSurfaceThresholdHigh - 0.5 * gTransitionHighMid;
+    if (intensity > high2midMin)
+        return lerp(gSurfaceMidIntensity, gSurfaceHighIntensity,
+                    (intensity - high2midMin) / gTransitionHighMid);
+    
+    float mid2lowMax = gSurfaceThresholdMid + 0.5 * gTransitionMidLow;
+    if (intensity > mid2lowMax)
+        return gSurfaceMidIntensity;
+    
+    float mid2lowMin = gSurfaceThresholdMid - 0.5 * gTransitionMidLow;
+    if (intensity > mid2lowMin)
+        return lerp(gSurfaceLowIntensity, gSurfaceMidIntensity,
+                    (intensity - mid2lowMin) / gTransitionMidLow);
+    
+    return gSurfaceLowIntensity;
+}
+
+
+//     ____     _     ____              __                     
+//    / ___|___| |   / ___| _   _ _ __ / _| __ _  ___ ___  ___ 
+//   | |   / _ \ |   \___ \| | | | '__| |_ / _` |/ __/ _ \/ __|
+//   | |__|  __/ |    ___) | |_| | |  |  _| (_| | (_|  __/\__ \
+//    \____\___|_|   |____/ \__,_|_|  |_|  \__,_|\___\___||___/
+//                                                             
+// Contributor: Oliver Vainumäe
+// Idea originates from https://github.com/mchamberlain/Cel-Shader/blob/master/shaders/celShader.frag
+float4 celSurfaces1Frag(vertexOutput i) : SV_Target{
     int3 loc = int3(i.pos.xy, 0); // coordinates for loading
 
     // get pixel values
     float4 renderTex = gColorTex.Load(loc);
-    float depth = gDepthTex.Load(loc).r;
 
-    if (length(renderTex.rgb) == 0.0f && depth >= 1.0f)
-        return float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    return float4(renderTex.rgb, 1.0);
-}
-
-
-// Just a simple fragment shader to output the input texture
-// I use it to debug: I can move the contents of one target to the other target
-float4 displayFrag(vertexOutput i) : SV_Target{
-    return gColorTex.Load(int3(i.pos.xy, 0));
-}
-
-
-float4 clampTestFrag(vertexOutput i) : SV_Target{
-    int3 loc = int3(i.pos.xy, 0);
-
-    float3 normal = gNormalsTex.Load(loc).rgb;
-
-    if (length(normal) < 0.01) return float4(0.0, 0.0, 0.0, 1.0);
-
-    float3 v = float3(0.0, 0.0, 1.0);
-
-    return float4(1.0 - pow(dot(normal, v), 0.1), 0.0, 0.0, 1.0);
-}
-
-float colorHatchingIntensity(int3 loc, float hatchValue) {
-    float colorDarkness = length(gColorTex.Load(loc).rgb);
-
-    float darkThreshold = 0.2;
-
-    if (colorDarkness < darkThreshold && colorDarkness / darkThreshold < hatchValue)
-        return 1.0;
-
-    return 0.0;
-}
-
-float diffuseHatchingIntensity(int3 loc, float hatchValue) {
-    // diffuse is used for thresholding where the hatching appears
-    float hatchThreshold = 0.35;
-
-    if (hatchValue < hatchThreshold) return 0.0;
-
-    float diffuse = max3(gDiffuseTex.Load(loc).rgb);
+    // if the pixel is transparent, we're not gonna modify it.
+    if (renderTex.a == 0.0) return renderTex;
     
-    float diffuseThreshold = 0.85;
+    float4 diffuseTex = gDiffuseTex.Load(loc);
+    float4 specularTex = gSpecularTex.Load(loc);
 
-    if (diffuse < diffuseThreshold
-            && (diffuse - hatchThreshold) / (diffuseThreshold - hatchThreshold) < hatchValue)
-        return 1.0;
+    float3 light = diffuseTex.rgb + specularTex.rgb;
 
-    return 0.0;
-}
+    float intensity = getIntensity(loc, diffuseTex, specularTex);
 
-float hatchingIntensity(int3 loc) {
-    // specular is used to cancel the hatching
-    float specular = max3(gSpecularTex.Load(loc).rgb);
+
+    // set the intensity of light
+    light = rgb2hsv2(light);
+    light.z = intensity;
+    light = hsv2rgb(light);
     
-    // substrate height sets the texture of the hatching
-    // combined with hatching texture
-    float substrateHeight = gSubstrateTex.Load(loc).b;
+    // to HSV; desaturate, darken; back to RGB; * lightColor
+    float3 color = renderTex.rgb;
+    color = rgb2hsv2(color);
 
-    float hatchValue = gHatchTex.Load(loc).g;
+    // still need to change value
+    // color.y *= intensity;
+    color.z *= intensity;
 
-    hatchValue = substrateHeight + substrateHeight * hatchValue;
+    /* color.y *= min(1.0, 1.5 * intensity);
+    color.z *= min(1.0, 1.1 * intensity); */
 
-    float darkIntensity = colorHatchingIntensity(loc, hatchValue);
-    float diffIntensity = diffuseHatchingIntensity(loc, hatchValue);
+    color = hsv2rgb(color);
 
-    //float intensity = max(0.0, max(diffIntensity, darkIntensity));
-    float intensity = diffIntensity;
+    // tried brightening the light color
+    /* light = rgb2hsv2(light);
+    //light.y = 1.0;
+    light.z = 1.0;
+    light = hsv2rgb(light); */
 
-    float hatchCtrl = 0.0; // gHatchCtrl.Load(loc).rgb;
+    color *= light;
 
-    return intensity + intensity * hatchCtrl;
-}
-
-float4 hatchTestFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0); // coordinates for loading
-
-    float intensity = hatchingIntensity(loc);
-
-    float3 colorTex = gStylizationTex.Load(loc).rgb;
-
-    float reversed = 1.0 - intensity;
-
-    return float4(colorTex * reversed, 1.0);
+    return float4(color, renderTex.a);
+    //return float4(renderTex.rgb * intensity, 1.0);
 }
 
 
@@ -314,37 +304,5 @@ technique11 celOutlines1 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, celOutlines1Frag()));
-    }
-};
-
-technique11 fixBackground {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVert()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, fixBackgroundFrag()));
-    }
-};
-
-technique11 display {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVert()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, displayFrag()));
-    }
-};
-
-technique11 celClampTest {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVert()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, clampTestFrag()));
-    }
-};
-
-technique11 hatchTest {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVert()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, hatchTestFrag()));
     }
 };
