@@ -13,6 +13,7 @@
 // This shader file provides different algorithms for pigment application in different media
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "include\\quadCommon.fxh"
+#include "include\\quadColorTransform.fxh"
 
 // TEXTURES
 Texture2D gFilterTex;
@@ -55,25 +56,24 @@ float4 pigmentApplicationWCFrag(vertexOutput i) : SV_Target {
     float mask = renderTex.a;
 
     // check if its not the substrate color
-    if (mask < 0.01) {
-        return renderTex;
-    }
+    if (mask < 0.01) return renderTex;
 
     //calculate drybrush
     float dryBrush = -application;
     float dryDiff = heightMap - dryBrush;
-    if (dryDiff < 0) {
-        return lerp(renderTex, float4(gSubstrateColor, renderTex.a), saturate(abs(dryDiff)*gDryBrushThreshold));
-    } else {
-        // calculate density accumulation (-1 granulate, 0 default)
-        dryBrush = (abs(dryBrush) + 0.2);  // default is granulated (// 1.2 granulate, 0.2 default)
-        
-        //more accumulation on brighter areas
-        dryBrush = lerp(dryBrush, dryBrush * 5, luminance(renderTex.rgb));
+    if (dryDiff < 0)
+        return lerp(renderTex,
+                    float4(gSubstrateColor, renderTex.a),
+                    saturate(abs(dryDiff)*gDryBrushThreshold));
+    
+    // calculate density accumulation (-1 granulate, 0 default)
+    dryBrush = abs(dryBrush) + 0.2;  // default is granulated (// 1.2 granulate, 0.2 default)
+    
+    //more accumulation on brighter areas
+    dryBrush = lerp(dryBrush, dryBrush * 5, luminance(renderTex.rgb));
 
-        //modulate heightmap to be between 0.8-1.0 (for montesdeoca et al.)
-        heightMap = (heightMap * 0.2) + 0.8;
-    }
+    //modulate heightmap to be between 0.8-1.0 (for montesdeoca et al.)
+    heightMap = (heightMap * 0.2) + 0.8;
 
     //montesdeoca et al.
     float accumulation = 1 + (dryBrush * (1 - (heightMap)) * gPigmentDensity);
@@ -154,6 +154,46 @@ fragmentOutput pigmentApplicationOPFrag(vertexOutput i) {
 
 
 
+float4 pigmentApplicationWMFrag(vertexOutput i) : SV_Target {
+    int3 loc = int3(i.pos.xy, 0);  // coordinates for loading
+
+    float4 renderTex = gColorTex.Load(loc);
+
+    float heightMap = gSubstrateTex.Load(loc).b;
+    float application = gControlTex.Load(loc).g;
+    float mask = renderTex.a;
+
+    // check if its not the substrate color
+    if (mask < 0.01) return renderTex;
+
+    float dryBrush = -application;
+    float dryDiff = heightMap - dryBrush;
+
+    if (dryDiff < 0) return renderTex;
+    
+    // calculate density accumulation (-1 granulate, 0 default)
+    dryBrush = abs(dryBrush) + 0.2;  // default is granulated (// 1.2 granulate, 0.2 default)
+    
+    //more accumulation on brighter areas
+    dryBrush = lerp(dryBrush, dryBrush * 5, luminance(renderTex.rgb));
+
+    //modulate heightmap to be between 0.8-1.0 (for montesdeoca et al.)
+    heightMap = (heightMap * 0.2) + 0.8;
+
+    //montesdeoca et al.
+    float accumulation = 1 + dryBrush * (1 - heightMap);
+
+    //calculate denser color output
+    float3 colorOut = pow(abs(renderTex.rgb), accumulation);
+
+    // don't granulate/dry-brush if the renderTex is similar to substrate color
+    float colorDiff = saturate(length(renderTex - gSubstrateColor) * 5);
+    colorOut = lerp(renderTex, colorOut, colorDiff.xxx);
+    return float4(colorOut, renderTex.a);
+}
+
+
+
 //    _            _           _
 //   | |_ ___  ___| |__  _ __ (_) __ _ _   _  ___  ___
 //   | __/ _ \/ __| '_ \| '_ \| |/ _` | | | |/ _ \/ __|
@@ -174,5 +214,13 @@ technique11 pigmentApplicationOP {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, pigmentApplicationOPFrag()));
+    }
+}
+
+technique11 pigmentApplicationWM {
+    pass p0 {
+        SetVertexShader(CompileShader(vs_5_0, quadVert()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_5_0, pigmentApplicationWMFrag()));
     }
 }
