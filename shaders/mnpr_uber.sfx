@@ -4,7 +4,7 @@ GroupVersion=-1.000000
 Advanced=0
 HelpID=0
 ParentMaterial=0
-NumberOfNodes=792
+NumberOfNodes=795
 #NT=20001 0
 	PC=5
 	posx=1 v=2003 321.787231
@@ -962,7 +962,7 @@ NumberOfNodes=792
 		SVT=2001 2001 4 
 		CC=0
 #NT=10100 0
-	PC=59
+	PC=63
 	name=1 v=5000 Material
 	posx=1 v=2003 -1482.654541
 	posy=1 v=2003 -314.123535
@@ -972,31 +972,25 @@ NumberOfNodes=792
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
 	options_reflectanceModel=2 e=1 v=5012 0
 	options_specularModel=2 e=1 v=5012 1
-	value_Transparent=2 e=1 v=2001 0
-	shadername_HwShader=2 e=1 v=5000 C:/Users/santy/Dropbox/DEV/MNPR-framework/shaders/sfx/puber.fx
+	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
 	uigroup_maxLights=2 e=1 v=5000 Reflectance
-	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
+	value_vIncline_3D_MNPR=2 e=1 v=2001 1
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
+	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
 	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Variation_3D_MNPR=2 e=1 v=2001 1
-	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
-	value_enableDepth=2 e=1 v=2001 1
-	value_maxLights=2 e=1 v=2002 3
-	value_uIncline_3D_MNPR=2 e=1 v=2001 1
-	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
-	value_vIncline_3D_MNPR=2 e=1 v=2001 1
-	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
+	value_vtxControls=2 e=1 v=2001 0
+	shadername_HwShader=2 e=1 v=5000 C:/Users/santy/Dropbox/DEV/MNPR-framework/shaders/sfx/puber.fx
+	uistep_ObjectID=2 e=1 v=2002 1
 	value_Application_3D_MNPR=2 e=1 v=2001 1
 	value_Application_Procedural_MNPR=2 e=1 v=2001 0
 	value_Blending_3D_MNPR=2 e=1 v=2001 1
 	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
-	value_vtxControls=2 e=1 v=2001 0
 	value_Density_3D_MNPR=2 e=1 v=2001 1
 	value_Density_Procedural_MNPR=2 e=1 v=2001 0
 	value_Detail_3D_MNPR=2 e=1 v=2001 1
-	value_lightNrDefault=2 e=1 v=2002 3
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
+	value_Diffuse_Factor=2 e=1 v=2003 1.000000
 	value_Distortion_3D_MNPR=2 e=1 v=2001 1
 	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
 	value_Edge_3D_MNPR=2 e=1 v=2001 1
@@ -1010,18 +1004,28 @@ NumberOfNodes=792
 	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
 	value_Transition_3D_MNPR=2 e=1 v=2001 1
 	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
+	value_Transparent=2 e=1 v=2001 0
+	value_Variation_3D_MNPR=2 e=1 v=2001 1
+	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
+	value_enableDepth=2 e=1 v=2001 1
+	value_lightNrDefault=2 e=1 v=2002 3
+	value_maxLights=2 e=1 v=2002 3
+	value_uIncline_3D_MNPR=2 e=1 v=2001 1
 	uvindex_UVs=2 e=2 v=2002 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
-	uiorder_reflectanceModel=2 e=5 v=2002 0
 	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
-	valueX_Tile=2 e=5 v=2003 5.000000
 	value_Shadow=2 e=5 v=2001 1
+	valueX_Tile=2 e=5 v=2003 5.000000
+	uiorder_reflectanceModel=2 e=5 v=2002 0
 	valueY_Tile=2 e=6 v=2003 5.000000
 	valueX_Offset=2 e=7 v=2003 0.000000
 	valueY_Offset=2 e=8 v=2003 0.000000
 	value_Brightness=2 e=10 v=2003 10.000000
 	uiorder_Specular-In-Transparent=2 e=55 v=2002 55
+	uimax_ObjectID=2 e=1000 v=2002 1000
+	value_ObjectID2=2 e=1000 v=2002 0
+	uisoftmax_ObjectID=2 e=1000 v=2002 1000
 	group=-1
 	ISC=6
 		SVT=5001 3003 0 0 0 Albedo
@@ -1300,60 +1304,64 @@ NumberOfNodes=792
 		SVT=5001 1002 0 
 		CC=0
 #NT=10100 0
-	PC=53
+	PC=57
 	name=1 v=5000 ForwardRenderPasses
 	posx=1 v=2003 -469.224060
 	posy=1 v=2003 -101.211517
 	grpPosX=1 v=2003 -2009.000000
 	grpPosY=1 v=2003 -570.500000
-	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
-	options_reflectanceModel=2 e=1 v=5012 0
-	options_specularModel=2 e=1 v=5012 1
-	value_Variation_3D_MNPR=2 e=1 v=2001 1
-	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
+	uiorder_Dilute_Color=2 e=1 v=2002 125
+	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
+	uistep_ObjectID=2 e=1 v=2002 1
+	value_Application_3D_MNPR=2 e=1 v=2001 1
+	value_Application_Procedural_MNPR=2 e=1 v=2001 0
+	value_Blending_3D_MNPR=2 e=1 v=2001 1
+	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
+	value_Density_3D_MNPR=2 e=1 v=2001 1
+	value_Density_Procedural_MNPR=2 e=1 v=2001 0
+	value_Detail_3D_MNPR=2 e=1 v=2001 1
+	options_reflectanceModel=2 e=1 v=5012 0
+	value_Diffuse_Factor=2 e=1 v=2003 1.000000
+	value_Distortion_3D_MNPR=2 e=1 v=2001 1
+	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
+	value_Edge_3D_MNPR=2 e=1 v=2001 1
+	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
+	value_Flip-Back-Faces=2 e=1 v=2001 0
+	options_specularModel=2 e=1 v=5012 1
+	value_Shape_3D_MNPR=2 e=1 v=2001 1
+	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
+	value_Specular-In-Transparent=2 e=1 v=2001 0
+	value_SpecularInTransparent=2 e=1 v=2001 1
+	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
+	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
+	value_Transition_3D_MNPR=2 e=1 v=2001 1
+	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
+	value_Transparent=2 e=1 v=2001 0
+	value_Variation_3D_MNPR=2 e=1 v=2001 1
+	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
 	value_enableDepth=2 e=1 v=2001 1
 	value_uIncline_3D_MNPR=2 e=1 v=2001 1
 	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
 	value_vIncline_3D_MNPR=2 e=1 v=2001 1
 	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
 	value_vtxControls=2 e=1 v=2001 0
-	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
-	value_Application_3D_MNPR=2 e=1 v=2001 1
-	value_Application_Procedural_MNPR=2 e=1 v=2001 0
-	value_Blending_3D_MNPR=2 e=1 v=2001 1
-	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
-	value_Distortion_3D_MNPR=2 e=1 v=2001 1
-	value_Density_3D_MNPR=2 e=1 v=2001 1
-	value_Density_Procedural_MNPR=2 e=1 v=2001 0
-	value_Detail_3D_MNPR=2 e=1 v=2001 1
-	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
-	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Shape_3D_MNPR=2 e=1 v=2001 1
-	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
-	value_Edge_3D_MNPR=2 e=1 v=2001 1
-	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
-	value_Flip-Back-Faces=2 e=1 v=2001 0
-	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
-	value_Specular-In-Transparent=2 e=1 v=2001 0
-	value_SpecularInTransparent=2 e=1 v=2001 1
 	value_Specularity=2 e=1 v=2001 0
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
-	value_Transition_3D_MNPR=2 e=1 v=2001 1
-	value_Transition_Procedural_MNPR=2 e=1 v=2001 0
-	value_Transparent=2 e=1 v=2001 0
 	uvindex_UVs=2 e=2 v=2002 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
-	uiorder_reflectanceModel=2 e=5 v=2002 0
 	valueX_Tile=2 e=5 v=2003 5.000000
+	uiorder_reflectanceModel=2 e=5 v=2002 0
 	uigroup_reflectanceModel=2 e=5 v=5000 Reflectance
 	valueY_Tile=2 e=6 v=2003 5.000000
 	valueX_Offset=2 e=7 v=2003 0.000000
 	valueY_Offset=2 e=8 v=2003 0.000000
 	value_Brightness=2 e=10 v=2003 10.000000
 	uiorder_Specular-In-Transparent=2 e=55 v=2002 55
+	uimax_ObjectID=2 e=1000 v=2002 1000
+	value_ObjectID2=2 e=1000 v=2002 0
+	uisoftmax_ObjectID=2 e=1000 v=2002 1000
 	group=50
 	ISC=7
 		SVT=1001 1002 0 0 0 
@@ -6435,7 +6443,7 @@ NumberOfNodes=792
 			C=339 2 9 151 0 1 2
 			CPC=0
 #NT=10100 0
-	PC=47
+	PC=51
 	name=1 v=5000 Color-DiffusePass
 	posx=1 v=2003 -241.250015
 	posy=1 v=2003 -799.720581
@@ -6443,17 +6451,21 @@ NumberOfNodes=792
 	grpPosY=1 v=2003 -577.000000
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
 	options_reflectanceModel=2 e=1 v=5012 0
+	value_Application_3D_MNPR=2 e=1 v=2001 1
 	value_Blending_Procedural_MNPR=2 e=1 v=2001 0
+	value_Application_Procedural_MNPR=2 e=1 v=2001 0
 	value_Density_3D_MNPR=2 e=1 v=2001 1
 	value_Density_Procedural_MNPR=2 e=1 v=2001 0
-	value_Detail_3D_MNPR=2 e=1 v=2001 1
+	uiorder_Dilute_Color=2 e=1 v=2002 125
 	value_Detail_Procedural_MNPR=2 e=1 v=2001 0
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Diffuse_Factor=2 e=1 v=2003 1.000000
 	value_Distortion_3D_MNPR=2 e=1 v=2001 1
-	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
+	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
 	value_Edge_3D_MNPR=2 e=1 v=2001 1
 	value_Edge_Procedural_MNPR=2 e=1 v=2001 0
 	value_Flip-Back-Faces=2 e=1 v=2001 0
+	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
+	value_Blending_3D_MNPR=2 e=1 v=2001 1
 	value_Shape_3D_MNPR=2 e=1 v=2001 1
 	value_Shape_Procedural_MNPR=2 e=1 v=2001 0
 	value_Surface_Mask_Cutoff=2 e=1 v=2003 0.500000
@@ -6463,16 +6475,13 @@ NumberOfNodes=792
 	value_Variation_Procedural_MNPR=2 e=1 v=2001 0
 	value_enableDepth=2 e=1 v=2001 1
 	value_uIncline_3D_MNPR=2 e=1 v=2001 1
-	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
+	value_Detail_3D_MNPR=2 e=1 v=2001 1
 	value_vIncline_3D_MNPR=2 e=1 v=2001 1
 	value_vIncline_Procedural_MNPR=2 e=1 v=2001 0
-	value_Distortion_Procedural_MNPR=2 e=1 v=2001 0
-	uiorder_Diffuse_Factor=2 e=1 v=2002 100
-	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Application_3D_MNPR=2 e=1 v=2001 1
 	value_vtxControls=2 e=1 v=2001 0
-	value_Application_Procedural_MNPR=2 e=1 v=2001 0
-	value_Blending_3D_MNPR=2 e=1 v=2001 1
+	uiorder_Diffuse_Factor=2 e=1 v=2002 100
+	uistep_ObjectID=2 e=1 v=2002 1
+	value_uIncline_Procedural_MNPR=2 e=1 v=2001 0
 	uvindex_UVs=2 e=2 v=2002 0
 	uvsetname_UVs=2 e=3 v=5000 
 	perinstanceunshared_UVs=2 e=4 v=2001 0
@@ -6483,6 +6492,9 @@ NumberOfNodes=792
 	valueX_Offset=2 e=7 v=2003 0.000000
 	valueY_Offset=2 e=8 v=2003 0.000000
 	value_Brightness=2 e=10 v=2003 10.000000
+	value_ObjectID2=2 e=1000 v=2002 0
+	uisoftmax_ObjectID=2 e=1000 v=2002 1000
+	uimax_ObjectID=2 e=1000 v=2002 1000
 	group=63
 	ISC=8
 		SVT=5001 5005 0 0 0 
@@ -6794,7 +6806,7 @@ NumberOfNodes=792
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
 	uiorder_Dilute_Color=2 e=1 v=2002 125
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Diffuse_Factor=2 e=1 v=2003 1.000000
 	group=340
 	ISC=4
 		SVT=5001 3002 0 0 0 Diffuse Lighting
@@ -7727,7 +7739,7 @@ NumberOfNodes=792
 	name=1 v=5000 Diffuse_Factor
 	posx=1 v=2003 -1231.634766
 	posy=1 v=2003 -767.379517
-	value=2 e=1 v=2003 0.200000
+	value=2 e=1 v=2003 1.000000
 	defineinheader=2 e=1 v=2001 1
 	uiorder=2 e=1 v=2002 100
 	uigroup=2 e=0 v=5000 Painterly Shading
@@ -7767,7 +7779,7 @@ NumberOfNodes=792
 	defineinheader_Diffuse_Factor=2 e=1 v=2001 1
 	uimax_Diffuse_Factor=2 e=1 v=2003 1.000000
 	uiorder_Diffuse_Factor=2 e=1 v=2002 100
-	value_Diffuse_Factor=2 e=1 v=2003 0.200000
+	value_Diffuse_Factor=2 e=1 v=2003 1.000000
 	group=355
 	ISC=2
 		SVT=5001 3002 0 0 0 Diffuse Lighting
@@ -14962,8 +14974,8 @@ NumberOfNodes=792
 			CPC=0
 #NT=20020 0
 	PC=2
-	posx=1 v=2003 256.868469
-	posy=1 v=2003 -73.535324
+	posx=1 v=2003 255.050293
+	posy=1 v=2003 -12.626234
 	group=340
 	ISC=6
 		SVT=5001 2003 1 0 0 
@@ -14994,3 +15006,46 @@ NumberOfNodes=792
 		CC=1
 			C=791 0 3 790 4 5 0
 			CPC=0
+#NT=20096 0
+	PC=9
+	name=1 v=5000 ObjectID
+	posx=1 v=2003 -202.803009
+	posy=1 v=2003 201.818130
+	value=2 e=0 v=2002 0
+	defineinheader=2 e=0 v=2001 1
+	uigroup=2 e=0 v=5000 Separability
+	uimax=2 e=1000 v=2002 1000
+	uisoftmax=2 e=1000 v=2002 1000
+	uistep=2 e=1 v=2002 1
+	group=340
+	ISC=0
+	OSC=1
+		SVT=5001 2002 1 
+		CC=1
+			C=792 0 1 793 0 1 0
+			CPC=0
+#NT=20099 0
+	PC=2
+	posx=1 v=2003 -3.636360
+	posy=1 v=2003 200.909149
+	group=340
+	ISC=1
+		SVT=5001 2002 1 0 0 
+	OSC=1
+		SVT=5001 2003 2 
+		CC=1
+			C=793 0 2 790 5 6 0
+			CPC=0
+#NT=20117 0
+	PC=6
+	name=1 v=5000 ObjectID2
+	posx=1 v=2003 -202.115463
+	posy=1 v=2003 329.551392
+	value=2 e=1000 v=2002 0
+	exposesetting=1 v=2001 1
+	uigroup=2 e=0 v=5000 Separability
+	group=340
+	ISC=0
+	OSC=1
+		SVT=2002 2002 1 
+		CC=0

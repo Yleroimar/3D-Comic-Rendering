@@ -72,6 +72,10 @@ struct MRenderTargetList {
         return target(indexOf(t_descName));
     }
 
+    MHWRender::MRenderTargetDescription* getDescription(MString t_descName) {
+        return &targetDescriptions[indexOf(t_descName)];
+    }
+
     /// update targets with their respective description
     void updateTargetDescriptions() {
         for (int i = 0; i < length(); i++) {

@@ -139,6 +139,7 @@ struct FXParameters {
     std::vector<float> dryMediaThreshold = std::vector<float>{ 0.5f };
 
     // waterMemory parameters
+    MString hatchingTexFilename = "debugTexture_2k.jpg";
     std::vector<float> testingValue = std::vector<float>{ 0.5f };
     std::vector<float> edgePower = std::vector<float>{ 0.1f };
     std::vector<float> edgeMultiplier = std::vector<float>{ 10.0f };

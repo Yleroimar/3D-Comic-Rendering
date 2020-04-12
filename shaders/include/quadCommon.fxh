@@ -95,13 +95,14 @@ float luminance(float3 color) {
 }
 
 float4 unpremultiply(float4 color) {
-	if (color.a) {
+	if (color.a)
 		color.rgb /= color.a;
-	}
+	
 	return color;
 }
 
 float mod(float x, float y) {
+	// Now I am wondering if this is the same as the % operator?
     return x - y * floor(x / y);
 }
 

@@ -51,18 +51,6 @@ namespace wc {
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
 
-        
-        // Just for debugging, I wanted to see what's in the pigmentCtrlTarget, but it has signed values.
-        opName = "[quad] debug";
-        opShader = new MOperationShader("quadDebug", "debugAbsoluteColor");
-        opShader->addTargetParameter("gTargetTex", mRenderTargets.getTarget("pigmentCtrlTarget"));
-        quadOp = new QuadRender(opName,
-                                     MHWRender::MClearOperation::kClearNone,
-                                     mRenderTargets,
-                                     *opShader);
-        mOperations.append(quadOp);
-        mRenderTargets.setOperationOutputs(opName, { "normalsTarget" });
-
 
         opName = "[quad] separable H";
         opShader = new MOperationShader("wc", "quadSeparable", "blurH");

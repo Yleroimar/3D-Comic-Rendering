@@ -21,6 +21,9 @@
 // stylization attributes
 static MObject aTestingValue;
 
+// Hatching texture
+static MObject aHatchingTex;
+
 // Cel Outline
 static MObject aEdgePower;
 static MObject aEdgeMultiplier;
@@ -49,13 +52,22 @@ namespace wm {
         MFnEnumAttribute eAttr;
         MFnTypedAttribute tAttr;
         MFnNumericAttribute nAttr;
+        MFnStringData fnData;
 
         // disable/enable engine settings
         mEngSettings->velocityPV[0] = 0.0;
-        
+
+        // Hatching Texture
+        MObject oData = fnData.create(mFxParams->hatchingTexFilename);
+        aHatchingTex = tAttr.create("hatchingTexture", "hatchingTexture", MFnData::kString, oData);
+        tAttr.setStorable(true);
+        ConfigNode::enableAttribute(aHatchingTex);
+
+        // Testing Value
+
         aTestingValue = nAttr.create("testingValue", "testingValue",
-                                  MFnNumericData::kFloat,
-                                  mFxParams->testingValue[0], &status);
+                                     MFnNumericData::kFloat,
+                                     mFxParams->testingValue[0], &status);
         MAKE_INPUT(nAttr);
         nAttr.setSoftMin(0.0);
         nAttr.setSoftMax(1.0);
@@ -168,6 +180,34 @@ namespace wm {
                            FXParameters *mFxParams,
                            EngineSettings *mEngSettings) {
         MStatus status;
+
+        /*
+        // Before I can use this, I need to make a technique for loading the texture
+        // and create a rendering operation
+        // by the sounds of it, loading the texture doesn't even have to pass by Maya, yay
+        // not exactly sure what is going on with the surfaceTex
+
+        // DO I REALLY HAVE TO PASS IT THROUGH A SHADER?
+        // OR I CAN GET IT DIRECTLY FROM THE TEXTURE LOADER?
+
+        MOperationShader* opShader;
+        QuadRender* quadOp = (QuadRender*) MNPR->renderOperation("[quad] style-load");
+        opShader = quadOp->getOperationShader();
+        if (opShader) {
+            // not exactly sure what is going on with the surfaceTex
+
+            MString surfaceTex = data.inputValue(aHatchingTex, &status).asString();
+
+            if (surfaceTex != mFxParams->hatchingTexFilename) {
+                mFxParams->hatchingTexFilename = surfaceTex;
+                opShader->textureParameters["gHatchingTex"]->
+                    loadTexture(mFxParams->hatchingTexFilename);
+            }
+
+            opShader->textureParameters["gHatchingTex"]->setParams();
+        }
+        */
+
 
         auto asFloat = [&](MObject attribute) -> float {
             return data.inputValue(attribute, &status).asFloat() * mEngSettings->renderScale[0];

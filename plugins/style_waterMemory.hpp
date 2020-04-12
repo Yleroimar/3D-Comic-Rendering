@@ -29,6 +29,12 @@ namespace wm {
 
         MHWRender::MRasterFormat rgba8 = MHWRender::kR8G8B8A8_SNORM;
         MHWRender::MRasterFormat rgb8 = MHWRender::kR8G8B8X8;
+        MHWRender::MRasterFormat rgba16f = MHWRender::kR16G16B16A16_FLOAT;
+        MHWRender::MRasterFormat rgba32f = MHWRender::kR32G32B32A32_FLOAT;
+        MHWRender::MRasterFormat defaultUserDepth = MHWRender::kR16G16B16A16_SNORM;
+
+        MHWRender::MRasterFormat diffuseDepth = targetList.getDescription("diffuseTarget")->rasterFormat();
+        MHWRender::MRasterFormat colorDepth = targetList.getDescription("colorTarget")->rasterFormat();
 
         /*
         targetList.append(MHWRender::MRenderTargetDescription(
@@ -42,7 +48,16 @@ namespace wm {
             "edgeTargetWM", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
 
         targetList.append(MHWRender::MRenderTargetDescription(
-            "hatchingTargetWM", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+            "hatchingTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+
+        targetList.append(MHWRender::MRenderTargetDescription(
+            "widerDiffuseTarget", tWidth, tHeight, 1, diffuseDepth, arraySliceCount, isCubeMap));
+
+        targetList.append(MHWRender::MRenderTargetDescription(
+            "uvTarget", tWidth, tHeight, 1, diffuseDepth, arraySliceCount, isCubeMap));
+
+        targetList.append(MHWRender::MRenderTargetDescription(
+            "colorSpreadTarget", tWidth, tHeight, 1, colorDepth, arraySliceCount, isCubeMap));
     }
 
 
@@ -53,6 +68,60 @@ namespace wm {
         MString opName = "";
         MOperationShader* opShader;
         QuadRender* quadOp;
+        
+        /*
+        // enable once the shader is set up
+        opName = "[quad] style-load";
+        opShader = new MOperationShader("", "");
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "hatchingTarget" });
+        */
+
+
+        opName = "[quad] widen diffuse target";
+        opShader = new MOperationShader("quadLighting", "includeNegatives");
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+        opShader->addParameter("positiveScale", mFxParams.testingValue);
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "widerDiffuseTarget" });
+
+
+        opName = "[quad] pigment application";
+        opShader = new MOperationShader("quadPigmentApplication", "pigmentApplicationWM");
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
+        opShader->addTargetParameter("gSubstrateTex", mRenderTargets.getTarget("substrateTarget"));
+        opShader->addTargetParameter("gControlTex", mRenderTargets.getTarget("pigmentCtrlTarget"));
+        opShader->addParameter("gSubstrateColor", mEngSettings.substrateColor);
+        /*opShader->addParameter("gPigmentDensity", mFxParams.pigmentDensity);
+        opShader->addParameter("gDryBrushThreshold", mFxParams.dryBrushThreshold);*/
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+
+
+        opName = "[quad] color spread";
+        opShader = new MOperationShader("wm", "quadColorSpread", "testTech");
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+        opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("depthTarget"));
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "colorSpreadTarget" });
+
 
         opName = "[quad] cel shading surfaces";
         opShader = new MOperationShader("quadCelShader", "celSurfaces1");
@@ -61,7 +130,7 @@ namespace wm {
         opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
         // opShader->addTargetParameter("gNormalTex", mRenderTargets.getTarget("normalsTarget"));
         opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
-        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("widerDiffuseTarget"));
         opShader->addParameter("gSurfaceThresholdHigh", mFxParams.surfaceThresholdHigh);
         opShader->addParameter("gSurfaceThresholdMid", mFxParams.surfaceThresholdMid);
         opShader->addParameter("gTransitionHighMid", mFxParams.transitionHighMid);
@@ -83,32 +152,21 @@ namespace wm {
         /*
         */
         opName = "[quad] substrate-based hatching";
-        opShader = new MOperationShader("quadCelShader", "hatchTest");
+        opShader = new MOperationShader("quadHatching", "hatchTest");
         opShader->addTargetParameter("gStylizationTex", mRenderTargets.getTarget("stylizationTarget"));
-        opShader->addTargetParameter("gHatchTex", mRenderTargets.getTarget("pigmentCtrlTarget"));
+        opShader->addTargetParameter("gHatchCtrl", mRenderTargets.getTarget("pigmentCtrlTarget"));
         opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
         opShader->addTargetParameter("gSubstrateTex", mRenderTargets.getTarget("substrateTarget"));
-        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("diffuseTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("widerDiffuseTarget"));
         opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
-        opShader->addParameter("gSubstrateThreshold", mFxParams.testingValue);
+        //opShader->addParameter("gTestingValue", mFxParams.testingValue);
         quadOp = new QuadRender(opName,
                                 MHWRender::MClearOperation::kClearNone,
                                 mRenderTargets,
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
-
-
-        opName = "[quad] cel shading background";
-        opShader = new MOperationShader("quadCelShader", "fixBackground");
-        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
-        opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
-        quadOp = new QuadRender(opName,
-                                MHWRender::MClearOperation::kClearNone,
-                                mRenderTargets,
-                                *opShader);
-        mOperations.append(quadOp);
-        mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+        /*mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });*/
 
 
         // edge detection
@@ -125,10 +183,30 @@ namespace wm {
         mRenderTargets.setOperationOutputs(opName, { "edgeTargetWM" });
 
 
+        /*
+        */
+        opName = "[quad] uv hatching";
+        opShader = new MOperationShader("quadHatching", "hatchUVsTest");
+        opShader->addTargetParameter("gStylizationTex", mRenderTargets.getTarget("stylizationTarget"));
+        opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("colorTarget"));
+        opShader->addTargetParameter("gUVsTex", mRenderTargets.getTarget("normalsTarget"));
+        opShader->addTargetParameter("gDiffuseTex", mRenderTargets.getTarget("widerDiffuseTarget"));
+        opShader->addTargetParameter("gSpecularTex", mRenderTargets.getTarget("specularTarget"));
+        //opShader->addParameter("gTestingValue", mFxParams.testingValue);
+        quadOp = new QuadRender(opName,
+                                MHWRender::MClearOperation::kClearNone,
+                                mRenderTargets,
+                                *opShader);
+        mOperations.append(quadOp);
+        mRenderTargets.setOperationOutputs(opName, { "hatchingTarget" });
+        /*mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });*/
+
+
         opName = "[quad] display outlines";
         opShader = new MOperationShader("quadCelShader", "celOutlines1");
         opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
         opShader->addTargetParameter("gEdgeTex", mRenderTargets.getTarget("edgeTargetWM"));
+        /*opShader->addTargetParameter("gEdgeTex", mRenderTargets.getTarget("edgeTargetWM"));*/
         opShader->addParameter("gEdgePower", mFxParams.edgePower);
         opShader->addParameter("gEdgeMultiplier", mFxParams.edgeMultiplier);
         quadOp = new QuadRender(opName,
@@ -137,6 +215,8 @@ namespace wm {
                                 *opShader);
         mOperations.append(quadOp);
         mRenderTargets.setOperationOutputs(opName, { "stylizationTarget" });
+
+        
 
 
         /*

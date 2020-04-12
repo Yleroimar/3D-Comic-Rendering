@@ -80,8 +80,12 @@ float4 deferredLightingFrag(vertexOutputSampler i) : SV_Target {
         // if viewport is not gamma corrected, at least keep light linearity on substrate
         diffuse = pow(diffuse, 0.454545455);
     }
+
+    return float4(renderTex.rgb * diffuse, renderTex.a);
+    /*
     renderTex.rgb *= diffuse;
 	return renderTex;
+    */
 }
 
 // Contributor: Amir Semmo

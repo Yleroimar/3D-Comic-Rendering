@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadGapsOverlaps10.fx (HLSL)
 // Brief: Creating gaps and overlaps at the edges of the rendered image
-// Contributors: Santiago Montesdeoca, Pierre Bénard
+// Contributors: Santiago Montesdeoca, Pierre Bï¿½nard
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                             _                        _                 
 //     __ _  __ _ _ __  ___   | |    _____   _____ _ __| | __ _ _ __  ___ 
@@ -41,7 +41,7 @@ struct fragmentOutput {
 //   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 //
 
-// Contributor: Pierre Bénard
+// Contributor: Pierre Bï¿½nard
 // rgb (red, green, blue) to ryb (red, yellow, blue) color space transformation
 // -> Based on color mixing model by Chen et al. 2015
 //    [2015] Wetbrush: GPU-based 3D Painting Simulation at the Bristle Level
@@ -100,10 +100,8 @@ fragmentOutput gapsOverlapsFrag(vertexOutputSampler i) : SV_Target{
         // make sure we are at an edge
         if (eEdges > 0.1) {
 
-
             // OVERLAPS
             if (gapsOverlaps > 0.1f) {
-
                 // get gradients
                 float right = gEdgeTex.Sample(gSampler, i.uv + float2(gTexel.x, 0)).b;
                 float left = gEdgeTex.Sample(gSampler, i.uv + float2(-gTexel.x, 0)).b;
@@ -125,21 +123,22 @@ fragmentOutput gapsOverlapsFrag(vertexOutputSampler i) : SV_Target{
 
                 int o = 1;
                 // find vector of gradient (to get neighboring color)
-                [unroll(10)] for (o = 1; o < gGORadius; o++) {
-                    if (gapsOverlaps < o) {
-                        break;
-                    }
+                [unroll(10)]
+                for (o = 1; o < gGORadius; o++) {
+                    if (gapsOverlaps < o) break;
+
                     destColor = gColorTex.Sample(gSampler, i.uv + o*(gradient*gTexel));
+
                     // check with destination color
                     if (length(destColor - outColor) > 0.33) {
                         // no overlap with substrateColor
-                        if (length(destColor.rgb - gSubstrateColor) < 0.1) {
-                            break;
-                        }
+                        if (length(destColor.rgb - gSubstrateColor) < 0.1) break;
+                        
                         outColor.rgb = mixRYB2(outColor.rgb, destColor.rgb);
                         break;
                     }
                 }
+                
                 // check if loop reached the max
                 if (o == gGORadius) {
                     // means that gradient was reversed
@@ -151,7 +150,7 @@ fragmentOutput gapsOverlapsFrag(vertexOutputSampler i) : SV_Target{
 
 
             // GAPS
-            if (gapsOverlaps < -0.1f) {
+            else if (gapsOverlaps < -0.1f) {
                 // check if it is at an edge
                 if (eEdges > goThreshold*2) {
                     //result.colorOutput = float4(0, 0, 0, 0);
@@ -177,7 +176,8 @@ fragmentOutput gapsOverlapsFrag(vertexOutputSampler i) : SV_Target{
 
                 // normalize gradient to check neighboring pixels
                 gradient = normalize(gradient);
-                [unroll(10)] for (int o = 1; o < gGORadius; o++) {
+                [unroll(10)]
+                for (int o = 1; o < gGORadius; o++) {
                     if (abs(gapsOverlaps) < o / gGORadius) {
                         //outColor.rgb = float3(gapsOverlaps, 0, 0);
                         break;
