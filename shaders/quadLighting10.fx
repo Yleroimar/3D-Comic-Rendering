@@ -2,7 +2,7 @@
 
 Texture2D gDiffuseTex;
 
-float positiveScale = 0.5;
+float positiveScale = 1.0; //0.5;
 
 
 float4 includeNegativesFrag(vertexOutput i) : SV_Target {

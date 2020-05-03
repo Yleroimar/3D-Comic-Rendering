@@ -46,7 +46,7 @@ float2 gAtmosphereRange;
 
 
 // MRT
-struct fragmentOutput {
+struct FragmentOutput {
 	float4 stylizationOutput : SV_Target0;
 	float4 substrateOutput : SV_Target1;
 	float2 depthOutput : SV_Target2;
@@ -67,7 +67,6 @@ float remap(float value, float oldMin, float oldMax, float newMin, float newMax)
 }
 
 
-
 //              _  _           _             _                 _
 //     __ _  __| |(_)_   _ ___| |_          | | ___   __ _  __| |
 //    / _` |/ _` || | | | / __| __|  _____  | |/ _ \ / _` |/ _` |
@@ -81,8 +80,8 @@ float remap(float value, float oldMin, float oldMax, float newMin, float newMax)
 // 2.- Adds the substrate color as the background color (tgt 1)
 // 3.- Loads the substrate texture into the substrate target (tgt 2)
 // 4.- Modulates Maya's Z-buffer to a linear depth target with a custom range (tgt 3)
-fragmentOutput adjustLoadFrag(vertexOutputSampler i) {
-	fragmentOutput result;
+FragmentOutput adjustLoadFrag(vertexOutputSampler i) {
+	FragmentOutput result;
     int3 loc = int3(i.pos.xy, 0);  // coordinates for loading texels
 
     // LINEAR DEPTH
@@ -107,16 +106,17 @@ fragmentOutput adjustLoadFrag(vertexOutputSampler i) {
     //float depthOfStylizedShaders = gSpecularTex.Load(loc).a;
     float mask = gSpecularTex.Load(loc).a;
     if (mask > 0) {
-        if (gGamma < 1) {
-            // if viewport is not gamma corrected, at least keep light linearity
+        // if viewport is not gamma corrected, at least keep light linearity
+        if (gGamma < 1)
             diffuseTex.rgb = pow(diffuseTex.rgb, 0.454545455);
-        }
+        
         //renderTex.rgb *= lightingTex.rgb;
         // shade color embedded in negative values of lightingTex
         //float3 shadeColor = lerp(saturate(lightingTex * float3(-1, -1, -1)))
         //renderTex.rgb *= diffuseTex.rgb;
         //renderTex.rgb += gSpecularTex.Load(loc).rgb;  // add specular contribution
     }
+    
 	// color operations
 	float luma = luminance(renderTex.rgb);
 	float3 saturationResult = float3(lerp(luma.xxx, renderTex.rgb, gSaturation));
@@ -135,15 +135,18 @@ fragmentOutput adjustLoadFrag(vertexOutputSampler i) {
 
 	// SUBSTRATE
 	// get proper UVS
-	float2 uv = i.uv * (gScreenSize / gSubstrateTexDimensions) * (gSubstrateTexScale) + gSubstrateTexUVOffset;
+	float2 uv = i.uv * (gScreenSize / gSubstrateTexDimensions)
+                     * gSubstrateTexScale + gSubstrateTexUVOffset;
 	// get substrate pixel
 	float3 substrate = gSubstrateTex.Sample(gSampler, uv).rgb;
-	substrate = substrate - 0.5;;  // bring to [-0.5 - 0 - 0.5]
+	substrate -= 0.5;  // bring to [-0.5 - 0 - 0.5]
 	substrate *= gSubstrateRoughness;  // define roughness
     result.substrateOutput = float4(substrate + 0.5, 0.0);  // bring back to [0 - 1]
 
     // velocity reset if disabled
-    result.velocity = (gEnableVelocityPV == 1.0 ? gVelocityTex.Load(loc).xy : float2(0.0, 0.0));
+    result.velocity = gEnableVelocityPV == 1.0
+                    ? gVelocityTex.Load(loc).xy
+                    : float2(0.0, 0.0);
 
 	return result;
 }

@@ -12,21 +12,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // This shader loads the required elements for future stylization in Water Memory style in MNPR
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "include\\quadCommon.fxh"
+#include "..\\include\\quadCommon.fxh"
 
 // TEXTURES
 Texture2D gHatchingTex;
 
 
 //
-struct fragmentOutput {
-    float4 hatchingOutput : SV_Target0;
-}
+struct FragmentOutput { float4 hatchingOutput : SV_Target0; };
 
 
 // Contributors: Oliver Vainumäe
-fragmentOutput adjustLoadFrag(vertexOutputSampler i) {
-	fragmentOutput result;
+FragmentOutput adjustLoadFrag(vertexOutputSampler i) {
+	FragmentOutput result;
     int3 loc = int3(i.pos.xy, 0);  // coordinates for loading texels
 
 	// get proper UVS

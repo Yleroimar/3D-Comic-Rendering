@@ -15,6 +15,8 @@
 #ifndef _QUADCOLORTRANSFORM_FXH
 #define _QUADCOLORTRANSFORM_FXH
 
+#include "quadCommon.fxh"
+
 
 
 //    ____   ____ ____       ____      _   _ ______     __
@@ -39,8 +41,8 @@ float3 rgb2hsv(in float3 c)
 
 
 float3 rgb2hsv2(in float3 rgb) {
-    float M = max(max(rgb.r, rgb.g), rgb.b);
-    float m = min(min(rgb.r, rgb.g), rgb.b);
+    float M = max(rgb.rgb);
+    float m = min(rgb.rgb);
 
     float c = M - m;
 
@@ -48,7 +50,7 @@ float3 rgb2hsv2(in float3 rgb) {
 
     if (c != 0.0) {
         if (M == rgb.r)
-            h = mod((rgb.g - rgb.b) / c, 6.0);
+            h = ((rgb.g - rgb.b) / c) % 6.0;
         else if (M == rgb.g)
             h = (rgb.b - rgb.r) / c + 2.0;
         else if (M == rgb.b)
