@@ -51,54 +51,75 @@ logger.setLevel(logging.DEBUG)  # defines the logging level (INFO for releases)
 #          - watercolor: -
 #          - oil paint : -
 #          - charcoal  : -
+#          - waterMem  :
+#
 #    GREEN - general   : PIGMENT APPLICATION
 #          - watercolor: pigment application (granulation - dry-brush)
 #          - oil paint : pigment application (impasto - dry-brush)
 #          - charcoal  : pigment application
+#          - waterMem  : hatching intensity
+#
 #    BLUE  - general   : PIGMENT DENSITY
 #          - watercolor: pigment density
 #          - oil paint : pigment density
 #          - charcoal  : pigment darkness
+#          - waterMem  :
+#
 #    ALPHA - general   : DETAIL | [RED in abstraction target]
 #          - watercolor: -
 #          - oil paint : color detail
 #          - charcoal  : smudging
+#          - waterMem  : color edge-detection multiplier
 #
 # controlSetB (Substrate Effects):
 #    RED   - general   : SUBSTRATE DISTORTION
 #          - watercolor: substrate distortion
 #          - oil paint : substrate distortion
 #          - charcoal  :
+#          - waterMem  :
+#
 #    GREEN - general   :  U-INCLINATION (also used to specify direction, in general)
 #          - watercolor: -
 #          - oil paint : -
 #          - charcoal  : -
+#          - waterMem  :
+#
 #    BLUE  - general   : V-INCLINATION (also used to specify direction, in general)
 #          - watercolor: -
 #          - oil paint : -
 #          - charcoal  : -
+#          - waterMem  :
+#
 #    ALPHA - general   : SHAPE | [GREEN in abstraction target]
 #          - watercolor: -
 #          - oil paint : -
 #          - charcoal  : -
+#          - waterMem  :
 #
 # controlSetC (Edge effects):
 #    RED   - general   : EDGE INTENSITY
 #          - watercolor: edge darkening
 #          - oil paint : -
 #          - charcoal  : -
+#          - waterMem  : edge intensity
+#
 #    GREEN - general   : EDGE WIDTH
 #          - watercolor: edge width
 #          - oil paint : -
 #          - charcoal  :
+#          - waterMem  : edge width
+#
 #    BLUE  - general   : EDGE TRANSITION
 #          - watercolor: gaps and overlaps
 #          - oil paint : gaps and overlaps
 #          - charcoal  :
+#          - waterMem  : overlaps side+range
+
 #    ALPHA - general   : BLENDING | [BLUE in abstraction target]
 #          - watercolor: color bleeding
 #          - oil paint : paint stroke length
 #          - charcoal  : mixing
+#          - waterMem  : overlaps falloff
 #
 # ===========================================================================================
 
@@ -182,19 +203,24 @@ def getStyleFX():
     charcoalFX = [distortionFX, densityFX_CH, applicationFX_CH, mixingFX_CH, smudgingFX_CH, edgeFX_CH]
 
     # water memory effects
-    densityFX_WM = MNPR_FX("density", "Pigment turbulence",
+    densityFX_WM = MNPR_FX("density", "Pigment turbulence (unused)",
                            "controlSetA", [[0, 0, 1, 0]],
                            ["accumulate", "dilute"], ["noise"])
-    applicationFX_WM = MNPR_FX("application", "Granulate | Dry-brush",
+    applicationFX_WM = MNPR_FX("hatching", "Hatching",
                                "controlSetA", [[0, 1, 0, 0]],
-                               ["granulate", "dry-brush"], ["noise"])
-    blendingFX_WM = MNPR_FX("blending", "Color bleeding (wet-in-wet)",
-                            "controlSetC", [[0, 0, 0, 1]],
-                            ["bleed", "revert"], ["noise"])
+                               ["more", "less"], ["noise"])
+    overlapsFX = MNPR_FX("overlaps", "Overlaps falloff, side/range",
+                         "controlSetC", [[0, 0, 0, 1], [0, 0, 1, 0]],
+                         ["longer", "shorter", "behind", "front"], ["n. falloff", "n. side"])
     edgeFX_WM = MNPR_FX("edge manip", "Edge darkening",
                         "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]],
                         ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
-    watermemoryFX = [densityFX_WM, applicationFX_WM, distortionFX, edgeFX_WM, gapsOverlapsFX, blendingFX_WM]
+    colorEdgeDetectFX_WM = MNPR_FX("edge detect", "Color-based edge-detection",
+                                   "controlSetA", [[0, 0, 0, 1]],
+                                   ["more", "less"], ["noise"])
+    watermemoryFX = [distortionFX, densityFX_WM,
+                     applicationFX_WM, overlapsFX,
+                     edgeFX_WM, colorEdgeDetectFX_WM]
 
     # query mnpr style and return
 
