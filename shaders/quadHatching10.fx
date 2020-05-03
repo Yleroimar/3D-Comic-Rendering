@@ -15,81 +15,93 @@
 #include "include\\quadCommon.fxh"
 
 // TEXTURES
-Texture2D gStylizationTex;
+Texture2D gRenderTex;
 Texture2D gDepthTex;
 Texture2D gDiffuseTex;
 Texture2D gSpecularTex;
 Texture2D gHatchCtrl;
 Texture2D gSubstrateTex;
-
-Texture2D gUVsTex;
+Texture2D gNormalsTex;
 
 
 // VARIABLES
+float gHatchMultiplier = 1.0;
 
 float gTestingValue = 0.5;
 
-float diffuseThreshold = 2.0; //0.85;
-float darkThreshold = 0.15;
+float thresholdDiffuse = 2.0; //0.85;
+float thresholdColor = 0.15;
 
 
+float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
+
+float4 loadDiffuseTex(int3 loc) { return gDiffuseTex.Load(loc); }
+float4 loadSpecularTex(int3 loc) { return gSpecularTex.Load(loc); }
+
+float2 loadUVs(int3 loc) { return gNormalsTex.Load(loc).ba; }
+
+float4 loadSubstrateTex(int3 loc) { return gSubstrateTex.Load(loc); }
+float loadSubstrateHeight(int3 loc) { return loadSubstrateTex(loc).b; }
+
+float loadHatchCtrl(int3 loc) { return gHatchCtrl.Load(loc).g; }
+
+
+float colorIntensity(float3 color) { return length(color); }
 float colorHatchingIntensity(int3 loc) {
-    float colorDarkness = length(gColorTex.Load(loc).rgb);
-
-    return colorDarkness / darkThreshold;
+    float colorLightness = colorIntensity(loadColorTex(loc).rgb);
+    return colorLightness / thresholdColor;
 }
 
+float diffuseIntensity(float3 diffuseColor) { return length(diffuseColor); }
 float diffuseHatchingIntensity(int3 loc) {
-    float diffuse = length(gDiffuseTex.Load(loc).rgb);
-
-    return diffuse / diffuseThreshold;
+    float diffuse = diffuseIntensity(loadDiffuseTex(loc).rgb);
+    return diffuse / thresholdDiffuse;
 }
+
+float specularIntensity(float3 specularColor) { return max(specularColor); }
 
 float hatchingIntensity(int3 loc) {
     // specular is used to cancel the hatching
-    float specular = max3(gSpecularTex.Load(loc).rgb);
+    float specular = specularIntensity(loadSpecularTex(loc).rgb);
     
     // substrate height sets the texture of the hatching
-    // combined with hatching texture
-    float substrateHeight = gSubstrateTex.Load(loc).b;
+    float substrateHeight = loadSubstrateHeight(loc);
 
+    // color and diffuse is used to choose where to place substrate texture
     float intensityColor = colorHatchingIntensity(loc);
     float intensityDiffuse = diffuseHatchingIntensity(loc);
-
     float intensity = min(1.0, min(intensityColor, intensityDiffuse));
     
-    float hatchCtrl = gHatchCtrl.Load(loc).g;
+    float hatchCtrl = loadHatchCtrl(loc);
+    hatchCtrl = (1.0 + hatchCtrl) * gHatchMultiplier;
 
-    float strengthScale = gTestingValue;
+    float strength = saturate(substrateHeight * hatchCtrl - intensity);
 
-    //float strength = saturate((substrateHeight - intensity) / strengthScale);
-
-    float strength = saturate((substrateHeight - intensity) / strengthScale);
-
-    return strength + strength * hatchCtrl;
+    return 2.0 * strength * hatchCtrl;
 }
 
 float4 hatchTestFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0); // coordinates for loading
+    int3 loc = int3(i.pos.xy, 0);
 
-    float4 colorTex = gStylizationTex.Load(loc);
+    float4 renderTex = loadRenderTex(loc);
+    // return renderTex;
     
-    if (colorTex.a == 0.0) return colorTex;
+    if (renderTex.a == 0.0) return renderTex;
 
     float intensity = hatchingIntensity(loc);
 
-    float reversed = 1.0 - intensity;
+    float renderColorIntensity = 1.0 - intensity;
 
-    return float4(colorTex.rgb * reversed, colorTex.a);
+    return float4(renderTex.rgb * renderColorIntensity, renderTex.a);
 }
 
 
 float4 hatchingUVsFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
-    float2 uvTex = gUVsTex.Load(loc).ba;
+    float2 uvTex = loadUVs(loc);
 
-    float light = length(gDiffuseTex.Load(loc).rgb);
+    float light = length(loadDiffuseTex(loc).rgb);
 
     float modulus = 0.025;
 
