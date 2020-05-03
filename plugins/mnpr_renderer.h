@@ -59,12 +59,15 @@ struct EngineSettings {
     std::vector<float> velocityPV = std::vector<float>{ 0.0f };                       ///< enable/disable velocity per vertex computation (cast as boolean)
     std::vector<float> colorChannels = std::vector<float>{ 1.0f, 1.0f, 1.0f, 0.0f };  ///< color channels to present
     std::vector<float> colorTransformationMode = std::vector<float>{ 0.0f };          ///< color transformation mode to use
+
     // ATMOSPHERE
     std::vector<float> atmosphereTint = std::vector<float>{ 1.0f, 1.0f, 1.0f };         ///< colors of atmosphere
     std::vector<float> atmosphereRange = std::vector<float>{ 25.0f, 300.0f };           ///< range of atmosphere perspective (maya units)
+    
     // TIME, RANDOM
     std::vector<float> time = std::vector<float>{ 0.0f };                               ///< time in milliseconds, refreshed after each frame
     std::vector<float> random = std::vector<float>{ 0.0f, 0.0f, 0.0f };                 ///< 3 random integers cast as float, each between 0 and 254
+    
     // SUBSTRATE
     MString substrateTexFilename = "rough_default_2k.jpg";			                    ///< substrate texture name
     std::vector<float> substrateColor = std::vector<float>{ 1.0f, 1.0f, 1.0f };	        ///< colors of substrate
@@ -117,6 +120,7 @@ struct FXParameters {
     std::vector<float> contrast = std::vector<float>{ 1.0f };
     std::vector<float> brightness = std::vector<float>{ 1.0f };
 
+
     // watercolor parameters
     std::vector<float> bleedingThreshold = std::vector<float>{ 0.0002f };
     std::vector<float> bleedingRadius = std::vector<float>{ 10.0f };
@@ -127,6 +131,7 @@ struct FXParameters {
     std::vector<float> pigmentDensity = std::vector<float>{ 5.0f };
     std::vector<float> dryBrushThreshold = std::vector<float>{ 15.0f };
 
+
     // oilpaint parameters
     std::vector<float> opColorSmoothing = std::vector<float>{ 8.0f };
     std::vector<float> opSTSmoothing = std::vector<float>{ 2.5f };
@@ -135,24 +140,35 @@ struct FXParameters {
     std::vector<float> opBrushScale = std::vector<float>{ 0.75f };
     std::vector<float> opBrushMicro = std::vector<float>{ 2.0f };
 
+
     // charcoal parameters
     std::vector<float> dryMediaThreshold = std::vector<float>{ 0.5f };
 
+
     // waterMemory parameters
     MString hatchingTexFilename = "debugTexture_2k.jpg";
-    std::vector<float> testingValue = std::vector<float>{ 0.5f };
-    std::vector<float> edgePower = std::vector<float>{ 0.1f };
-    std::vector<float> edgeMultiplier = std::vector<float>{ 10.0f };
-    std::vector<float> surfaceThresholdHigh = std::vector<float>{ 0.9f };
-    std::vector<float> surfaceThresholdMid = std::vector<float>{ 0.5f };
+    std::vector<float> testingValue = std::vector<float>{ 1.0f };
+
+    std::vector<float> edgeThresholdWM = std::vector<float>{ 0.01f };
+    std::vector<float> edgeWidthWM = std::vector<float>{ 1.0f };
+    std::vector<float> edgeIntensityWM = std::vector<float>{ 1.0f };
+    
+    std::vector<float> overlapRangeWM = std::vector<float>{ 10.0f };
+    std::vector<float> overlapPickDistanceWM = std::vector<float>{ 2.0f };
+    std::vector<float> overlapFalloffWM = std::vector<float>{ 0.5f };
+    std::vector<float> overlapFalloffSpeedWM = std::vector<float>{ 1.0f };
+    std::vector<float> overlapDepthDifferenceWM = std::vector<float>{ 1.0f };
+
+    std::vector<float> shadingTintWM = std::vector<float>{ 1.0f, 1.0f, 1.0f };
+    std::vector<float> shadingTintWeightWM = std::vector<float>{ 1.0f };
+    std::vector<float> shadingDesaturationWeightWM = std::vector<float>{ 1.0f };
+    std::vector<float> shadingThresholdHigh = std::vector<float>{ 0.9f };
+    std::vector<float> shadingThresholdMid = std::vector<float>{ 0.5f };
     std::vector<float> transitionHighMid = std::vector<float>{ 0.025f };
     std::vector<float> transitionMidLow = std::vector<float>{ 0.025f };
-    std::vector<float> surfaceHighIntensity = std::vector<float>{ 1.1f };
-    std::vector<float> surfaceMidIntensity = std::vector<float>{ 0.7f };
-    std::vector<float> surfaceLowIntensity = std::vector<float>{ 0.5f };
-    std::vector<float> diffuseCoefficient = std::vector<float>{ 0.6f };
-    std::vector<float> specularCoefficient = std::vector<float>{ 0.4f };
-    std::vector<float> specularPower = std::vector<float>{ 1.0f };
+    std::vector<float> shadingIntensityHigh = std::vector<float>{ 1.1f };
+    std::vector<float> shadingIntensityMid = std::vector<float>{ 0.7f };
+    std::vector<float> shadingIntensityLow = std::vector<float>{ 0.5f };
     
 
     /// print fx parameters (DEBUG)

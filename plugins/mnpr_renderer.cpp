@@ -34,7 +34,11 @@ const MString AUTHOR_NAME = "Santiago Montesdeoca";  // name of the author of th
 const MString PURPOSE = "Research";                  // purpose of plugin ("Research" or "Client")
 const std::vector<MString> STYLES = { "Framework", "Watercolor", "Charcoal", "Water Memory" };  // supported styles
 
-MHWRender::MRasterFormat MNPROverride::colorDepths[3] = { MHWRender::kR8G8B8A8_SNORM, MHWRender::kR16G16B16A16_SNORM, MHWRender::kR32G32B32A32_FLOAT };
+MHWRender::MRasterFormat MNPROverride::colorDepths[3] = {
+    MHWRender::kR8G8B8A8_SNORM,
+    MHWRender::kR16G16B16A16_SNORM,
+    MHWRender::kR32G32B32A32_FLOAT
+};
 
 
 MStatus MNPROverride::addCustomTargets() {
@@ -126,15 +130,20 @@ void MNPROverride::initializeMNPR() {
         "linearDepth", tWidth, tHeight, 1,
         MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap)); // previous frame encoded in y-channel
 
+    /*mRenderTargets.append(MHWRender::MRenderTargetDescription(
+        "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));*/
+
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
+        "normalsTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_FLOAT, arraySliceCount, isCubeMap));
     /*
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "worldPosTarget", tWidth, tHeight, MSAA, MHWRender::kR16G16B16A16_SNORM, arraySliceCount, isCubeMap));
     */
 
+    /*mRenderTargets.append(MHWRender::MRenderTargetDescription(
+        "edgeTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));*/
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
-        "edgeTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
+        "edgeTarget", tWidth, tHeight, 1, userDepth, arraySliceCount, isCubeMap));
     mRenderTargets.append(MHWRender::MRenderTargetDescription(
         "velocity", tWidth, tHeight, 1, MHWRender::kR32G32_FLOAT, arraySliceCount, isCubeMap));
 
@@ -199,9 +208,12 @@ void MNPROverride::initializeMNPR() {
 
     // edge detection
     opName = "[quad] edge detection";
-    opShader = new MOperationShader("quadEdgeDetection", "sobelRGBDEdgeDetection");
+    opShader = new MOperationShader("quadEdgeDetection", "badDogRGBDNEdgeDetection");
+    /*opShader = new MOperationShader("quadEdgeDetection", "dogRGBDNEdgeDetection");*/
+    /*opShader = new MOperationShader("quadEdgeDetection", "sobelRGBDEdgeDetection");*/
     opShader->addTargetParameter("gColorTex", mRenderTargets.getTarget("stylizationTarget"));
     opShader->addTargetParameter("gDepthTex", mRenderTargets.getTarget("linearDepth"));
+    opShader->addTargetParameter("gNormalsTex", mRenderTargets.getTarget("normalsTarget"));
     quadOp = new QuadRender(opName,
                             MHWRender::MClearOperation::kClearNone,
                             mRenderTargets,
