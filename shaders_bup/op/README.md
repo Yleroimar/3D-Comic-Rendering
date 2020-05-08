@@ -1,1 +1,0 @@
-The publication of the oil paint shaders is currently under review. They are planned to be shipped in a future revision of MNPR.
