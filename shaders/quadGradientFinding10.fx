@@ -67,16 +67,22 @@ float2 gradientTowardsEdgeFrag(vertexOutput i) : SV_Target {
 }
 
 
-float2 gradientTowardsEdgeDebugFrag(vertexOutput i) : SV_Target {
+float3 gradientTowardsEdgeDebugFrag(vertexOutput i) : SV_Target {
     float2 gradient = getGradient(int3(i.pos.xy, 0));
 
-    // cannot colorize the angle with hue cause the output is two-dimensional
-    /* float angle = acos(dot(gradient, float2(1,0)));
-    float3 hsv = float3(20.0, 1.0, 1.0);
-    float3 rgb = hsv2rgb(hsv);
-    return float2(angle, angle); */
+    float angle = atan(gradient.y / gradient.x);
 
-    return 0.5 * gradient + 0.5;
+    angle = angle / PI * 180 + 360;
+
+    if (gradient.x < 0.0)
+        angle += 180;
+        
+    angle %= 360;
+
+    float3 hsv = float3(angle, 1.0, 1.0);
+    float3 rgb = hsv2rgb(hsv);
+
+    return rgb;
 }
 
 technique11 gradientTowardsEdgeSampled {
