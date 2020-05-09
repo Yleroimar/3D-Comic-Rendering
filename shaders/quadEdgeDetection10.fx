@@ -67,7 +67,6 @@ RGBDN rgbdn(int3 loc, int dx, int dy) { return rgbdn(loc + int3(dx, dy, 0)); }
 
 
 
-
 //              _          _     ____   ____ ____  ____
 //    ___  ___ | |__   ___| |   |  _ \ / ___| __ )|  _ \
 //   / __|/ _ \| '_ \ / _ \ |   | |_) | |  _|  _ \| | | |
@@ -276,7 +275,7 @@ float gaussianWeight(float x, float y, float sigma) {
 }
 float gaussianWeight(int3 dloc, float sigma) { return gaussianWeight(dloc.x, dloc.y, sigma); }
 
-RGBDN getKernelResult(int3 loc, int kernelWidth, float sigma) {
+RGBDN getGaussianKernelResult(int3 loc, int kernelWidth, float sigma) {
 	RGBDN result;
 
 	float4 value4 = float4(0.0, 0.0, 0.0, 0.0);
@@ -310,31 +309,27 @@ RGBDN getKernelResult(int3 loc, int kernelWidth, float sigma) {
 
 	return result;
 }
-// RGBDN getKernelResult(int3 loc, int kernelWidth) {
-// 	return getKernelResult(loc, kernelWidth, 0.5 * kernelWidth);
-// }
 
 float4 badDogRGBDNFrag(vertexOutput vertex) : SV_Target{
 	int3 loc = int3(vertex.pos.xy, 0);
 
-	// RGBDN kernelResult1 = getKernelResult(loc, 5, 0.1);
-	RGBDN kernelResult1 = getKernelResult(loc, 5, 1.0);
-	// RGBDN kernelResult1 = rgbdn(loc);
-	// RGBDN kernelResult2 = getKernelResult(loc, 5, 2.1);
-	RGBDN kernelResult2 = getKernelResult(loc, 5, 1.6);
+	float sigma = 1.0;
+	float k = 1.6;
+
+	RGBDN kernelResult1 = getGaussianKernelResult(loc, 5, sigma);
+	RGBDN kernelResult2 = getGaussianKernelResult(loc, 5, sigma * k);
 
 	// calculate difference of gaussians
 	float4 dogRGBD = kernelResult1.rgbd - kernelResult2.rgbd;
 	float3 dogNormal = kernelResult1.normal - kernelResult2.normal;
 
-	float edgeMagnitudeRGB = length(dogRGBD.rgb);
-	float edgeMagnitudeD = 100.0 * dogRGBD.a;
-	float edgeMagnitudeN = 3.0 * length(dogNormal);
-	edgeMagnitudeN = 4.0 * pow(edgeMagnitudeN, 1.1);
+	float edgeMagnitudeRGB = 50.0 * max(dogRGBD.rgb);
+	float edgeMagnitudeD = 200.0 * dogRGBD.a;
+	float edgeMagnitudeN = 50.0 * max(dogNormal);
+	edgeMagnitudeN = 50.0 * pow(5 * max(dogNormal), 1.5);
 	
 	return float4(edgeMagnitudeRGB, edgeMagnitudeD, edgeMagnitudeN, 1.0);
 }
-
 
 
 float4 objectIDEdgeDetectionFrag(vertexOutput vertex) : SV_Target {
@@ -410,6 +405,7 @@ technique11 badDogRGBDNEdgeDetection {
 		SetVertexShader(CompileShader(vs_5_0, quadVert()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, badDogRGBDNFrag()));
+		// SetPixelShader(CompileShader(ps_5_0, sobelRGBDNFrag()));
 	}
 }
 
