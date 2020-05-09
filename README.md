@@ -1,7 +1,14 @@
-Repository, as this was required.
-
+Repository for modifications of MNPR to render Water Memory (WM) style.  
 Most of the files originate from MNPR repo: https://github.com/semontesdeoca/MNPR
-Should I find a better way to maintain the repo, I might remove all the excessive files, but right now I have no estimate of what files need to be changed.
+
+Modified files include:
+* the C++ files for the new style
+* mnpr_FX.py for setting up control targets for WM style
+* HLSL files in shader
+
+New icons were added to PaintFX for WM style.
+
+I have kept the readme of MNPR from the time of starting the modifications:
 
 # MNPR
 MNPR is an expressive non-photorealistic rendering framework for real-time, filter-based stylization pipelines within Maya (2016.5+). It extends the Maya API and simplifies the creation of Viewport 2.0 render overrides, while still preserving all the low-level options that the Maya API provides.
