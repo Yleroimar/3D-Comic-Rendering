@@ -37,8 +37,8 @@ static MObject aEdgeThresholdWM;
 // Overlap
 static MObject aOverlapRangeWM;
 static MObject aOverlapPickDistanceWM;
+static MObject aOverlapFalloffStartWM;
 static MObject aOverlapFalloffWM;
-static MObject aOverlapFalloffSpeedWM;
 static MObject aOverlapDepthDifferenceWM;
 
 // Discrete Surface Shading
@@ -47,7 +47,7 @@ static MObject aShadingTintG;
 static MObject aShadingTintB;
 static MObject aShadingTint;
 static MObject aShadingTintWeight;
-static MObject aShadingDesaturationWeight;
+static MObject aShadingSaturationWeight;
 
 static MObject aShadingThresholdHigh;
 static MObject aShadingThresholdValueHigh;
@@ -61,6 +61,11 @@ static MObject aShadingIntensity;
 static MObject aShadingIntensityHigh;
 static MObject aShadingIntensityMid;
 static MObject aShadingIntensityLow;
+
+// Hatching
+static MObject aHatchingColorThreshold;
+static MObject aHatchingDiffuseThreshold;
+
 
 
 
@@ -88,7 +93,7 @@ namespace wm {
         ConfigNode::enableAttribute(aHatchingTex);*/
 
         // Testing Value
-        {
+        /*{
             aTestingValue = nAttr.create(
                 "testingValue", "testingValue",
                 MFnNumericData::kFloat, mFxParams->testingValue[0],
@@ -97,7 +102,7 @@ namespace wm {
             nAttr.setSoftMin(0.0);
             nAttr.setSoftMax(1.0);
             ConfigNode::enableAttribute(aTestingValue);
-        }
+        }*/
 
 
         // Ramps
@@ -114,7 +119,7 @@ namespace wm {
         // Outline
         {
             aEdgeThresholdWM = nAttr.create(
-                "edgeThreshold", "edgeThreshold",
+                "edgeDetectionThreshold", "edgeDetectionThreshold",
                 MFnNumericData::kFloat, mFxParams->edgeThresholdWM[0],
                 &status);
             MAKE_INPUT(nAttr);
@@ -149,7 +154,7 @@ namespace wm {
         // Overlap
         {
             aOverlapRangeWM = nAttr.create(
-                "overlapRange", "overlapRange",
+                "smudgeRange", "smudgeRange",
                 MFnNumericData::kFloat, mFxParams->overlapRangeWM[0],
                 &status);
             MAKE_INPUT(nAttr);
@@ -158,38 +163,38 @@ namespace wm {
             ConfigNode::enableAttribute(aOverlapRangeWM);
 
 
-            aOverlapPickDistanceWM = nAttr.create(
+            /*aOverlapPickDistanceWM = nAttr.create(
                 "overlapPickDistance", "overlapPickDistance",
                 MFnNumericData::kFloat, mFxParams->overlapPickDistanceWM[0],
                 &status);
             MAKE_INPUT(nAttr);
             nAttr.setSoftMin(1.0);
             nAttr.setSoftMax(10.0);
-            ConfigNode::enableAttribute(aOverlapPickDistanceWM);
+            ConfigNode::enableAttribute(aOverlapPickDistanceWM);*/
 
 
-            aOverlapFalloffWM = nAttr.create(
-                "overlapFalloff", "overlapFalloff",
+            aOverlapFalloffStartWM = nAttr.create(
+                "smudgeFalloffStart", "smudgeFalloffStart",
                 MFnNumericData::kFloat, mFxParams->overlapFalloffWM[0],
                 &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
             nAttr.setMax(1.0);
-            ConfigNode::enableAttribute(aOverlapFalloffWM);
+            ConfigNode::enableAttribute(aOverlapFalloffStartWM);
 
 
-            aOverlapFalloffSpeedWM = nAttr.create(
-                "overlapFalloffSpeed", "overlapFalloffSpeed",
+            aOverlapFalloffWM = nAttr.create(
+                "smudgeFalloff", "smudgeFalloff",
                 MFnNumericData::kFloat, mFxParams->overlapFalloffSpeedWM[0],
                 &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.001);
             nAttr.setSoftMax(10.0);
-            ConfigNode::enableAttribute(aOverlapFalloffSpeedWM);
+            ConfigNode::enableAttribute(aOverlapFalloffWM);
 
 
             aOverlapDepthDifferenceWM = nAttr.create(
-                "overlapDepthDifference", "overlapDepthDifference",
+                "smudgeDepthDifference", "smudgeDepthDifference",
                 MFnNumericData::kFloat, mFxParams->overlapDepthDifferenceWM[0],
                 &status);
             MAKE_INPUT(nAttr);
@@ -211,14 +216,14 @@ namespace wm {
                 "shadingTintB", "shadingTintB",
                 MFnNumericData::kFloat, mFxParams->shadingTintWM[2]);
             aShadingTint = nAttr.create(
-                "shadingTint", "shadingTint",
+                "shadeTint", "shadeTint",
                 aShadingTintR, aShadingTintG, aShadingTintB);
             MAKE_INPUT(nAttr);
             nAttr.setUsedAsColor(true);
             ConfigNode::enableAttribute(aShadingTint);
 
             aShadingTintWeight = nAttr.create(
-                "shadingTintWeight", "shadingTintWeight",
+                "shadeTintWeight", "shadeTintWeight",
                 MFnNumericData::kFloat,
                 mFxParams->shadingTintWeightWM[0], &status);
             MAKE_INPUT(nAttr);
@@ -226,14 +231,14 @@ namespace wm {
             nAttr.setSoftMax(1.0);
             ConfigNode::enableAttribute(aShadingTintWeight);
 
-            aShadingDesaturationWeight = nAttr.create(
-                "desaturationWeight", "desaturationWeight",
+            aShadingSaturationWeight = nAttr.create(
+                "shadeSaturation", "shadeSaturation",
                 MFnNumericData::kFloat,
-                mFxParams->shadingDesaturationWeightWM[0], &status);
+                mFxParams->shadingSaturationWeightWM[0], &status);
             MAKE_INPUT(nAttr);
             nAttr.setMin(0.0);
-            nAttr.setSoftMax(1.0);
-            ConfigNode::enableAttribute(aShadingDesaturationWeight);
+            nAttr.setMax(1.0);
+            ConfigNode::enableAttribute(aShadingSaturationWeight);
 
 
             // Shading thresholding
@@ -300,6 +305,29 @@ namespace wm {
             MAKE_INPUT(nAttr);
             ConfigNode::enableAttribute(aShadingIntensity);
         }
+
+
+        // Hatching
+        {
+            aHatchingColorThreshold = nAttr.create(
+                "hatchingColorThreshold", "hatchingColorThreshold",
+                MFnNumericData::kFloat, mFxParams->hatchingColorThresholdWM[0],
+                &status);
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setSoftMax(1.0);
+            ConfigNode::enableAttribute(aHatchingColorThreshold);
+
+
+            aHatchingDiffuseThreshold = nAttr.create(
+                "hatchingLightThreshold", "hatchingLightThreshold",
+                MFnNumericData::kFloat, mFxParams->hatchingDiffuseThresholdWM[0],
+                &status);
+            MAKE_INPUT(nAttr);
+            nAttr.setMin(0.0);
+            nAttr.setSoftMax(1.0);
+            ConfigNode::enableAttribute(aHatchingDiffuseThreshold);
+        }
     }
 
 
@@ -337,7 +365,7 @@ namespace wm {
             return asFloat(attribute) * mEngSettings->renderScale[0];
         };
 
-        mFxParams->testingValue[0] = asScaledFloat(aTestingValue);
+        /*mFxParams->testingValue[0] = asScaledFloat(aTestingValue);*/
 
         // Outline
         mFxParams->edgeThresholdWM[0] = asScaledFloat(aEdgeThresholdWM);
@@ -346,9 +374,9 @@ namespace wm {
 
         // Overlap
         mFxParams->overlapRangeWM[0] = asScaledFloat(aOverlapRangeWM);
-        mFxParams->overlapPickDistanceWM[0] = asScaledFloat(aOverlapPickDistanceWM);
-        mFxParams->overlapFalloffWM[0] = asScaledFloat(aOverlapFalloffWM);
-        mFxParams->overlapFalloffSpeedWM[0] = asScaledFloat(aOverlapFalloffSpeedWM);
+        /*mFxParams->overlapPickDistanceWM[0] = asScaledFloat(aOverlapPickDistanceWM);*/
+        mFxParams->overlapFalloffWM[0] = asScaledFloat(aOverlapFalloffStartWM);
+        mFxParams->overlapFalloffSpeedWM[0] = asScaledFloat(aOverlapFalloffWM);
         mFxParams->overlapDepthDifferenceWM[0] = asScaledFloat(aOverlapDepthDifferenceWM);
 
         // Discrete Surface Shading
@@ -358,7 +386,7 @@ namespace wm {
         mFxParams->shadingTintWM[2] = fvColor[2];
         mFxParams->shadingTintWeightWM[0] = asFloat(aShadingTintWeight);
 
-        mFxParams->shadingDesaturationWeightWM[0] = asFloat(aShadingDesaturationWeight);
+        mFxParams->shadingSaturationWeightWM[0] = asFloat(aShadingSaturationWeight);
 
         mFxParams->shadingThresholdHigh[0] = asFloat(aShadingThresholdValueHigh);
         mFxParams->shadingThresholdMid[0] = asFloat(aShadingThresholdValueMid);
@@ -369,5 +397,9 @@ namespace wm {
         mFxParams->shadingIntensityHigh[0] = asFloat(aShadingIntensityHigh);
         mFxParams->shadingIntensityMid[0] = asFloat(aShadingIntensityMid);
         mFxParams->shadingIntensityLow[0] = asFloat(aShadingIntensityLow);
+
+        // Hatching
+        mFxParams->hatchingColorThresholdWM[0] = asFloat(aHatchingColorThreshold);
+        mFxParams->hatchingDiffuseThresholdWM[0] = asFloat(aHatchingDiffuseThreshold);
     }
 };
