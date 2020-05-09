@@ -154,14 +154,14 @@ struct FXParameters {
     std::vector<float> edgeIntensityWM = std::vector<float>{ 1.0f };
     
     std::vector<float> overlapRangeWM = std::vector<float>{ 10.0f };
-    std::vector<float> overlapPickDistanceWM = std::vector<float>{ 2.0f };
+    std::vector<float> overlapPickDistanceWM = std::vector<float>{ 7.0f };
     std::vector<float> overlapFalloffWM = std::vector<float>{ 0.5f };
     std::vector<float> overlapFalloffSpeedWM = std::vector<float>{ 1.0f };
     std::vector<float> overlapDepthDifferenceWM = std::vector<float>{ 1.0f };
 
     std::vector<float> shadingTintWM = std::vector<float>{ 1.0f, 1.0f, 1.0f };
     std::vector<float> shadingTintWeightWM = std::vector<float>{ 1.0f };
-    std::vector<float> shadingDesaturationWeightWM = std::vector<float>{ 1.0f };
+    std::vector<float> shadingSaturationWeightWM = std::vector<float>{ 1.0f };
     std::vector<float> shadingThresholdHigh = std::vector<float>{ 0.9f };
     std::vector<float> shadingThresholdMid = std::vector<float>{ 0.5f };
     std::vector<float> transitionHighMid = std::vector<float>{ 0.025f };
@@ -170,6 +170,9 @@ struct FXParameters {
     std::vector<float> shadingIntensityMid = std::vector<float>{ 0.7f };
     std::vector<float> shadingIntensityLow = std::vector<float>{ 0.5f };
     
+    std::vector<float> hatchingColorThresholdWM = std::vector<float>{ 0.35f };
+    std::vector<float> hatchingDiffuseThresholdWM = std::vector<float>{ 1.0f };
+
 
     /// print fx parameters (DEBUG)
     void dPrint() {
