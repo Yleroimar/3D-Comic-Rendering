@@ -83,7 +83,7 @@ MStatus ConfigNode::initializeCustomParameters() {
     if (engineSettings->style == "Charcoal")
         ch::initializeParameters(fxParameters, engineSettings, aEvaluate);
 
-    if (engineSettings->style == "Water Memory")
+    if (engineSettings->style == "Water Memory" || engineSettings->style == "Water Memory Alt")
         wm::initializeParameters(fxParameters, engineSettings);
     
     cout << "Initialization of " << engineSettings->style << " parameters was successful" << endl;
@@ -103,7 +103,7 @@ MStatus ConfigNode::computeCustomParameters(MDataBlock& data) {
         if (engineSettings->style == "Charcoal")
             ch::computeParameters(MNPR, data, fxParameters, engineSettings);
 
-        if (engineSettings->style == "Water Memory")
+        if (engineSettings->style == "Water Memory" || engineSettings->style == "Water Memory Alt")
             wm::computeParameters(MNPR, data, fxParameters, engineSettings);
     }
     return MS::kSuccess;
