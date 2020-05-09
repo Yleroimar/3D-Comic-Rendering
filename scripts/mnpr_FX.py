@@ -209,16 +209,16 @@ def getStyleFX():
     applicationFX_WM = MNPR_FX("hatching", "Hatching",
                                "controlSetA", [[0, 1, 0, 0]],
                                ["more", "less"], ["noise"])
-    overlapsFX = MNPR_FX("overlaps", "Overlaps falloff, side/range",
+    overlapsFX = MNPR_FX("smudging", "Smudge falloff, side/range",
                          "controlSetC", [[0, 0, 0, 1], [0, 0, 1, 0]],
                          ["longer", "shorter", "behind", "front"], ["n. falloff", "n. side"])
-    edgeFX_WM = MNPR_FX("edge manip", "Edge darkening",
+    edgeFX_WM = MNPR_FX("edge manip", "Edge stylization",
                         "controlSetC", [[1, 0, 0, 0], [0, 1, 0, 0]],
                         ["darken", "lighten", "wider", "narrower"], ["n. dark", "n. wide"])
     colorEdgeDetectFX_WM = MNPR_FX("edge detect", "Color-based edge-detection",
                                    "controlSetA", [[0, 0, 0, 1]],
                                    ["more", "less"], ["noise"])
-    watermemoryFX = [distortionFX, densityFX_WM,
+    watermemoryFX = [#distortionFX, densityFX_WM,
                      applicationFX_WM, overlapsFX,
                      edgeFX_WM, colorEdgeDetectFX_WM]
 
@@ -233,7 +233,7 @@ def getStyleFX():
         return oilFX
     if style == "Charcoal":
         return charcoalFX
-    if style == "Water Memory":
+    if style == "Water Memory" or style == "Water Memory Alt":
         return watermemoryFX
 
     return []
