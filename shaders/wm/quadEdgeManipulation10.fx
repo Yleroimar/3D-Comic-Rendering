@@ -233,7 +233,7 @@ float2 edgeUvLocationsFrag(vertexOutput i) : SV_Target {
     
     float2 edgeUv = iterateToEdge(loc, gradient);
 
-    if (0.5 < loadEdge(loc)) return float2(1.0, 1.0);
+    //if (0.5 < loadEdge(loc)) return float2(1.0, 1.0);
 
     return edgeUv;
 }
@@ -259,7 +259,7 @@ float2 getClosestEdgeLocation(int3 loc) {
         if (location.x < 0.0) continue;
         
         float2 locEF = uv2screen(location);
-        float distance = length(locEF - loc);
+        float distance = length(locEF - loc.xy);
 
         if (minDistance < distance) continue;
         
@@ -429,8 +429,6 @@ float4 applyEdgesFrag(vertexOutput i) : SV_Target {
 
     float edgeRadius = getEdgeRange(ctrlWidth);
     float distance = length(loc.xy - edgeLoc.xy);
-    // if (8.0 < distance) return renderTex;
-    // return float4(0.0, 0.0, 0.0, 0.0);
 
     float substrateHeight = loadSubstrateHeight(loc);
 
@@ -438,7 +436,6 @@ float4 applyEdgesFrag(vertexOutput i) : SV_Target {
                                            substrateHeight,
                                            ctrlIntensity);
     
-    // float3 color = renderTex.rgb * (1.0 - saturate(intensity));
     float3 color = lerp(renderTex.rgb, float3(0.0, 0.0, 0.0), intensity);
 
     return float4(color, 1.0);
