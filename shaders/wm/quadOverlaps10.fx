@@ -128,13 +128,8 @@ float getOverlapIntensity(int3 loc, float distance, float range) {
 
     if (distance < falloffStart) return 1.0;
 
-    float remainder = distance - falloffStart;
-
-    float remainderN = remainder / (range - falloffStart);
-
-    float intensity = 1.0 - remainderN;
-
-    float powered = pow(intensity, gOverlapFalloffSpeed);
+    float falloff = falloffValue(distance, range, falloffStart);
+    float powered = pow(falloff, gOverlapFalloffSpeed);
 
     return powered;
 }
@@ -154,11 +149,6 @@ float getDepthIntensity(int3 loc, int3 pickLoc, float range) {
     if (gOverlapDepthDifference < depthDiff * 1000) return 1.0;
 
     return 0.0;
-
-    float remainder = gOverlapDepthDifference - depthDiff;
-    float remainderN = remainder / gOverlapDepthDifference;
-
-    return remainderN;
 }
 
 float4 overlapsFrag(vertexOutput i) : SV_Target {
@@ -169,11 +159,13 @@ float4 overlapsFrag(vertexOutput i) : SV_Target {
     float ctrlRange = loadCtrlRange(loc);
     ctrlRange *= gOverlapRange;
 
-    if (ctrlRange <= 0.9) return renderTex;
+    if (ctrlRange <= 0.1) return renderTex;
+    // if (ctrlRange <= 0.9) return renderTex;
 
     int3 edgeLoc = loadEdgeLoc(loc);
 
     if (edgeLoc.x < 0.0) return renderTex;
+    // if (edgeLoc.x < 0.0) return float4(1.0, 0.0, 0.0, 1.0);
 
     float distance = length(edgeLoc.xy - loc.xy);
 
@@ -186,7 +178,7 @@ float4 overlapsFrag(vertexOutput i) : SV_Target {
     float depthIntensity = getDepthIntensity(loc, pickLoc, ctrlRange);
     float overlapIntensity = getOverlapIntensity(loc, distance, ctrlRange);
     float intensity = depthIntensity * overlapIntensity;
-    float3 color = lerp(renderTex.rgb, pickedColor, intensity);
+    float3 color = lerp(renderTex.rgb, pickedColor, saturate(intensity));
 
     return float4(color, 1.0);
 }
