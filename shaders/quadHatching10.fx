@@ -13,6 +13,7 @@
 // This shader file provides algorithms for hatching effects in MNPR
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "include\\quadCommon.fxh"
+#include "include\\quadColorTransform.fxh"
 
 // TEXTURES
 Texture2D gRenderTex;
@@ -29,8 +30,8 @@ float gHatchMultiplier = 1.0;
 
 float gTestingValue = 0.5;
 
-float thresholdDiffuse = 2.0; //0.85;
-float thresholdColor = 0.15;
+float gThresholdColor = 0.35;
+float gThresholdDiffuse = 1.0; //0.85;
 
 
 float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
@@ -46,16 +47,18 @@ float loadSubstrateHeight(int3 loc) { return loadSubstrateTex(loc).b; }
 float loadHatchCtrl(int3 loc) { return gHatchCtrl.Load(loc).g; }
 
 
-float colorIntensity(float3 color) { return length(color); }
-float colorHatchingIntensity(int3 loc) {
-    float colorLightness = colorIntensity(loadColorTex(loc).rgb);
-    return colorLightness / thresholdColor;
+// float colorIntensity(float3 color) { return length(color); }
+float colorLightness(float3 color) { return rgb2hsv2(color).z; }
+float colorHatchingLightness(int3 loc) {
+    float colorL = colorLightness(loadColorTex(loc).rgb);
+    return colorL / gThresholdColor;
 }
 
-float diffuseIntensity(float3 diffuseColor) { return length(diffuseColor); }
-float diffuseHatchingIntensity(int3 loc) {
-    float diffuse = diffuseIntensity(loadDiffuseTex(loc).rgb);
-    return diffuse / thresholdDiffuse;
+// float diffuseIntensity(float3 diffuseColor) { return length(diffuseColor); }
+float diffuseLightness(float3 diffuseColor) { return rgb2hsv2(diffuseColor).z; }
+float diffuseHatchingLightness(int3 loc) {
+    float diffuseL = diffuseLightness(loadDiffuseTex(loc).rgb);
+    return diffuseL / gThresholdDiffuse;
 }
 
 float specularIntensity(float3 specularColor) { return max(specularColor); }
@@ -68,16 +71,19 @@ float hatchingIntensity(int3 loc) {
     float substrateHeight = loadSubstrateHeight(loc);
 
     // color and diffuse is used to choose where to place substrate texture
-    float intensityColor = colorHatchingIntensity(loc);
-    float intensityDiffuse = diffuseHatchingIntensity(loc);
-    float intensity = min(1.0, min(intensityColor, intensityDiffuse));
+    float lightnessColor = colorHatchingLightness(loc);
+    float lightnessDiffuse = diffuseHatchingLightness(loc);
+    float lightness = min(1.0, min(lightnessColor, lightnessDiffuse));
     
     float hatchCtrl = loadHatchCtrl(loc);
     hatchCtrl = (1.0 + hatchCtrl) * gHatchMultiplier;
 
-    float strength = saturate(substrateHeight * hatchCtrl - intensity);
+    //float strength = saturate(substrateHeight * hatchCtrl - lightness);
+    //float strength = max(0, substrateHeight * hatchCtrl - lightness);
+    float strength = substrateHeight * hatchCtrl - lightness;
 
-    return 2.0 * strength * hatchCtrl;
+    // multiplied with 2.5 for better practical balance
+    return (1.0 - specular) * 2.5 * strength;// * hatchCtrl;
 }
 
 float4 hatchTestFrag(vertexOutput i) : SV_Target {
@@ -90,9 +96,14 @@ float4 hatchTestFrag(vertexOutput i) : SV_Target {
 
     float intensity = hatchingIntensity(loc);
 
+    float3 outColor = lerp(renderTex.rgb, float3(0,0,0), saturate(intensity));
+
+    return float4(outColor, renderTex.a);
+
     float renderColorIntensity = 1.0 - intensity;
 
-    return float4(renderTex.rgb * renderColorIntensity, renderTex.a);
+    return float4(renderTex.rgb * saturate(renderColorIntensity), renderTex.a);
+    //return float4(renderTex.rgb * renderColorIntensity, renderTex.a);
 }
 
 
