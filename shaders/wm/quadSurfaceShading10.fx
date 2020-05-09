@@ -2,16 +2,16 @@
 #include "..\\include\\quadColorTransform.fxh"
 
 Texture2D gRenderTex;
+Texture2D gDepthTex;
 Texture2D gDiffuseTex;
 Texture2D gSpecularTex;
 Texture2D gLightTex;
-Texture2D gDepthTex;
 
 
 // VARIABLES
 float3 gShadingTint = float3(1.0, 1.0, 1.0);
 float gShadingTintWeight = 1.0;
-float gShadingDesaturationWeight = 1.0;
+float gShadingSaturationWeight = 1.0;
 
 float gSurfaceThresholdHigh = 0.9;
 float gSurfaceThresholdMid = 0.5;
@@ -87,7 +87,7 @@ float getDiscreteIntensity(float3 lightColor) {
 }
 
 
-float3 setLightBrightness(float intensity, float3 lightRGB) {
+float3 setLightLevel(float intensity, float3 lightRGB) {
     float3 hueModelColor = toHueModel(lightRGB);
 
     hueModelColor.z = intensity;
@@ -98,9 +98,12 @@ float3 setLightBrightness(float intensity, float3 lightRGB) {
 float4 discreteLightFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
+    // float intensity2 = getColorIntensity(loadDiffuseColor(loc));
+    // return float4(intensity2, intensity2, intensity2, intensity2);
+    
     float3 light = loadDiffuseColor(loc);
     float intensity = getDiscreteIntensity(light);
-    float3 discrete = setLightBrightness(intensity, light);
+    float3 discrete = setLightLevel(intensity, light);
 
     return float4(discrete, intensity);
 }
@@ -127,9 +130,9 @@ float4 tintShadeFrag(vertexOutput i) : SV_Target {
 float updateSaturationValue(float hueModelSaturation, float lightIntensity) {
     float darkIntensity = 1.0 - lightIntensity;
 
-    float desaturationMultiplier = darkIntensity * gShadingDesaturationWeight;
+    float desaturationValue = darkIntensity * (1.0 - saturate(gShadingSaturationWeight));
 
-    float saturationValue = 1.0 - desaturationMultiplier;
+    float saturationValue = 1.0 - desaturationValue;
 
     return hueModelSaturation * saturationValue;
 }
@@ -158,6 +161,7 @@ float4 shadeSurfacesFrag(vertexOutput i) : SV_Target {
 
     float3 shadedColor = shadedSurfaceColor(renderTex.rgb, loadLightTex(loc));
 
+    // multiplied with alpha to account for transparency.
     return float4(shadedColor.rgb * renderTex.a, renderTex.a);
 }
 
