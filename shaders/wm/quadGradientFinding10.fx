@@ -1,23 +1,27 @@
-////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // quadGradientFinding10.fx (HLSL)
 // Brief: Gradient vector finding algorithms
 // Contributors: Oliver Vainumäe
-////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 //                        _ _            _        __ _           _ _             
 //     __ _ _ __ __ _  __| (_) ___ _ __ | |_     / _(_)_ __   __| (_)_ __   __ _ 
 //    / _` | '__/ _` |/ _` | |/ _ \ '_ \| __|   | |_| | '_ \ / _` | | '_ \ / _` |
 //   | (_| | | | (_| | (_| | |  __/ | | | |_    |  _| | | | | (_| | | | | | (_| |
 //    \__, |_|  \__,_|\__,_|_|\___|_| |_|\__|   |_| |_|_| |_|\__,_|_|_| |_|\__, |
 //    |___/                                                                |___/ 
-////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // This shader provides algorithms for gradient vector finding such as:
 // 1.- Gradient vector finding with seperated 3x3 kernel with corners [WM]
 // 2.- Gradient vector finding with seperated 3x3 kernel with corners (sampled) [WM]
-////////////////////////////////////////////////////////////////////////////////////
-#include "include\\quadCommon.fxh"
-#include "include\\quadColorTransform.fxh"
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "quadCommon.fxh"
+#include "..\\include\\quadColorTransform.fxh"
 
+
+
+// TEXTURES
 Texture2D gValueTex;
+
 
 
 //     __                  _   _
@@ -71,7 +75,6 @@ float2 gradientTowardsEdgeSampledFrag(vertexOutputSampler i) : SV_Target {
 }
 
 
-
 float2 getGradient(int3 loc) {
     float right = loadAt(loc, 1, 0);
     float left = loadAt(loc, -1, 0);
@@ -93,6 +96,7 @@ float2 getGradient(int3 loc) {
 
     return normalize(gradient);
 }
+
 
 //                        _ _            _        __ _           _ _             
 //     __ _ _ __ __ _  __| (_) ___ _ __ | |_     / _(_)_ __   __| (_)_ __   __ _ 
@@ -126,6 +130,15 @@ float3 gradientTowardsEdgeDebugFrag(vertexOutput i) : SV_Target {
 
     return rgb;
 }
+
+
+
+//    _            _           _                       
+//   | |_ ___  ___| |__  _ __ (_) __ _ _   _  ___  ___ 
+//   | __/ _ \/ __| '_ \| '_ \| |/ _` | | | |/ _ \/ __|
+//   | ||  __/ (__| | | | | | | | (_| | |_| |  __/\__ \
+//    \__\___|\___|_| |_|_| |_|_|\__, |\__,_|\___||___/
+//                                  |_|                
 
 technique11 gradientTowardsEdgeSampled {
     pass p0 {

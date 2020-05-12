@@ -1,33 +1,24 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // quadHatching10.fx (HLSL)
 // Brief: Hatching operations for MNPR
 // Contributors: Oliver Vainumäe
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 //    _           _       _     _             
 //   | |__   __ _| |_ ___| |__ (_)_ __   __ _ 
 //   | '_ \ / _` | __/ __| '_ \| | '_ \ / _` |
 //   | | | | (_| | || (__| | | | | | | | (_| |
 //   |_| |_|\__,_|\__\___|_| |_|_|_| |_|\__, |
 //                                      |___/
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // This shader file provides algorithms for hatching effects in MNPR
-////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "include\\quadCommon.fxh"
-#include "include\\quadColorTransform.fxh"
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "quadCommon.fxh"
+#include "..\\include\\quadColorTransform.fxh"
 
-// TEXTURES
-Texture2D gRenderTex;
-Texture2D gDiffuseTex;
-Texture2D gSpecularTex;
-Texture2D gHatchCtrl;
-Texture2D gSubstrateTex;
-Texture2D gNormalsTex;
 
 
 // VARIABLES
 float gHatchMultiplier = 1.0;
-
-float gTestingValue = 0.5;
 
 float gThresholdColor = 0.35;
 float gThresholdDiffuse = 1.0;
@@ -40,17 +31,8 @@ float gThresholdDiffuse = 1.0;
 //   |  _| |_| | | | | (__| |_| | (_) | | | \__ \
 //   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 //
-float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
-
-float4 loadDiffuseTex(int3 loc) { return gDiffuseTex.Load(loc); }
-float4 loadSpecularTex(int3 loc) { return gSpecularTex.Load(loc); }
 
 float2 loadUVs(int3 loc) { return gNormalsTex.Load(loc).ba; }
-
-float4 loadSubstrateTex(int3 loc) { return gSubstrateTex.Load(loc); }
-float loadSubstrateHeight(int3 loc) { return loadSubstrateTex(loc).b; }
-
-float loadHatchCtrl(int3 loc) { return gHatchCtrl.Load(loc).g; }
 
 
 // float colorIntensity(float3 color) { return length(color); }
