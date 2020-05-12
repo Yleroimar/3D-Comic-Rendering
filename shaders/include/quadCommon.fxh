@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadCommon.fxh (HLSL)
 // Brief: Common utility shader elements for MNPR
-// Contributors: Santiago Montesdeoca
+// Contributors: Santiago Montesdeoca, Oliver Vainumäe
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                          _
 //     __ _ _   _  __ _  __| |       ___ ___  _ __ ___  _ __ ___   ___  _ __
@@ -160,9 +160,11 @@ float mod(float x, float y) {
     return x - y * floor(x / y);
 }
 
+// offset a float2 screen-location to int2
 int2 offsetScreen(float2 xy) { return round(xy); }
 int2 offsetScreen(int2 xy, float2 dxy) { return offsetScreen(xy + dxy); }
 int2 offsetScreen(int3 loc, float2 dxy) { return offsetScreen(loc.xy + dxy); }
+// offset a float2 screen-location to int3
 int3 offsetLoc(float2 xy) { return int3(offsetScreen(xy), 0); }
 int3 offsetLoc(int2 xy, float2 dxy) { return int3(offsetScreen(xy, dxy), 0); }
 int3 offsetLoc(int3 loc, float2 dxy) { return int3(offsetScreen(loc, dxy), 0); }

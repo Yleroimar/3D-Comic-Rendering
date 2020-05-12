@@ -1,3 +1,27 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+// quadEdgeManipulation10.fx (HLSL)
+// Brief: Edge manipulation algorithms for Water Memory
+// Contributors: Oliver Vainumäe
+///////////////////////////////////////////////////////////////////////////////////////////////
+//             _                                      _             _       _   _             
+//     ___  __| | __ _  ___     _ __ ___   __ _ _ __ (_)_ __  _   _| | __ _| |_(_) ___  _ __  
+//    / _ \/ _` |/ _` |/ _ \   | '_ ` _ \ / _` | '_ \| | '_ \| | | | |/ _` | __| |/ _ \| '_ \ 
+//   |  __/ (_| | (_| |  __/   | | | | | | (_| | | | | | |_) | |_| | | (_| | |_| | (_) | | | |
+//    \___|\__,_|\__, |\___|   |_| |_| |_|\__,_|_| |_|_| .__/ \__,_|_|\__,_|\__|_|\___/|_| |_|
+//               |___/                                 |_|                                    
+///////////////////////////////////////////////////////////////////////////////////////////////
+// This shader provides alorithms for edge manipulation such as:
+// 1.- Setting edge pixel value as the pixel's UV position [WM]
+// 2.- Dilating  [WM]
+// 2.- RGBDNO edge-detection combining into Red channel [WM]
+// 3.- Edge-detection thresholding [WM]
+// 4.- Edge-related controls target dilating, based on depth [WM]
+// 5.- Iterating to closest edge using gradient vector of blurred edges target [WM]
+// 6.- Dilating closest edge location based on proximity [WM]
+// 7.- Removing edge location pixels that are too far from edge (DEBUG) [WM]
+// 8.- Setting the intensity of edges based on ctrl from edge location (DEBUG) [WM]
+// 9.- Applying the edges using edge ctrl target and edge locations [WM]
+///////////////////////////////////////////////////////////////////////////////////////////////
 #include "..\\include\\quadCommon.fxh"
 
 // TEXTURES
@@ -60,10 +84,27 @@ float4 loadSubstrateTex(int3 loc) { return gSubstrateTex.Load(loc); }
 float4 loadSubstrateHeight(int3 loc) { return loadSubstrateTex(loc).b; }
 
 
+float thresholdValue(float value, float threshold) { return value < threshold ? 0.0 : 1.0; }
 
-// EDGE MANIPULATIONS
+
+float getEdgeRange(float ctrlWidth) {
+    if (0 < ctrlWidth)
+        ctrlWidth *= 8;
+
+    return gEdgeWidth * (1.0 + ctrlWidth);
+}
 
 
+
+
+//             _                _                            
+//    ___  ___| |_      ___  __| | __ _  ___     _   ___   __
+//   / __|/ _ \ __|    / _ \/ _` |/ _` |/ _ \   | | | \ \ / /
+//   \__ \  __/ |_    |  __/ (_| | (_| |  __/   | |_| |\ V / 
+//   |___/\___|\__|    \___|\__,_|\__, |\___|    \__,_| \_/  
+//                                |___/                      
+// Contributor: Oliver Vainumäe
+// Sets the edge pixel value as the pixel's UV position
 float2 placeUVsFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
@@ -75,12 +116,18 @@ float2 placeUVsFrag(vertexOutput i) : SV_Target {
 }
 
 
+//        _ _ _       _                    _            
+//     __| (_) | __ _| |_ ___      ___  __| | __ _  ___ 
+//    / _` | | |/ _` | __/ _ \    / _ \/ _` |/ _` |/ _ \
+//   | (_| | | | (_| | ||  __/   |  __/ (_| | (_| |  __/
+//    \__,_|_|_|\__,_|\__\___|    \___|\__,_|\__, |\___|
+//                                           |___/      
+// Contributor: Oliver Vainumäe
+// Dilates the the edge
 float dilateEdgeFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
-    return loadEdge(loc);
-
-    /* const int kernelWidth = cEdgeDilateKernelWidth;
+    const int kernelWidth = cEdgeDilateKernelWidth;
     const int kernelWidthHalf = kernelWidth / 2;
     const int kernelSize = kernelWidth * kernelWidth;
 
@@ -94,23 +141,19 @@ float dilateEdgeFrag(vertexOutput i) : SV_Target {
         if (0.5 < edge) return edge;
     }
 
-    return 0.0; */
+    return 0.0;
 }
 
 
-float thresholdValue(float value, float threshold) { return value < threshold ? 0.0 : 1.0; }
-
-float thresholdEdgesFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0);
-
-    float4 edgeTex = loadEdgeTex(loc);
-
-    edgeTex.r = thresholdValue(edgeTex.r, gEdgeThreshold);
-
-    return edgeTex.r;
-}
-
-
+//                        _     _                         _                 
+//     ___ ___  _ __ ___ | |__ (_)_ __   ___      ___  __| | __ _  ___  ___ 
+//    / __/ _ \| '_ ` _ \| '_ \| | '_ \ / _ \    / _ \/ _` |/ _` |/ _ \/ __|
+//   | (_| (_) | | | | | | |_) | | | | |  __/   |  __/ (_| | (_| |  __/\__ \
+//    \___\___/|_| |_| |_|_.__/|_|_| |_|\___|    \___|\__,_|\__, |\___||___/
+//                                                          |___/           
+// Contributor: Oliver Vainumäe
+// Combines the 4 edge-types into Red channel by taking max
+// color-based edges (red) are multiplied with a ctrl weight
 float edgePickerFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
@@ -124,7 +167,34 @@ float edgePickerFrag(vertexOutput i) : SV_Target {
 
 
 
-int2 findClosestDepthNeighbour(int3 loc) {
+//    _   _                   _           _     _              _                 
+//   | |_| |__  _ __ ___  ___| |__   ___ | | __| |     ___  __| | __ _  ___  ___ 
+//   | __| '_ \| '__/ _ \/ __| '_ \ / _ \| |/ _` |    / _ \/ _` |/ _` |/ _ \/ __|
+//   | |_| | | | | |  __/\__ \ | | | (_) | | (_| |   |  __/ (_| | (_| |  __/\__ \
+//    \__|_| |_|_|  \___||___/_| |_|\___/|_|\__,_|    \___|\__,_|\__, |\___||___/
+//                                                               |___/           
+// Contributor: Oliver Vainumäe
+// Thresholds edge intensities to output edges as binary values
+float thresholdEdgesFrag(vertexOutput i) : SV_Target {
+    int3 loc = int3(i.pos.xy, 0);
+
+    float4 edgeTex = loadEdgeTex(loc);
+
+    edgeTex.r = thresholdValue(edgeTex.r, gEdgeThreshold);
+
+    return edgeTex.r;
+}
+
+
+//             _                     _        _         _ _ _       _       
+//     ___  __| | __ _  ___      ___| |_ _ __| |     __| (_) | __ _| |_ ___ 
+//    / _ \/ _` |/ _` |/ _ \    / __| __| '__| |    / _` | | |/ _` | __/ _ \
+//   |  __/ (_| | (_| |  __/   | (__| |_| |  | |   | (_| | | | (_| | ||  __/
+//    \___|\__,_|\__, |\___|    \___|\__|_|  |_|    \__,_|_|_|\__,_|\__\___|
+//               |___/                                                      
+// Contributor: Oliver Vainumäe
+// Takes the edge-related control values from the neighbor depth-wise closest to the viewer
+int3 findClosestDepthNeighbour(int3 loc) {
     int3 closest = loc;
     float depth = loadDepth(loc);
 
@@ -145,66 +215,29 @@ int2 findClosestDepthNeighbour(int3 loc) {
         depth = depth2;
     }
 
-    return closest.xy;
+    return closest;
 }
 
 float4 fixEdgeCtrlFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
-    /* float4 ctrlTexTemp = loadEdgeCtrlTex(loc);
-    if (0.5 < loadEdge(loc))
-        ctrlTexTemp.b = 0.25;
-    else ctrlTexTemp.b = 0.0;
-    return ctrlTexTemp; */
+    /* if (edge < 0.5) return loadEdgeCtrlTex(loc); */
 
-    /* float edge = loadEdge(loc);
+    int3 from = findClosestDepthNeighbour(loc);
 
-    if (edge < 0.5) return loadEdgeCtrlTex(loc); */
-
-    int3 from = int3(findClosestDepthNeighbour(loc), 0);
-
-    float4 ctrlTex = loadEdgeCtrlTex(from);
-    
-    /* if (0.5 < loadEdge(loc))
-        ctrlTex.b = 0.25;
-    else ctrlTex.b = 0.0; */
-
-    return ctrlTex;
+    return loadEdgeCtrlTex(from);
 }
 
 
 
-float2 iterateToEdgeSampled(float2 uv, float2 gradient) {
-    float2 uv2 = uv;
-    float edge = sampleEdge(uv2);
-
-    const int iterations = cEdgeIterations;
-
-    [unroll(iterations % 20)]
-    for (int i = 1; i <= iterations; i++) {
-        if (0.5 < edge) return uv2;
-
-        uv2 = uv + screen2uv(i * gradient);
-        edge = sampleEdge(uv2);
-    }
-
-    // if we got here, we didn't reach any edge.
-    return float2(-1.0, -1.0);
-}
-
-float2 edgeUvLocationsSampledFrag(vertexOutputSampler i) : SV_Target {
-    float2 uv = i.uv;
-
-    float2 gradient = sampleGradient(uv);
-
-    // if gradient is too small, then no edge is nearby.
-    if (length(gradient) < 0.5) return float2(-1.0, -1.0);
-    
-    float2 edgeUv = iterateToEdgeSampled(uv, gradient);
-
-    return edgeUv;
-}
-
+//    _ _                 _           _                     _            
+//   (_) |_ ___ _ __ __ _| |_ ___    | |_ ___       ___  __| | __ _  ___ 
+//   | | __/ _ \ '__/ _` | __/ _ \   | __/ _ \     / _ \/ _` |/ _` |/ _ \
+//   | | ||  __/ | | (_| | ||  __/   | || (_) |   |  __/ (_| | (_| |  __/
+//   |_|\__\___|_|  \__,_|\__\___|    \__\___/     \___|\__,_|\__, |\___|
+//                                                            |___/      
+// Contributor: Oliver Vainumäe
+// Iterates to the closest edge based on the gradient vector of blurred edges target
 float2 iterateToEdge(int3 loc, float2 gradient) {
     float2 locF = loc.xy;
     float edge = loadEdge(loc);
@@ -239,7 +272,14 @@ float2 edgeUvLocationsFrag(vertexOutput i) : SV_Target {
 }
 
 
-
+//        _ _ _       _                    _                _            
+//     __| (_) | __ _| |_ ___      ___  __| | __ _  ___    | | ___   ___ 
+//    / _` | | |/ _` | __/ _ \    / _ \/ _` |/ _` |/ _ \   | |/ _ \ / __|
+//   | (_| | | | (_| | ||  __/   |  __/ (_| | (_| |  __/   | | (_) | (__ 
+//    \__,_|_|_|\__,_|\__\___|    \___|\__,_|\__, |\___|   |_|\___/ \___|
+//                                           |___/                       
+// Contributor: Oliver Vainumäe
+// Dilates edge locations based on location values from neighbors and the location proximity
 float2 getClosestEdgeLocation(int3 loc) {
     float2 closest = float2(-1.0, -1.0);
     float minDistance = 10000; // a big number for a start
@@ -297,20 +337,22 @@ float2 dilateEdgeLocationsFrag(vertexOutput i) : SV_Target {
     if (0.0 <= local.x) return local; */
 
     // float2 closest = getNearbyEdgeLocation(loc);
-
     float2 closest = getClosestEdgeLocation(loc);
 
     return closest;
 }
 
 
-float getEdgeRange(float ctrlWidth) {
-    if (0 < ctrlWidth)
-        ctrlWidth *= 8;
 
-    return gEdgeWidth * (1.0 + ctrlWidth);
-}
-
+//                                           __                      _      
+//    _ __ ___ _ __ ___   _____   _____     / _| __ _ _ __     _ __ (_)_  __
+//   | '__/ _ \ '_ ` _ \ / _ \ \ / / _ \   | |_ / _` | '__|   | '_ \| \ \/ /
+//   | | |  __/ | | | | | (_) \ V /  __/   |  _| (_| | |      | |_) | |>  < 
+//   |_|  \___|_| |_| |_|\___/ \_/ \___|   |_|  \__,_|_|      | .__/|_/_/\_\
+//                                                            |_|           
+// Contributor: Oliver Vainumäe
+// Removes the edge location pixels that are already too far based on edge range
+//  Used for debugging
 float2 removeFarPixelsFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
@@ -334,7 +376,15 @@ float2 removeFarPixelsFrag(vertexOutput i) : SV_Target {
 }
 
 
-
+//             _                _       _                 _ _         
+//     ___  __| | __ _  ___    (_)_ __ | |_ ___ _ __  ___(_) |_ _   _ 
+//    / _ \/ _` |/ _` |/ _ \   | | '_ \| __/ _ \ '_ \/ __| | __| | | |
+//   |  __/ (_| | (_| |  __/   | | | | | ||  __/ | | \__ \ | |_| |_| |
+//    \___|\__,_|\__, |\___|   |_|_| |_|\__\___|_| |_|___/_|\__|\__, |
+//               |___/                                          |___/ 
+// Contributor: Oliver Vainumäe
+// Sets the edge intensity based on ctrl from edge location
+//  Used for debugging
 float4 edgeIntensityFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
@@ -357,40 +407,16 @@ float4 edgeIntensityFrag(vertexOutput i) : SV_Target {
 
 
 
-float4 averageEdgeIntensityFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0);
-
-    float4 localEdgeTex = loadEdgeTex(loc);
-
-    return localEdgeTex;
-
-    /* if (localEdgeTex.a < 0.5) return localEdgeTex;
-
-    int pixels = 0;
-    float intensitySum = 0;
-
-    [unroll(9)]
-    for (int i = 0; i < 9; i++) {
-        int3 loc2 = kernelOffsetLoc(loc, i, 3, 1, 9);
-
-        float4 edgeTex = loadEdgeTex(loc2);
-
-        if (edgeTex.a < 0.5) continue;
-
-        float intensity = edgeTex.r;
-
-        pixels++;
-        intensitySum += intensity;
-    }
-
-    float averageIntensity = intensitySum / pixels;
-
-    return float4(averageIntensity, 0.0, 0.0, 1.0); */
-}
-
-
-
-
+//                      _                    _                 
+//     __ _ _ __  _ __ | |_   _      ___  __| | __ _  ___  ___ 
+//    / _` | '_ \| '_ \| | | | |    / _ \/ _` |/ _` |/ _ \/ __|
+//   | (_| | |_) | |_) | | |_| |   |  __/ (_| | (_| |  __/\__ \
+//    \__,_| .__/| .__/|_|\__, |    \___|\__,_|\__, |\___||___/
+//         |_|   |_|      |___/                |___/           
+// Contributor: Oliver Vainumäe
+// Applies the edges using edge locations target.
+//  Out-of-range pixels are filtered out and intensities are accounted for
+//   based on the edge ctrl target at the pointed edge location.
 float getDistanceIntensity(float distance, float edgeRadius) {
     float falloffStart = gEdgeFalloffStart * edgeRadius;
     return falloffValue(distance, edgeRadius, falloffStart);
@@ -491,14 +517,6 @@ technique11 fixEdgeCtrl {
     }
 };
 
-technique11 edgeUvLocationsSampled {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVertSampler()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, edgeUvLocationsSampledFrag()));
-    }
-};
-
 technique11 edgeUvLocations {
     pass p0 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
@@ -528,14 +546,6 @@ technique11 edgeIntensity {
         SetVertexShader(CompileShader(vs_5_0, quadVertSampler()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, edgeIntensityFrag()));
-    }
-};
-
-technique11 averageEdgeIntensity {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVertSampler()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, averageEdgeIntensityFrag()));
     }
 };
 

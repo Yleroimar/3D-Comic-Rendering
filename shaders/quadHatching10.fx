@@ -17,7 +17,6 @@
 
 // TEXTURES
 Texture2D gRenderTex;
-Texture2D gDepthTex;
 Texture2D gDiffuseTex;
 Texture2D gSpecularTex;
 Texture2D gHatchCtrl;
@@ -31,9 +30,16 @@ float gHatchMultiplier = 1.0;
 float gTestingValue = 0.5;
 
 float gThresholdColor = 0.35;
-float gThresholdDiffuse = 1.0; //0.85;
+float gThresholdDiffuse = 1.0;
 
 
+
+//     __                  _   _
+//    / _|_   _ _ __   ___| |_(_) ___  _ __  ___
+//   | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+//   |  _| |_| | | | | (__| |_| | (_) | | | \__ \
+//   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+//
 float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
 
 float4 loadDiffuseTex(int3 loc) { return gDiffuseTex.Load(loc); }
@@ -86,27 +92,31 @@ float hatchingIntensity(int3 loc) {
     return (1.0 - specular) * 2.5 * strength;// * hatchCtrl;
 }
 
+
+//    _           _       _     _             
+//   | |__   __ _| |_ ___| |__ (_)_ __   __ _ 
+//   | '_ \ / _` | __/ __| '_ \| | '_ \ / _` |
+//   | | | | (_| | || (__| | | | | | | | (_| |
+//   |_| |_|\__,_|\__\___|_| |_|_|_| |_|\__, |
+//                                      |___/ 
+// Contributor: Oliver Vainumäe
+// Adds substrate-based hatching to the render
 float4 hatchTestFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
     float4 renderTex = loadRenderTex(loc);
-    // return renderTex;
     
     if (renderTex.a == 0.0) return renderTex;
 
-    float intensity = hatchingIntensity(loc);
+    float hatchIntensity = hatchingIntensity(loc);
 
-    float3 outColor = lerp(renderTex.rgb, float3(0,0,0), saturate(intensity));
+    float3 outColor = lerp(renderTex.rgb, float3(0,0,0), saturate(hatchIntensity));
 
     return float4(outColor, renderTex.a);
-
-    float renderColorIntensity = 1.0 - intensity;
-
-    return float4(renderTex.rgb * saturate(renderColorIntensity), renderTex.a);
-    //return float4(renderTex.rgb * renderColorIntensity, renderTex.a);
 }
 
 
+// UNFINISHED, UNUSED
 float4 hatchingUVsFrag(vertexOutput i) : SV_Target {
     int3 loc = int3(i.pos.xy, 0);
 
@@ -139,7 +149,7 @@ float4 hatchingUVsFrag(vertexOutput i) : SV_Target {
 //   | ||  __/ (__| | | | | | | | (_| | |_| |  __/\__ \
 //    \__\___|\___|_| |_|_| |_|_|\__, |\__,_|\___||___/
 //                                  |_|                
-
+// SUBSTRATE-BASED HATCHING [WM]
 technique11 hatchTest {
     pass p0 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
@@ -148,6 +158,7 @@ technique11 hatchTest {
     }
 };
 
+// UNFINISHED, UNUSED
 technique11 hatchUVsTest {
     pass p0 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));

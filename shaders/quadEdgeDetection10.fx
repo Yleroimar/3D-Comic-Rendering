@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // quadEdgeDetection10.fx (HLSL)
 // Brief: Edge detection operations
-// Contributors: Santiago Montesdeoca
+// Contributors: Santiago Montesdeoca, Oliver Vainumäe
 /////////////////////////////////////////////////////////////////////////////
 //             _                    _      _            _   _
 //     ___  __| | __ _  ___      __| | ___| |_ ___  ___| |_(_) ___  _ __
@@ -63,6 +63,48 @@ RGBDN rgbdn(int3 loc) {
 }
 RGBDN rgbdn(int3 loc, int dx, int dy) { return rgbdn(loc + int3(dx, dy, 0)); }
 
+
+
+float gaussianWeight(float x, float y, float sigma) {
+    return 0.15915 * exp(-0.5 * (x * x + y * y) / (sigma * sigma)) / (sigma);
+}
+float gaussianWeight(int3 dloc, float sigma) { return gaussianWeight(dloc.x, dloc.y, sigma); }
+
+// Finds the weighted sum in the localized kernel
+RGBDN getGaussianKernelResult(int3 loc, int kernelWidth, float sigma) {
+	RGBDN result;
+
+	float4 value4 = float4(0.0, 0.0, 0.0, 0.0);
+
+	result.rgbd = float4(0.0, 0.0, 0.0, 0.0);
+	result.normal = float3(0.0, 0.0, 0.0);
+	result.weightSum = 0.0;
+
+	int kernelWidthHalf = kernelWidth / 2;
+	int kernelSize = kernelWidth * kernelWidth;
+
+	[unroll(25)]
+	for (int i = 0; i < kernelSize; i++) {
+		int3 dloc = kernelOffsetLoc(i, kernelWidth,
+								   kernelWidthHalf, kernelSize);
+
+		int3 loc2 = loc + dloc;
+
+		RGBDN values = rgbdn(loc2);
+		float weight = gaussianWeight(dloc, sigma);
+
+		value4 += weight * values.rgbd;
+
+		result.rgbd += weight * values.rgbd;
+		result.normal += weight * values.normal;
+		result.weightSum += weight;
+	}
+
+	result.rgbd = value4 / result.weightSum;
+	result.normal /= result.weightSum;
+
+	return result;
+}
 
 
 
@@ -223,7 +265,8 @@ float3 dogRGBDFrag(vertexOutput i) : SV_Target{
 	return edgeMagnitude.xxx;
 }
 
-
+// Contributor: Oliver Vainumäe
+// Modification to dogRGBD to also do edge detection on normals channels
 float4 dogRGBDNFrag(vertexOutput i) : SV_Target{
 	int3 loc = int3(i.pos.xy, 0);
 
@@ -268,48 +311,8 @@ float4 dogRGBDNFrag(vertexOutput i) : SV_Target{
 	return float4(edgeMagnitudeRGB, edgeMagnitudeD, edgeMagnitudeN, 1.0);
 }
 
-
-float gaussianWeight(float x, float y, float sigma) {
-    // return 0.15915 * exp(-0.5 * (x * x + y * y) / (sigma * sigma)) / (sigma);
-    return 0.15915 * exp(-0.5 * (x * x + y * y) / (sigma * sigma)) / (sigma);
-}
-float gaussianWeight(int3 dloc, float sigma) { return gaussianWeight(dloc.x, dloc.y, sigma); }
-
-RGBDN getGaussianKernelResult(int3 loc, int kernelWidth, float sigma) {
-	RGBDN result;
-
-	float4 value4 = float4(0.0, 0.0, 0.0, 0.0);
-
-	result.rgbd = float4(0.0, 0.0, 0.0, 0.0);
-	result.normal = float3(0.0, 0.0, 0.0);
-	result.weightSum = 0.0;
-
-	int kernelWidthHalf = kernelWidth / 2;
-	int kernelSize = kernelWidth * kernelWidth;
-
-	[unroll(25)]
-	for (int i = 0; i < kernelSize; i++) {
-		int3 dloc = kernelOffsetLoc(i, kernelWidth,
-								   kernelWidthHalf, kernelSize);
-
-		int3 loc2 = loc + dloc;
-
-		RGBDN values = rgbdn(loc2);
-		float weight = gaussianWeight(dloc, sigma);
-
-		value4 += weight * values.rgbd;
-
-		result.rgbd += weight * values.rgbd;
-		result.normal += weight * values.normal;
-		result.weightSum += weight;
-	}
-
-	result.rgbd = value4 / result.weightSum;
-	result.normal /= result.weightSum;
-
-	return result;
-}
-
+// Contributor: Oliver Vainumäe
+// Modification to do dogRGBDN to a 5x5 kernel
 float4 badDogRGBDNFrag(vertexOutput vertex) : SV_Target{
 	int3 loc = int3(vertex.pos.xy, 0);
 
@@ -331,7 +334,8 @@ float4 badDogRGBDNFrag(vertexOutput vertex) : SV_Target{
 	return float4(edgeMagnitudeRGB, edgeMagnitudeD, edgeMagnitudeN, 1.0);
 }
 
-
+// Contributor: Oliver Vainumäe
+// Performs edge detection on object IDs - every difference in value signals of an edge
 float4 objectIDEdgeDetectionFrag(vertexOutput vertex) : SV_Target {
 	int3 loc = int3(vertex.pos.xy, 0);
 
@@ -400,12 +404,12 @@ technique11 dogRGBDNEdgeDetection {
 	}
 }
 
+// Difference of Gaussians RGBDN edge detection with 5x5 kernel
 technique11 badDogRGBDNEdgeDetection {
 	pass p0 {
 		SetVertexShader(CompileShader(vs_5_0, quadVert()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, badDogRGBDNFrag()));
-		// SetPixelShader(CompileShader(ps_5_0, sobelRGBDNFrag()));
 	}
 }
 

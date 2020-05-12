@@ -1,3 +1,19 @@
+////////////////////////////////////////////////////////////////////////
+// quadSeparable10.fx (HLSL)
+// Brief: Separable filters for edge blurring
+// Contributors: Oliver Vainumäe
+////////////////////////////////////////////////////////////////////////
+//                                   _     _      
+//    ___  ___ _ __   __ _ _ __ __ _| |__ | | ___ 
+//   / __|/ _ \ '_ \ / _` | '__/ _` | '_ \| |/ _ \
+//   \__ \  __/ |_) | (_| | | | (_| | |_) | |  __/
+//   |___/\___| .__/ \__,_|_|  \__,_|_.__/|_|\___|
+//            |_|                                 
+////////////////////////////////////////////////////////////////////////
+// This shader file provides separable filters to achieve the following:
+// - Extend the edges to converge edges into overlaps
+// - Extend the edges to converge edges into overlaps (sampled)
+////////////////////////////////////////////////////////////////////////
 #include "..\\include\\quadCommon.fxh"
 
 // TEXTURES
@@ -48,6 +64,7 @@ float linearWeight(float x) { return 1.0 - x; }
 float getSigma(int kernelRadius) { return kernelRadius / 3; }
 
 float getWeight(int stepNr, float sigma, int kernelRadius) {
+    // this is used to unify the control over weights to one place
     return gaussianWeight(stepNr, sigma);
     return linearWeight(stepNr / kernelRadius);
     return cosineWeight(stepNr / kernelRadius);
@@ -65,7 +82,14 @@ float4 loadEdgeTex(int3 loc) { return gEdgeTex.Load(loc); }
 float loadEdgeIntensity(int3 loc) { return getEdgeIntensity(loadEdgeTex(loc)); }
 
 
-
+//             _                _     _            
+//     ___  __| | __ _  ___    | |__ | |_   _ _ __ 
+//    / _ \/ _` |/ _` |/ _ \   | '_ \| | | | | '__|
+//   |  __/ (_| | (_| |  __/   | |_) | | |_| | |   
+//    \___|\__,_|\__, |\___|   |_.__/|_|\__,_|_|   
+//               |___/                             
+// Contributor: Oliver Vainumäe
+// Extends the edges for overlaps
 float edgeBlurSampled(float2 uv, float2 dir) {
     int kernelRadius = max(1, cPaintedWidth);
     
@@ -89,6 +113,15 @@ float edgeBlurSampled(float2 uv, float2 dir) {
     return edgeGradient / normDivisor;
 }
 
+
+//             _                _     _            
+//     ___  __| | __ _  ___    | |__ | |_   _ _ __ 
+//    / _ \/ _` |/ _` |/ _ \   | '_ \| | | | | '__|
+//   |  __/ (_| | (_| |  __/   | |_) | | |_| | |   
+//    \___|\__,_|\__, |\___|   |_.__/|_|\__,_|_|   
+//               |___/                             
+// Contributor: Oliver Vainumäe
+// Extends the edges for overlaps
 float edgeBlur(int3 loc, int3 dir) {
     int kernelRadius = max(1, cPaintedWidth);
     

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // quadColorTransform.fxh (HLSL)
 // Brief: Common color transformation snippets for MNPR
-// Contributors: Amir Semmo, Pierre B�nard
+// Contributors: Amir Semmo, Pierre B�nard, Oliver Vainumäe
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //              _                _                        __                      
 //     ___ ___ | | ___  _ __    | |_ _ __ __ _ _ __  ___ / _| ___  _ __ _ __ ___  

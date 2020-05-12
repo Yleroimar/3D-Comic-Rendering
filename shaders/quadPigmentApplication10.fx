@@ -153,9 +153,9 @@ fragmentOutput pigmentApplicationOPFrag(vertexOutput i) {
 }
 
 
-
+// UNFINISHED AND UNUSED
 float4 pigmentApplicationWMFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0);  // coordinates for loading
+    int3 loc = int3(i.pos.xy, 0);
 
     float4 renderTex = gColorTex.Load(loc);
 
@@ -216,7 +216,7 @@ technique11 pigmentApplicationOP {
         SetPixelShader(CompileShader(ps_5_0, pigmentApplicationOPFrag()));
     }
 }
-
+// [WM] - PIGMENT APPLICATION - UNFINISHED, UNUSED
 technique11 pigmentApplicationWM {
     pass p0 {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
