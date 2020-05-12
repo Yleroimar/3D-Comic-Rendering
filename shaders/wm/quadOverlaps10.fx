@@ -1,25 +1,20 @@
-/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // quadGapsOverlaps10.fx (HLSL)
 // Brief: Creating smudging overlaps near the edges of the rendered image
 // Contributors: Oliver Vainumäe
-/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 //                        _                 
 //     _____   _____ _ __| | __ _ _ __  ___ 
 //    / _ \ \ / / _ \ '__| |/ _` | '_ \/ __|
 //   | (_) \ V /  __/ |  | | (_| | |_) \__ \
 //    \___/ \_/ \___|_|  |_|\__,_| .__/|___/
 //                               |_|        
-/////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // This shader provides the algorithms to produce smudging overlaps found in Water Memory
-/////////////////////////////////////////////////////////////////////////////////////////
-#include "..\\include\\quadCommon.fxh"
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "quadCommon.fxh"
 
-// TEXTURES
-Texture2D gRenderTex;
-Texture2D gEdgeControlTex;
-Texture2D gAbstractControlTex;
-Texture2D gEdgeLocationTex;
-Texture2D gDepthTex; // to identifty if overlapping color comes from behind or from in front
+
 
 // VARIABLES
 float gOverlapRange = 10.0;
@@ -36,26 +31,11 @@ float gOverlapDepthDifference = 1.0;
 //   |  _| |_| | | | | (__| |_| | (_) | | | \__ \
 //   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 //
-float2 loadEdgeUv(int3 loc) { return gEdgeLocationTex.Load(loc).xy; }
-int3 loadEdgeLoc(int3 loc) { return uv2loc(loadEdgeUv(loc).xy); }
-int2 loadEdgeScreen(int3 loc) { return uv2screen(loadEdgeUv(loc).xy); }
-
-float4 loadEdgeCtrlTex(int3 loc) { return gEdgeControlTex.Load(loc); }
-float loadCtrlRange(float4 edgeCtrlTex) { return edgeCtrlTex.b; }
-float loadCtrlRange(int3 loc) { return loadCtrlRange(loadEdgeCtrlTex(loc)); }
-
-float4 loadAbstractCtrlTex(int3 loc) { return gAbstractControlTex.Load(loc); }
-float loadCtrlFalloff(float4 absCtrlTex) { return absCtrlTex.b; }
-float loadCtrlFalloff(int3 loc) { return loadCtrlFalloff(loadAbstractCtrlTex(loc)); }
-
-float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
-float loadDepth(int3 loc) { return gDepthTex.Load(loc).r; }
-
 
 float getOverlapIntensity(int3 loc, float distance, float range) {
     range = abs(range);
 
-    float ctrlFalloff = max(loadCtrlFalloff(loc), 0.0);
+    float ctrlFalloff = max(loadOverlapFalloffCtrl(loc), 0.0);
     ctrlFalloff *= gOverlapFalloff;
 
     float falloffStart = ctrlFalloff * range;
@@ -100,7 +80,7 @@ float4 overlapsFrag(vertexOutput i) : SV_Target {
 
     float4 renderTex = loadRenderTex(loc);
 
-    float ctrlRange = loadCtrlRange(loc);
+    float ctrlRange = loadOverlapRangeCtrl(loc);
     ctrlRange *= gOverlapRange;
 
     if (ctrlRange <= 0.1) return renderTex;

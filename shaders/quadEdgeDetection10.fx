@@ -16,10 +16,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "include\\quadCommon.fxh"
 
-// TEXTURES
-Texture2D gCurrentTex;
-Texture2D gDepthTex;
-Texture2D gNormalsTex;
 
 
 struct RGBDN {
@@ -29,21 +25,14 @@ struct RGBDN {
 };
 
 
+
 //     __                  _   _
 //    / _|_   _ _ __   ___| |_(_) ___  _ __  ___
 //   | |_| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 //   |  _| |_| | | | | (__| |_| | (_) | | | \__ \
 //   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 //
-float4 loadCurrentTex(int3 loc) { return gCurrentTex.Load(loc); }
 
-float3 loadColor(int3 loc) { return gColorTex.Load(loc).rgb; }
-
-float loadDepth(int3 loc) { return gDepthTex.Load(loc).r; }
-
-float4 loadNormalsTex(int3 loc) { return gNormalsTex.Load(loc); }
-float3 loadNormals(float4 normalsTex) { return normalsTex.rgb; }
-float3 loadNormals(int3 loc) { return loadNormals(loadNormalsTex(loc)); }
 int loadObjectID(float4 normalsTex) { return round(normalsTex.a * 100); }
 int loadObjectID(int3 loc) { return loadObjectID(loadNormalsTex(loc)); }
 int loadObjectID(int3 loc, int dx, int dy) { return loadObjectID(loc + int3(dx, dy, 0)); }
@@ -64,11 +53,11 @@ RGBDN rgbdn(int3 loc) {
 RGBDN rgbdn(int3 loc, int dx, int dy) { return rgbdn(loc + int3(dx, dy, 0)); }
 
 
-
 float gaussianWeight(float x, float y, float sigma) {
     return 0.15915 * exp(-0.5 * (x * x + y * y) / (sigma * sigma)) / (sigma);
 }
 float gaussianWeight(int3 dloc, float sigma) { return gaussianWeight(dloc.x, dloc.y, sigma); }
+
 
 // Finds the weighted sum in the localized kernel
 RGBDN getGaussianKernelResult(int3 loc, int kernelWidth, float sigma) {
@@ -105,7 +94,6 @@ RGBDN getGaussianKernelResult(int3 loc, int kernelWidth, float sigma) {
 
 	return result;
 }
-
 
 
 
@@ -339,7 +327,7 @@ float4 badDogRGBDNFrag(vertexOutput vertex) : SV_Target{
 float4 objectIDEdgeDetectionFrag(vertexOutput vertex) : SV_Target {
 	int3 loc = int3(vertex.pos.xy, 0);
 
-	float4 currentTex = loadCurrentTex(loc);
+	float4 currentTex = loadEdgeTex(loc);
 	currentTex.a = 0.0;
 
 	int id = loadObjectID(loc);

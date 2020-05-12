@@ -47,34 +47,18 @@ namespace wm {
                 name, tWidth, tHeight, 1, rasterFormat, arraySliceCount, isCubeMap));
         };
 
-        /*
-        targetList.append(MHWRender::MRenderTargetDescription(
-            "bleedingTarget", tWidth, tHeight, 1, rgba8, arraySliceCount, isCubeMap));
-        */
-
         {
-            appendTarget("edgeTargetWM", r8);
             appendTarget("edgeThresholdedTarget", r1);
-            /*appendTarget("edgeDilatedTarget", r1);*/
             appendTarget("blurredEdgeTarget", r16un);
             appendTarget("edgeGradientTarget", rg16sn);
             appendTarget("edgeUvTarget", rg16sn);
             appendTarget("edgeUvDilatedTarget", rg16sn);
-            /*appendTarget("edgeWidthTarget", rg16sn);*/
-            //appendTarget("edgeUvDebugTarget", colorDepth);
-            /*appendTarget("edgeResultTarget", r16sn);*/
-            /*appendTarget("edgeResultAverageTarget", colorDepth);*/
         }
 
         {
             appendTarget("widerDiffuseTarget", diffuseDepth);
             appendTarget("discreteLightTarget", diffuseDepth);
-            /*appendTarget("discreteShadingTarget", diffuseDepth);*/
         }
-
-        /*appendTarget("colorSpreadTarget", colorDepth);*/
-
-        /*appendTarget("hatchingTarget", rgba8);*/
 
         appendTarget("uvTarget", diffuseDepth);
         appendTarget("debugTarget", colorDepth);
@@ -128,7 +112,7 @@ namespace wm {
         {
             opName = "[quad] objectID-based edge-detection";
             opShader = new MOperationShader("quadEdgeDetection", "objectIDEdgeDetection");
-            addTargetParameter("gCurrentTex", "edgeTarget");
+            addTargetParameter("gEdgeTex", "edgeTarget");
             addTargetParameter("gNormalsTex", "normalsTarget");
             appendOp({ "edgeTarget" });
 
@@ -136,13 +120,13 @@ namespace wm {
             opName = "[quad] edge channel picker";
             opShader = new MOperationShader("wm", "quadEdgeManipulation", "edgePicker");
             addTargetParameter("gEdgeTex", "edgeTarget");
-            addTargetParameter("gAbstractControlTex", "abstractCtrlTarget");
-            appendOp({ "edgeTargetWM" });
+            addTargetParameter("gEdgeCtrlTex", "abstractCtrlTarget");
+            appendOp({ "edgeTarget" });
 
 
             opName = "[quad] edge thresholding";
             opShader = new MOperationShader("wm", "quadEdgeManipulation", "thresholdEdges");
-            addTargetParameter("gEdgeTex", "edgeTargetWM");
+            addTargetParameter("gEdgeTex", "edgeTarget");
             addParameter("gEdgeThreshold", mFxParams.edgeThresholdWM);
             appendOp({ "edgeThresholdedTarget" });
 
@@ -157,7 +141,7 @@ namespace wm {
             opShader = new MOperationShader("wm", "quadEdgeManipulation", "fixEdgeCtrl");
             addTargetParameter("gEdgeTex", "edgeThresholdedTarget");
             addTargetParameter("gDepthTex", "linearDepth");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
+            addTargetParameter("gEdgeCtrlTex", "edgeCtrlTarget");
             appendOp({ "edgeCtrlTarget" });
 
 
@@ -165,7 +149,7 @@ namespace wm {
             opShader = new MOperationShader("wm", "quadEdgeManipulation", "fixEdgeCtrl");
             addTargetParameter("gEdgeTex", "edgeThresholdedTarget");
             addTargetParameter("gDepthTex", "linearDepth");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
+            addTargetParameter("gEdgeCtrlTex", "edgeCtrlTarget");
             appendOp({ "edgeCtrlTarget" });
         }
 
@@ -185,14 +169,13 @@ namespace wm {
 
 
             opName = "[quad] edge gradient";
-            opShader = new MOperationShader("quadGradientFinding", "gradientTowardsEdge");
+            opShader = new MOperationShader("wm", "quadGradientFinding", "gradientTowardsEdge");
             /*addSamplerState();*/
             addTargetParameter("gValueTex", "blurredEdgeTarget");
             appendOp({ "edgeGradientTarget" });
 
             opName = "[quad] closest edge locations";
-            opShader = new MOperationShader("wm", "quadEdgeManipulation", "edgeUvLocations");
-            addSamplerState();
+            opShader = new MOperationShader("wm", "quadGradientIterating", "edgeUvLocations");
             addTargetParameter("gEdgeTex", "edgeThresholdedTarget");
             addTargetParameter("gGradientTex", "edgeGradientTarget");
             appendOp({ "edgeUvTarget" });
@@ -235,46 +218,20 @@ namespace wm {
             addTargetParameter("gEdgeLocationTex", "edgeUvDilatedTarget");
             appendOp({ "edgeUvDilatedTarget" });
         }
-
-
-        {
-            /*opName = "[quad] edge width";
-            opShader = new MOperationShader("wm", "quadEdgeManipulation", "removeFarPixels");
-            addTargetParameter("gEdgeLocationTex", "edgeUvDilatedTarget");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
-            addParameter("gEdgeWidth", mFxParams.edgeWidthWM);
-            appendOp({ "edgeWidthTarget" });*/
-
-
-            /*opName = "[quad] edge uv location debug";
-            opShader = new MOperationShader("wm", "quadEdgeManipulation", "edgeLocationDebug");
-            addTargetParameter("gEdgeLocationTex", "edgeWidthTarget");
-            appendOp({ "edgeUvDebugTarget" });*/
-
-
-            /*opName = "[quad] edge intensity";
-            opShader = new MOperationShader("wm", "quadEdgeManipulation", "edgeIntensity");
-            addTargetParameter("gEdgeLocationTex", "edgeWidthTarget");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
-            addParameter("gEdgeIntensity", mFxParams.edgeIntensityWM);
-            appendOp({ "edgeResultTarget" });*/
-        }
-
+        
 
         // DISCRETE LIGHT SHADING
         {
             opName = "[quad] widen diffuse target";
-            opShader = new MOperationShader("quadLighting", "includeNegatives");
+            opShader = new MOperationShader("wm", "quadLighting", "includeNegatives");
             addTargetParameter("gDiffuseTex", "diffuseTarget");
             addParameter("positiveScale", mFxParams.testingValue);
             appendOp({ "widerDiffuseTarget" });
 
 
             opName = "[quad] discrete light";
-            opShader = new MOperationShader("wm", "quadSurfaceShading", "discreteLight");
+            opShader = new MOperationShader("wm", "quadLighting", "discreteLight");
             addTargetParameter("gDiffuseTex", "widerDiffuseTarget");
-            addParameter("gShadingTint", mFxParams.shadingTintWM);
-            addParameter("gShadingTintWeight", mFxParams.shadingTintWeightWM);
             addParameter("gSurfaceThresholdHigh", mFxParams.shadingThresholdHigh);
             addParameter("gSurfaceThresholdMid", mFxParams.shadingThresholdMid);
             addParameter("gTransitionHighMid", mFxParams.transitionHighMid);
@@ -286,9 +243,8 @@ namespace wm {
 
 
             opName = "[quad] discrete light tint";
-            opShader = new MOperationShader("wm", "quadSurfaceShading", "tintShade");
-            addTargetParameter("gLightTex", "discreteLightTarget");
-            addTargetParameter("gDepthTex", "linearDepth");
+            opShader = new MOperationShader("wm", "quadLighting", "tintShade");
+            addTargetParameter("gDiscreteDiffuseTex", "discreteLightTarget");
             addParameter("gShadingTint", mFxParams.shadingTintWM);
             addParameter("gShadingTintWeight", mFxParams.shadingTintWeightWM);
             appendOp({ "discreteLightTarget" });
@@ -297,45 +253,9 @@ namespace wm {
             opName = "[quad] surface shading and desaturation";
             opShader = new MOperationShader("wm", "quadSurfaceShading", "shadeSurfaces");
             addTargetParameter("gRenderTex", "stylizationTarget");
-            addTargetParameter("gLightTex", "discreteLightTarget");
+            addTargetParameter("gDiscreteDiffuseTex", "discreteLightTarget");
             addParameter("gShadingSaturationWeight", mFxParams.shadingSaturationWeightWM);
             appendOp({ "stylizationTarget" });
-
-
-            /*opName = "[quad] discrete surfaces";
-            opShader = new MOperationShader("quadCelShader", "shadeSurfaces");
-            addTargetParameter("gColorTex", "stylizationTarget");
-            addTargetParameter("gLightTex", "discreteLightTarget");
-            addParameter("gSurfaceThresholdHigh", mFxParams.surfaceThresholdHigh);
-            addParameter("gSurfaceThresholdMid", mFxParams.surfaceThresholdMid);
-            addParameter("gTransitionHighMid", mFxParams.transitionHighMid);
-            addParameter("gTransitionMidLow", mFxParams.transitionMidLow);
-            addParameter("gSurfaceHighIntensity", mFxParams.surfaceHighIntensity);
-            addParameter("gSurfaceMidIntensity", mFxParams.surfaceMidIntensity);
-            addParameter("gSurfaceLowIntensity", mFxParams.surfaceLowIntensity);
-            addParameter("gDiffuseCoefficient", mFxParams.diffuseCoefficient);
-            addParameter("gSpecularCoefficient", mFxParams.specularCoefficient);
-            addParameter("gSpecularPower", mFxParams.specularPower);
-            appendOp({ "discreteShadingTarget" });*/
-
-
-            /* opName = "[quad] cel shading surfaces";
-             opShader = new MOperationShader("quadCelShader", "celSurfaces1");
-             addTargetParameter("gColorTex", "stylizationTarget");
-             addTargetParameter("gDepthTex", "linearDepth");
-             addTargetParameter("gSpecularTex", "specularTarget");
-             addTargetParameter("gDiffuseTex", "widerDiffuseTarget");
-             addParameter("gSurfaceThresholdHigh", mFxParams.surfaceThresholdHigh);
-             addParameter("gSurfaceThresholdMid", mFxParams.surfaceThresholdMid);
-             addParameter("gTransitionHighMid", mFxParams.transitionHighMid);
-             addParameter("gTransitionMidLow", mFxParams.transitionMidLow);
-             addParameter("gSurfaceHighIntensity", mFxParams.surfaceHighIntensity);
-             addParameter("gSurfaceMidIntensity", mFxParams.surfaceMidIntensity);
-             addParameter("gSurfaceLowIntensity", mFxParams.surfaceLowIntensity);
-             addParameter("gDiffuseCoefficient", mFxParams.diffuseCoefficient);
-             addParameter("gSpecularCoefficient", mFxParams.specularCoefficient);
-             addParameter("gSpecularPower", mFxParams.specularPower);
-             appendOp({ "stylizationTarget" });*/
         }
 
 
@@ -345,8 +265,8 @@ namespace wm {
             opShader = new MOperationShader("wm", "quadOverlaps", "overlaps");
             addTargetParameter("gRenderTex", "stylizationTarget");
             addTargetParameter("gEdgeTex", "edgeThresholdedTarget");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
-            addTargetParameter("gAbstractControlTex", "abstractCtrlTarget");
+            addTargetParameter("gEdgeCtrlTex", "edgeCtrlTarget");
+            addTargetParameter("gEdgeCtrlTex", "abstractCtrlTarget");
             addTargetParameter("gEdgeLocationTex", "edgeUvDilatedTarget");
             addTargetParameter("gNormalsTex", "normalsTarget");
             addTargetParameter("gDepthTex", "linearDepth");
@@ -356,44 +276,22 @@ namespace wm {
             addParameter("gOverlapFalloffSpeed", mFxParams.overlapFalloffSpeedWM);
             addParameter("gOverlapDepthDifference", mFxParams.overlapDepthDifferenceWM);
             appendOp({ "stylizationTarget" });
-
-            /*opName = "[quad] color overlaps";
-            opShader = new MOperationShader("wm", "quadOverlaps", "overlapsOld");
-            addTargetParameter("gColorTex", "stylizationTarget");*/
-            /*addTargetParameter("gColorTex", "colorTarget");*/
-            /*addTargetParameter("gEdgeTex", "blurredEdgeTarget");
-            addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
-            addTargetParameter("gNormalsTex", "normalsTarget");
-            addTargetParameter("gDepthTex", "linearDepth");
-            appendOp({ "stylizationTarget" });*/
-            /*appendOp({ "colorSpreadTarget" });*/
         }
 
 
         // HATCHING
         {
             opName = "[quad] substrate-based hatching";
-            opShader = new MOperationShader("quadHatching", "hatchTest");
+            opShader = new MOperationShader("wm", "quadHatching", "hatchTest");
             addTargetParameter("gRenderTex", "stylizationTarget");
-            addTargetParameter("gHatchCtrl", "pigmentCtrlTarget");
+            addTargetParameter("gPigmentCtrlTex", "pigmentCtrlTarget");
             addTargetParameter("gColorTex", "colorTarget");
             addTargetParameter("gSubstrateTex", "substrateTarget");
             addTargetParameter("gDiffuseTex", "widerDiffuseTarget");
             addTargetParameter("gSpecularTex", "specularTarget");
-            //addParameter("gTestingValue", mFxParams.testingValue);
             addParameter("gThresholdColor", mFxParams.hatchingColorThresholdWM);
             addParameter("gThresholdDiffuse", mFxParams.hatchingDiffuseThresholdWM);
             appendOp({ "stylizationTarget" });
-
-
-            /*opName = "[quad] uv hatching";
-            opShader = new MOperationShader("quadHatching", "hatchUVsTest");
-            addTargetParameter("gStylizationTex", "stylizationTarget");
-            addTargetParameter("gColorTex", "colorTarget");
-            addTargetParameter("gNormalsTex", "normalsTarget");
-            addTargetParameter("gDiffuseTex", "widerDiffuseTarget");
-            addTargetParameter("gSpecularTex", "specularTarget");
-            appendOp({ "hatchingTarget" });*/
         }
 
 
@@ -402,7 +300,7 @@ namespace wm {
         opShader = new MOperationShader("wm", "quadEdgeManipulation", "applyEdges");
         addTargetParameter("gRenderTex", "stylizationTarget");
         addTargetParameter("gEdgeLocationTex", "edgeUvDilatedTarget");
-        addTargetParameter("gEdgeControlTex", "edgeCtrlTarget");
+        addTargetParameter("gEdgeCtrlTex", "edgeCtrlTarget");
         addTargetParameter("gSubstrateTex", "substrateTarget");
         addParameter("gEdgeIntensity", mFxParams.edgeIntensityWM);
         addParameter("gEdgeWidth", mFxParams.edgeWidthWM);

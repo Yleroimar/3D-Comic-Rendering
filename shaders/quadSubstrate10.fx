@@ -17,10 +17,7 @@
 #include "include\\quadCommon.fxh"
 
 // TEXTURES
-Texture2D gSubstrateTex;
-Texture2D gEdgeTex;
 Texture2D gControlTex;
-Texture2D gDepthTex;
 
 
 // VARIABLES

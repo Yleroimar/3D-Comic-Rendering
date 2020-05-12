@@ -18,10 +18,7 @@
 float gNCP : NearClipPlane;  // near clip plane distance
 
 // TEXTURES
-Texture2D gDiffuseTex;    // diffuse
-Texture2D gSpecularTex;   // specular
 Texture2D gZBuffer;       // ZBuffer
-Texture2D gSubstrateTex;  // substrate texture (paper, canvas, etc)
 Texture2D gLinearDepthTex; // linearized depth
 Texture2D gVelocityTex;  // velocity
 

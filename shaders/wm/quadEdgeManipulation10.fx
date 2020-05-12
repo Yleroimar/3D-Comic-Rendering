@@ -1,38 +1,28 @@
-///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // quadEdgeManipulation10.fx (HLSL)
 // Brief: Edge manipulation algorithms for Water Memory
 // Contributors: Oliver Vainumäe
-///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 //             _                                      _             _       _   _             
 //     ___  __| | __ _  ___     _ __ ___   __ _ _ __ (_)_ __  _   _| | __ _| |_(_) ___  _ __  
 //    / _ \/ _` |/ _` |/ _ \   | '_ ` _ \ / _` | '_ \| | '_ \| | | | |/ _` | __| |/ _ \| '_ \ 
 //   |  __/ (_| | (_| |  __/   | | | | | | (_| | | | | | |_) | |_| | | (_| | |_| | (_) | | | |
 //    \___|\__,_|\__, |\___|   |_| |_| |_|\__,_|_| |_|_| .__/ \__,_|_|\__,_|\__|_|\___/|_| |_|
 //               |___/                                 |_|                                    
-///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // This shader provides alorithms for edge manipulation such as:
 // 1.- Setting edge pixel value as the pixel's UV position [WM]
 // 2.- Dilating  [WM]
 // 2.- RGBDNO edge-detection combining into Red channel [WM]
 // 3.- Edge-detection thresholding [WM]
 // 4.- Edge-related controls target dilating, based on depth [WM]
-// 5.- Iterating to closest edge using gradient vector of blurred edges target [WM]
-// 6.- Dilating closest edge location based on proximity [WM]
-// 7.- Removing edge location pixels that are too far from edge (DEBUG) [WM]
-// 8.- Setting the intensity of edges based on ctrl from edge location (DEBUG) [WM]
-// 9.- Applying the edges using edge ctrl target and edge locations [WM]
-///////////////////////////////////////////////////////////////////////////////////////////////
-#include "..\\include\\quadCommon.fxh"
+// 5.- Dilating closest edge location based on proximity [WM]
+// 6.- Removing edge location pixels that are too far from edge (DEBUG) [WM]
+// 7.- Setting the intensity of edges based on ctrl from edge location (DEBUG) [WM]
+// 8.- Applying the edges using edge ctrl target and edge locations [WM]
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "quadCommon.fxh"
 
-// TEXTURES
-Texture2D gRenderTex;
-Texture2D gEdgeTex;
-Texture2D gGradientTex;
-Texture2D gEdgeLocationTex;
-Texture2D gEdgeControlTex;
-Texture2D gAbstractControlTex;
-Texture2D gDepthTex;
-Texture2D gSubstrateTex;
 
 
 // VARIABLES
@@ -42,15 +32,14 @@ float gEdgeThreshold = 0.5;
 float gEdgeFalloffStart = 0.1;
 float gEdgeTextureIntensity = 4;
 
+
+
 // FIXED GLOBAL VARIABLES
-float4 noEdge = float4(0.0, 0.0, 0.0, 0.0);
-float4 nullValue = float4(0.0, 0.0, 0.0, 0.0);
+static const float4 nullValue = float4(0.0, 0.0, 0.0, 0.0);
 
 static const int cEdgeDilateKernelWidth = 3;
 static const int cCtrlFixKernelWidth = 5;
 static const int cDilateKernelWidth = 5;
-static const int cEdgeIterations = 20;
-
 
 
 
@@ -60,32 +49,6 @@ static const int cEdgeIterations = 20;
 //   |  _| |_| | | | | (__| |_| | (_) | | | \__ \
 //   |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 //
-float4 loadEdgeLocationTex(int3 loc) { return gEdgeLocationTex.Load(loc); }
-float4 loadEdgeLocationTex(int3 loc, int dx, int dy) {
-    return loadEdgeLocationTex(loc + int3(dx, dy, 0));
-}
-
-float4 loadEdgeCtrlTex(int3 loc) { return gEdgeControlTex.Load(loc); }
-
-float4 loadColorEdgeCtrlTex(int3 loc) { return gAbstractControlTex.Load(loc); }
-float loadColorEdgeCtrl(int3 loc) { return loadColorEdgeCtrlTex(loc).r; }
-
-float sampleEdge(float2 uv) { return gEdgeTex.Sample(gSampler, uv).r; }
-float4 loadEdgeTex(int3 loc) { return gEdgeTex.Load(loc); }
-float loadEdge(int3 loc) { return loadEdgeTex(loc).r; }
-
-float2 sampleGradient(float2 uv) { return gGradientTex.Sample(gSampler, uv).rg; }
-float2 loadGradient(int3 loc) { return gGradientTex.Load(loc).rg; }
-
-float loadDepth(int3 loc) { return gDepthTex.Load(loc).r; }
-
-float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
-float4 loadSubstrateTex(int3 loc) { return gSubstrateTex.Load(loc); }
-float4 loadSubstrateHeight(int3 loc) { return loadSubstrateTex(loc).b; }
-
-
-float thresholdValue(float value, float threshold) { return value < threshold ? 0.0 : 1.0; }
-
 
 float getEdgeRange(float ctrlWidth) {
     if (0 < ctrlWidth)
@@ -226,49 +189,6 @@ float4 fixEdgeCtrlFrag(vertexOutput i) : SV_Target {
     int3 from = findClosestDepthNeighbour(loc);
 
     return loadEdgeCtrlTex(from);
-}
-
-
-
-//    _ _                 _           _                     _            
-//   (_) |_ ___ _ __ __ _| |_ ___    | |_ ___       ___  __| | __ _  ___ 
-//   | | __/ _ \ '__/ _` | __/ _ \   | __/ _ \     / _ \/ _` |/ _` |/ _ \
-//   | | ||  __/ | | (_| | ||  __/   | || (_) |   |  __/ (_| | (_| |  __/
-//   |_|\__\___|_|  \__,_|\__\___|    \__\___/     \___|\__,_|\__, |\___|
-//                                                            |___/      
-// Contributor: Oliver Vainumäe
-// Iterates to the closest edge based on the gradient vector of blurred edges target
-float2 iterateToEdge(int3 loc, float2 gradient) {
-    float2 locF = loc.xy;
-    float edge = loadEdge(loc);
-
-    const int iterations = cEdgeIterations;
-
-    [unroll(iterations % 20)]
-    for (int i = 1; i <= iterations; i++) {
-        if (0.5 < edge) return screen2uv(locF);
-
-        locF = loc.xy + i * gradient;
-        edge = loadEdge(int3(round(locF), 0));
-    }
-
-    // if we got here, we didn't reach any edge.
-    return float2(-1.0, -1.0);
-}
-
-float2 edgeUvLocationsFrag(vertexOutput i) : SV_Target {
-    int3 loc = int3(i.pos.xy, 0);
-
-    float2 gradient = loadGradient(loc);
-
-    // if gradient is too small, then no edge is nearby.
-    if (length(gradient) < 0.5) return float2(-1.0, -1.0).xy;
-    
-    float2 edgeUv = iterateToEdge(loc, gradient);
-
-    //if (0.5 < loadEdge(loc)) return float2(1.0, 1.0);
-
-    return edgeUv;
 }
 
 
@@ -514,14 +434,6 @@ technique11 fixEdgeCtrl {
         SetVertexShader(CompileShader(vs_5_0, quadVert()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, fixEdgeCtrlFrag()));
-    }
-};
-
-technique11 edgeUvLocations {
-    pass p0 {
-        SetVertexShader(CompileShader(vs_5_0, quadVert()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_5_0, edgeUvLocationsFrag()));
     }
 };
 

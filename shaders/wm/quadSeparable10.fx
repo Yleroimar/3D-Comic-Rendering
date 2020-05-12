@@ -14,13 +14,7 @@
 // - Extend the edges to converge edges into overlaps
 // - Extend the edges to converge edges into overlaps (sampled)
 ////////////////////////////////////////////////////////////////////////
-#include "..\\include\\quadCommon.fxh"
-
-// TEXTURES
-Texture2D gEdgeTex;
-
-
-// VARIABLES
+#include "quadCommon.fxh"
 
 
 // FIXED VARIABLES
@@ -75,10 +69,8 @@ float getWeight(int stepNr, float sigma, int kernelRadius) {
 
 float getEdgeIntensity(float4 color) { return color.r; }
 
-float4 sampleEdgeTex(float2 uv) { return gEdgeTex.Sample(gSampler, uv); }
 float sampleEdgeIntensity(float2 uv) { return getEdgeIntensity(sampleEdgeTex(uv)); }
 
-float4 loadEdgeTex(int3 loc) { return gEdgeTex.Load(loc); }
 float loadEdgeIntensity(int3 loc) { return getEdgeIntensity(loadEdgeTex(loc)); }
 
 

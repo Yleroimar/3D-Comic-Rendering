@@ -1,18 +1,18 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 // quadCommon.fxh (HLSL)
 // Brief: Common utility shader elements for MNPR
 // Contributors: Santiago Montesdeoca, Oliver Vainumäe
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 //                          _
 //     __ _ _   _  __ _  __| |       ___ ___  _ __ ___  _ __ ___   ___  _ __
 //    / _` | | | |/ _` |/ _` |_____ / __/ _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \
 //   | (_| | |_| | (_| | (_| |_____| (_| (_) | | | | | | | | | | | (_) | | | |
 //    \__, |\__,_|\__,_|\__,_|      \___\___/|_| |_| |_|_| |_| |_|\___/|_| |_|
 //       |_|
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 // This shader file provides utility variables, structs, vertex shader and functions to aid
 // the development of quad operations in MNPR
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 #ifndef _QUADCOMMON_FXH
 #define _QUADCOMMON_FXH
 
@@ -30,6 +30,17 @@ static const float PI = 3.14159265f;
 
 // COMMON TEXTURES
 Texture2D gColorTex;      // color target
+Texture2D gRenderTex;
+Texture2D gDiffuseTex;    // diffuse
+Texture2D gSpecularTex;   // specular
+Texture2D gDepthTex;
+Texture2D gNormalsTex;
+Texture2D gEdgeTex;
+Texture2D gSubstrateTex; // substrate texture (paper, canvas, etc)
+Texture2D gEdgeCtrlTex;
+Texture2D gAbstractCtrlTex;
+Texture2D gPigmentCtrlTex;
+Texture2D gSubstrateCtrlTex;
 
 
 // COMMON SAMPLERS
@@ -101,6 +112,58 @@ float4 unpremultiply(float4 color) {
 	return color;
 }
 
+
+//    _                 _ _                __                         _ _             
+//   | | ___   __ _  __| (_)_ __   __ _   / /__  __ _ _ __ ___  _ __ | (_)_ __   __ _ 
+//   | |/ _ \ / _` |/ _` | | '_ \ / _` | / / __|/ _` | '_ ` _ \| '_ \| | | '_ \ / _` |
+//   | | (_) | (_| | (_| | | | | | (_| |/ /\__ \ (_| | | | | | | |_) | | | | | | (_| |
+//   |_|\___/ \__,_|\__,_|_|_| |_|\__, /_/ |___/\__,_|_| |_| |_| .__/|_|_|_| |_|\__, |
+//                                |___/                        |_|              |___/ 
+
+float4 loadColorTex(int3 loc) { return gColorTex.Load(loc); }
+float3 loadColor(float4 colorTex) { return colorTex.rgb; }
+float3 loadColor(int3 loc) { return loadColor(loadColorTex(loc)); }
+
+float4 loadRenderTex(int3 loc) { return gRenderTex.Load(loc); }
+float3 loadRender(float4 renderTex) { return renderTex.rgb; }
+float3 loadRender(int3 loc) { return loadRender(loadRenderTex(loc)); }
+
+float4 loadSubstrateTex(int3 loc) { return gSubstrateTex.Load(loc); }
+float loadSubstrateHeight(float4 substrateTex) { return substrateTex.b; }
+float loadSubstrateHeight(int3 loc) { return loadSubstrateHeight(loadSubstrateTex(loc)); }
+
+float4 loadDepthTex(int3 loc) { return gDepthTex.Load(loc); }
+float loadDepth(float4 depthTex) { return depthTex.r; }
+float loadDepth(int3 loc) { return loadDepth(loadDepthTex(loc)); }
+float loadDepthPrevious(float4 depthTex) { return depthTex.g; }
+float loadDepthPrevious(int3 loc) { return loadDepthPrevious(loadDepthTex(loc)); }
+
+float4 loadNormalsTex(int3 loc) { return gNormalsTex.Load(loc); }
+float3 loadNormals(float4 normalsTex) { return normalsTex.rgb; }
+float3 loadNormals(int3 loc) { return loadNormals(loadNormalsTex(loc)); }
+
+float4 loadDiffuseTex(int3 loc) { return gDiffuseTex.Load(loc); }
+float3 loadDiffuseColor(float4 diffuseTex) { return diffuseTex.rgb; }
+float3 loadDiffuseColor(int3 loc) { return loadDiffuseColor(loadDiffuseTex(loc)); }
+float loadDiffuseNegative(float4 diffuseTex) { return diffuseTex.a; }
+float loadDiffuseNegative(int3 loc) { return loadDiffuseNegative(loadDiffuseTex(loc)); }
+
+float4 loadSpecularTex(int3 loc) { return gSpecularTex.Load(loc); }
+float3 loadSpecularColor(float4 specularTex) { return specularTex.rgb; }
+float3 loadSpecularColor(int3 loc) { return loadSpecularColor(loadSpecularTex(loc)); }
+
+float4 sampleEdgeTex(float2 uv) { return gEdgeTex.Sample(gSampler, uv); }
+float4 loadEdgeTex(int3 loc) { return gEdgeTex.Load(loc); }
+
+float4 loadEdgeCtrlTex(int3 loc) { return gEdgeCtrlTex.Load(loc); }
+
+float4 loadAbstractCtrlTex(int3 loc) { return gAbstractCtrlTex.Load(loc); }
+
+float4 loadPigmentCtrlTex(int3 loc) { return gPigmentCtrlTex.Load(loc); }
+
+float4 loadSubstrateCtrlTex(int3 loc) { return gSubstrateCtrlTex.Load(loc); }
+
+
 /*
  * All of these functions have been made to make
  * all the shader code consistent and to reduce
@@ -118,8 +181,6 @@ float4 unpremultiply(float4 color) {
  * Looks like this low-level language is being
  * given high-level funtions.
  */
-
-float4 loadColorTex(int3 loc) { return gColorTex.Load(loc); }
 
 /**
  * Returns:
@@ -184,12 +245,12 @@ int2 kernelOffsetScreen(int i, int kernelWidth) {
 							  kernelWidth / 2,
 							  kernelWidth * kernelWidth);
 }
-int2 kernelOffsetScreen(int2 xy,
-						int i, int kernelWidth, int kernelWidthHalf, int kernelSize) {
+int2 kernelOffsetScreen(int2 xy, int i,
+						int kernelWidth, int kernelWidthHalf, int kernelSize) {
 	return xy + kernelOffsetScreen(i, kernelWidth, kernelWidthHalf, kernelSize);
 }
-int2 kernelOffsetScreen(int3 loc,
-						int i, int kernelWidth, int kernelWidthHalf, int kernelSize) {
+int2 kernelOffsetScreen(int3 loc, int i,
+						int kernelWidth, int kernelWidthHalf, int kernelSize) {
 	return kernelOffsetScreen(loc.xy, i, kernelWidth, kernelWidthHalf, kernelSize);
 }
 
