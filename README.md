@@ -1,10 +1,31 @@
 Repository for modifications of MNPR to render Water Memory (WM) style.  
 Most of the files originate from MNPR repo: https://github.com/semontesdeoca/MNPR
 
-Modified files include:
-* the C++ files for the new style
-* mnpr_FX.py for setting up control targets for WM style
-* HLSL files in shader
+##### Modified files include:
+* modified <i>scripts/mnpr_FX.py</i> to set up control targets for WM style
+* modified <i>scripts/AEmnprConfigTemplate.mel</i> to order and group control parameters for WM style
+* modified <i>shaders/mnpr_uber.sfx</i> to add normals rendering to and remove color and diffuse mixing from ShaderFX materials
+* the C++ files:
+    * <b>[CREATED]</b> <i>plugins/style_waterMemory.hpp</i>
+    * <b>[CREATED]</b> <i>plugins/node_waterMemory.hpp</i>
+    * <b>[MODIFIED]</b> <i>plugins/mnpr_renderer.h</i>
+    * <b>[MODIFIED]</b> <i>plugins/mnpr_renderer.cpp</i>
+* HLSL shader files:
+    * <b>[CREATED]</b> <i>shaders/wm/quadEdgeManipulation10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadOverlaps10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadSeparable10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadStyleLoad10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadSurfaceShading10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/quadCelShader10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/quadGradientFinding10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/quadHatching10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/quadLighting10.fx</i>
+    * <b>[MODIFIED]</b> <i>shaders/quadEdgeDetection10.fx</i> (modified Sobel and DoG)
+    * <b>[MODIFIED]</b> <i>shaders/quadAdjustLoad10.fx</i> (removed color and diffuse mixing)
+    * <b>[MODIFIED]</b> <i>shaders/include/quadCommon.fxh</i> (new common functions)
+    * <b>[MODIFIED]</b> <i>shaders/include/quadColorTransform.fxh</i> (added rgb<->hsv and rgb<->hsl)
+
+Some more modifications were made to already existing files to improve code readability for myself.
 
 New icons were added to PaintFX for WM style.
 
