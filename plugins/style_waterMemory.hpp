@@ -32,7 +32,7 @@ namespace wm {
         MHWRender::MRasterFormat r16sn = MHWRender::kR16_SNORM;
         MHWRender::MRasterFormat r16un = MHWRender::kR16_UNORM;
         MHWRender::MRasterFormat rg16sn = MHWRender::kR16G16_SNORM;
-        MHWRender::MRasterFormat rgba8 = MHWRender::kR8G8B8A8_SNORM;
+        MHWRender::MRasterFormat rgba8sn = MHWRender::kR8G8B8A8_SNORM;
         MHWRender::MRasterFormat rgba8un = MHWRender::kR8G8B8A8_UNORM;
         MHWRender::MRasterFormat defaultUserDepth = MHWRender::kR16G16B16A16_SNORM;
 
@@ -185,7 +185,7 @@ namespace wm {
 
 
             opName = "[quad] edge gradient";
-            opShader = new MOperationShader("quadGradientFinding", "gradientTowardsEdge");
+            opShader = new MOperationShader("wm", "quadGradientFinding", "gradientTowardsEdge");
             /*addSamplerState();*/
             addTargetParameter("gValueTex", "blurredEdgeTarget");
             appendOp({ "edgeGradientTarget" });
@@ -264,7 +264,7 @@ namespace wm {
         // DISCRETE LIGHT SHADING
         {
             opName = "[quad] widen diffuse target";
-            opShader = new MOperationShader("quadLighting", "includeNegatives");
+            opShader = new MOperationShader("wm", "quadLighting", "includeNegatives");
             addTargetParameter("gDiffuseTex", "diffuseTarget");
             addParameter("positiveScale", mFxParams.testingValue);
             appendOp({ "widerDiffuseTarget" });
@@ -373,7 +373,7 @@ namespace wm {
         // HATCHING
         {
             opName = "[quad] substrate-based hatching";
-            opShader = new MOperationShader("quadHatching", "hatchTest");
+            opShader = new MOperationShader("wm", "quadHatching", "hatchTest");
             addTargetParameter("gRenderTex", "stylizationTarget");
             addTargetParameter("gHatchCtrl", "pigmentCtrlTarget");
             addTargetParameter("gColorTex", "colorTarget");
@@ -387,7 +387,7 @@ namespace wm {
 
 
             /*opName = "[quad] uv hatching";
-            opShader = new MOperationShader("quadHatching", "hatchUVsTest");
+            opShader = new MOperationShader("wm", "quadHatching", "hatchUVsTest");
             addTargetParameter("gStylizationTex", "stylizationTarget");
             addTargetParameter("gColorTex", "colorTarget");
             addTargetParameter("gNormalsTex", "normalsTarget");

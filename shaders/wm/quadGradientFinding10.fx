@@ -14,8 +14,8 @@
 // 1.- Gradient vector finding with seperated 3x3 kernel with corners [WM]
 // 2.- Gradient vector finding with seperated 3x3 kernel with corners (sampled) [WM]
 ////////////////////////////////////////////////////////////////////////////////////
-#include "include\\quadCommon.fxh"
-#include "include\\quadColorTransform.fxh"
+#include "..\\include\\quadCommon.fxh"
+#include "..\\include\\quadColorTransform.fxh"
 
 Texture2D gValueTex;
 
@@ -53,9 +53,7 @@ float2 getGradientSampled(float2 uv) {
     float yGradient = (down + 0.5 * (downRight + downLeft))
                         - (up + 0.5 * (topRight + topLeft));
 
-    float2 gradient = float2(xGradient, yGradient);
-
-    return normalize(gradient);
+    return float2(xGradient, yGradient);
 }
 
 //                        _ _            _        __ _           _ _             
@@ -67,7 +65,7 @@ float2 getGradientSampled(float2 uv) {
 // Contributor: Oliver Vainumäe
 // Finds the gradient vectors based on gValueTex (sampled)
 float2 gradientTowardsEdgeSampledFrag(vertexOutputSampler i) : SV_Target {
-    return getGradientSampled(i.uv);
+    return normalize(getGradientSampled(i.uv));
 }
 
 
@@ -89,9 +87,7 @@ float2 getGradient(int3 loc) {
     float yGradient = (down + 0.5 * (downRight + downLeft))
                         - (up + 0.5 * (topRight + topLeft));
 
-    float2 gradient = float2(xGradient, yGradient);
-
-    return normalize(gradient);
+    return float2(xGradient, yGradient);
 }
 
 //                        _ _            _        __ _           _ _             
@@ -103,7 +99,7 @@ float2 getGradient(int3 loc) {
 // Contributor: Oliver Vainumäe
 // Finds the gradient vectors based on gValueTex
 float2 gradientTowardsEdgeFrag(vertexOutput i) : SV_Target {
-    return getGradient(int3(i.pos.xy, 0));
+    return normalize(getGradient(int3(i.pos.xy, 0)));
 }
 
 
@@ -111,6 +107,8 @@ float2 gradientTowardsEdgeFrag(vertexOutput i) : SV_Target {
 // this is for debugging and for getting a good illustration of vector angles
 float3 gradientTowardsEdgeDebugFrag(vertexOutput i) : SV_Target {
     float2 gradient = getGradient(int3(i.pos.xy, 0));
+
+    if (length(gradient) < 1.0 / 65536) return float3(0.0, 0.0, 0.0);
 
     float angle = atan(gradient.y / gradient.x);
 

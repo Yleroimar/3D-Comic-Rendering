@@ -160,7 +160,7 @@ float edgePickerFrag(vertexOutput i) : SV_Target {
     float4 edgeTex = loadEdgeTex(loc);
 
     float colorCtrl = loadColorEdgeCtrl(loc);
-    edgeTex.r *= colorCtrl;
+    edgeTex.r *= max(0, colorCtrl);
 
     return max(edgeTex);
 }

@@ -58,7 +58,7 @@ float getOverlapIntensity(int3 loc, float distance, float range) {
     float ctrlFalloff = max(loadCtrlFalloff(loc), 0.0);
     ctrlFalloff *= gOverlapFalloff;
 
-    float falloffStart = ctrlFalloff * range;
+    float falloffStart = ctrlFalloff * (1.0 + range);
 
     if (distance < falloffStart) return 1.0;
 
@@ -103,11 +103,12 @@ float4 overlapsFrag(vertexOutput i) : SV_Target {
     float ctrlRange = loadCtrlRange(loc);
     ctrlRange *= gOverlapRange;
 
-    if (ctrlRange <= 0.1) return renderTex;
+    if (abs(ctrlRange) <= 0.1) return renderTex;
 
     int3 edgeLoc = loadEdgeLoc(loc);
 
     if (edgeLoc.x < 0.0) return renderTex;
+    if (length(edgeLoc - loc) <= 1.0 / 256) return renderTex;
 
     float distance = length(edgeLoc.xy - loc.xy);
 

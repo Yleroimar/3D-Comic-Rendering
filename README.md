@@ -12,18 +12,18 @@ Most of the files originate from MNPR repo: https://github.com/semontesdeoca/MNP
     * <b>[MODIFIED]</b> <i>plugins/mnpr_renderer.cpp</i>
 * HLSL shader files:
     * <b>[CREATED]</b> <i>shaders/wm/quadEdgeManipulation10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadGradientFinding10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadHatching10.fx</i>
+    * <b>[CREATED]</b> <i>shaders/wm/quadLighting10.fx</i>
     * <b>[CREATED]</b> <i>shaders/wm/quadOverlaps10.fx</i>
     * <b>[CREATED]</b> <i>shaders/wm/quadSeparable10.fx</i>
     * <b>[CREATED]</b> <i>shaders/wm/quadStyleLoad10.fx</i>
     * <b>[CREATED]</b> <i>shaders/wm/quadSurfaceShading10.fx</i>
     * <b>[CREATED]</b> <i>shaders/quadCelShader10.fx</i>
-    * <b>[CREATED]</b> <i>shaders/quadGradientFinding10.fx</i>
-    * <b>[CREATED]</b> <i>shaders/quadHatching10.fx</i>
-    * <b>[CREATED]</b> <i>shaders/quadLighting10.fx</i>
-    * <b>[MODIFIED]</b> <i>shaders/quadEdgeDetection10.fx</i> (modified Sobel and DoG)
-    * <b>[MODIFIED]</b> <i>shaders/quadAdjustLoad10.fx</i> (removed color and diffuse mixing)
-    * <b>[MODIFIED]</b> <i>shaders/include/quadCommon.fxh</i> (new common functions)
     * <b>[MODIFIED]</b> <i>shaders/include/quadColorTransform.fxh</i> (added rgb<->hsv and rgb<->hsl)
+    * <b>[MODIFIED]</b> <i>shaders/include/quadCommon.fxh</i> (new common functions)
+    * <b>[MODIFIED]</b> <i>shaders/quadAdjustLoad10.fx</i> (removed color and diffuse mixing)
+    * <b>[MODIFIED]</b> <i>shaders/quadEdgeDetection10.fx</i> (modified Sobel and DoG)
 
 Some more modifications were made to already existing files to improve code readability for myself.
 
